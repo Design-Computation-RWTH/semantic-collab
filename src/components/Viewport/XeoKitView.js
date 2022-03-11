@@ -425,7 +425,7 @@ class XeoKitView extends React.Component {
   render() {
 
       return <div className="caia-row">
-          <Sidebar />
+          <Sidebar XeokitInst={XeoKitView_instance}/>
           <canvas id="viewport_canvas" className="viewport"/>
           <div className="plan-toggle">
             <div className="btn-group-toggle" data-toggle="buttons">
@@ -632,9 +632,9 @@ class XeoKitView extends React.Component {
             isModel: true, // <---------- Node represents a model, so is registered by ID in viewer.scene.models
             rotation: [0, rotation.coordinates[2], 0],
             position: [
-              location.coordinates[0] / 100,
-              location.coordinates[2] / 100,
-              location.coordinates[1] / 100,
+              location.coordinates[0] / 10,
+              location.coordinates[2] / 10,
+              location.coordinates[1] / 10,
             ],
             scale: [1, 1, 1],
             isObject: true,

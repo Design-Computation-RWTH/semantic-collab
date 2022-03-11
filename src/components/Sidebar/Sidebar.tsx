@@ -3,8 +3,9 @@ import {Tab, Tabs} from "react-bootstrap";
 import Representations from "./Representations";
 import Gallery from "./Gallery";
 import Tasks from "./Tasks";
+import XeoKitView from "../Viewport/XeoKitView";
 
-export default function Sidebar() {
+export default function Sidebar(XeokitInst: XeoKitView) {
 
     return (
         <div className="image-grid">
@@ -13,7 +14,7 @@ export default function Sidebar() {
                     <Tab eventKey="representation" title={<span> <i
                         className="icon bi-layers btn-caia-icon-size"/> Representation </span>}>
                         <div className="caia-fill">
-                            <Representations/>
+                            <Representations viewer={XeokitInst}/>
                         </div>
                     </Tab>
                     <Tab eventKey="gallery" title={<span> <i

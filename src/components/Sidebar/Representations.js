@@ -224,7 +224,7 @@ class Representations extends React.Component {
                             PubSub.publish("CancelNewDocument", {})
                             this.setState({ screen: 0 })
                         }}/>
-                        <RepresentationDetails selected_document={this.state.selected_document} newfilename={this.state.new_file_name} file={this.state.file}/>
+                        <RepresentationDetails selected_document={this.state.selected_document} newfilename={this.state.new_file_name} file={this.state.file} viewer={this.props.viewer}/>
                     </div>
 
         }
