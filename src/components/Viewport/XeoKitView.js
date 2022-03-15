@@ -425,7 +425,7 @@ class XeoKitView extends React.Component {
   render() {
 
       return <div className="caia-row">
-          <Sidebar XeokitInst={XeoKitView_instance}/>
+          <Sidebar XeokitInst={this}/>
           <canvas id="viewport_canvas" className="viewport"/>
           <div className="plan-toggle">
             <div className="btn-group-toggle" data-toggle="buttons">

@@ -1,14 +1,25 @@
 import React from "react";
 import { Gantt, ViewMode } from 'gantt-task-react';
-import {testtasks, handleDblClick} from "./Tasks/tasks_gantt";
+import {handleDblClick} from "./Tasks/tasks_gantt";
+import {TaskListPreview} from "./Tasks/TaskListPreview";
+import {TaskListCreation} from "./Tasks/TaskListCreation";
+import XeoKitView from "../Viewport/XeoKitView";
 // @ts-ignore
 import PubSub from "pubsub-js";
 
+const testJSON = require("./Tasks/TasksExample.json")
+let Viewer_instance = null;
+
+type TaskView = "Preview" | "Creation" ;
+
 type TasksProps = {
+    viewer: XeoKitView
 };
 
 type TasksState = {
     tasks:any;
+    viewState:TaskView;
+    storeys: object;
 };
 
 class Tasks extends React.Component<TasksProps,TasksState> {
@@ -17,6 +28,8 @@ class Tasks extends React.Component<TasksProps,TasksState> {
         super(props);
         this.state = {
             tasks: null,
+            viewState: "Preview",
+            storeys: {},
         }
     }
 
@@ -25,39 +38,44 @@ class Tasks extends React.Component<TasksProps,TasksState> {
 
     render() {
 
-       let tasksGantt;
-       console.log(this.state.tasks)
-       if (!this.state.tasks) {
-           console.log("empty")
-           tasksGantt = <div/>
-       } else if (this.state.tasks) {
-           console.log("ähh?")
-           tasksGantt =
-               <Gantt
-                   tasks={this.state.tasks}
-                   viewMode={ViewMode.Month}
-                   onDoubleClick={handleDblClick}
-                   listCellWidth="0"
-                   barFill={90}
-               />
-       }
+        Viewer_instance = this.props.viewer.viewer;
+        let storeyTemp:any = []
+
+        if (Viewer_instance) {
+            let storeys = Viewer_instance.metaScene.getObjectIDsByType("IfcBuildingStorey")
+
+
+            for (let storey in storeys) {
+
+                let ifc_storey = Viewer_instance.metaScene.metaObjects[storeys[storey]]
+
+                storeyTemp.push(ifc_storey)
+            }
+        }
+
+        let ViewState = null
+
+        if (this.state.viewState == "Preview") {
+            ViewState = <TaskListPreview TaskJson={testJSON}/>
+        } else if (this.state.viewState == "Creation") {
+            ViewState = <TaskListCreation TaskJson={testJSON} IfcStoreys={storeyTemp} viewer={this.props.viewer}/>
+        }
+
         return (
             <div className="caia-fill caia-background">
                 <div className="yscroll">
-                    {tasksGantt}
+                    {ViewState}
                 </div>
                 <div className="caia-submenu-border">
                     <button className="btn-caia-icon" title="Refresh Tasks" onClick={()=> {
-                        console.log("StateTest")
-                        alert("Synch JSON. ")
-                        this.setState({tasks: testtasks})
-                    }}>
-                        <i className="icon bi-arrow-clockwise btn-caia-icon-size"/>
-                    </button>
-                    <button className="btn-caia-icon" title="Refresh Tasks" onClick={()=> {
-                        console.log("StateTest")
-                        alert("Generate Tasks. ")
-                        PubSub.publish('GenerateTasks', {tasks: this.state.tasks})
+                        if (this.props.viewer) {
+                            this.setState({viewState: "Creation"})
+                        } else {
+                            alert("Please load an IFC Building Representation First")
+                        }
+
+
+
                     }}>
                         <i className="icon bi-plus-square btn-caia-icon-size"/>
                     </button>

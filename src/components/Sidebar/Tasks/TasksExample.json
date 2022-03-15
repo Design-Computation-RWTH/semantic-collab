@@ -1,0 +1,145 @@
+{
+  "intervention_posts": [
+    {
+      "id": 4,
+      "name": "Façade",
+      "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+      "energy_related": true,
+      "multi_layer": true
+    },
+    {
+      "id": 6,
+      "name": "Façade insulation",
+      "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+      "energy_related": true,
+      "multi_layer": true
+    }
+  ],
+  "intervention_priorities": [
+    {
+      "id": 1,
+      "name": "one",
+      "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
+    },
+    {
+      "id": 3,
+      "name": "three",
+      "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
+    }
+  ],
+  "intervention": [
+    {
+      "id": 45621,
+      "name": "External Insulation",
+      "description": "Installation of an external insulation system",
+      "estimated_cost": 20000.0,
+      "start_date": "2022-05-24",
+      "end_date": "2022-06-31",
+      "intervention_priority_id": 3,
+      "intervention_post_id": 6,
+      "intervention_post_name": "Façade insulation"
+    },
+    {
+      "id": 45622,
+      "name": "Technical pre-work inspection",
+      "description": "Technical pre-work inspection. The quality of the façade needs to be checked, some measure be performed, and the accessibility needs to be ensures.",
+      "intervention_category_id": 4,
+      "start_date": "2022-05-24",
+      "end_date": "2022-05-25",
+      "intervention_priority_id": 3,
+      "intervention_post_id": 4,
+      "intervention_post_name": "Façade insulation",
+      "parent_intervention": 45621,
+      "checks": ["Façade quality", "Accessibility"]
+    },
+    {
+      "id": 45623,
+      "name": "Façade preparation",
+      "description": "Install claddings and prepare the façade for the installation of the insulation system",
+      "intervention_category_id": 4,
+      "estimated_cost": 1000.0,
+      "start_date": "2022-05-28",
+      "end_date": "2022-06-03",
+      "intervention_priority_id": 1,
+      "intervention_post_id": 4,
+      "intervention_post_name": "Façade insulation",
+      "parent_intervention": 45621,
+      "checks": [
+        "Identify thermal bridges",
+        "Check cladding security",
+        "Uv protection installed",
+        "No rugosity on the façade",
+        "Floor is protected",
+        "Remove weak structural zones",
+        "Remove external elements: cables..."
+      ]
+    },
+    {
+      "id": 45624,
+      "name": "Rails installation",
+      "description": "Installation of the rails supporting the system. Drill holes, install rails, cut angles.",
+      "start_date": "2022-06-04",
+      "end_date": "2022-06-14",
+      "intervention_priority_id": 1,
+      "intervention_post_id": 4,
+      "intervention_post_name": "Façade",
+      "parent_intervention": 45621,
+      "required_previous": [45623],
+      "checks": [
+        "Check height from ground (FR: 3cm from concrete ground; 15cm for grass/clay",
+        "Holes must be separated by approximately 30cm",
+        "Check planarity"
+      ]
+    },
+    {
+      "id": 45625,
+      "name": "Installation of insulation panels",
+      "description": "Installation of the insulation panels. Cut the panels. Paste/fix them. Insulation of framings. Fix the panels with screws",
+      "start_date": "2022-06-15",
+      "end_date": "2022-06-20",
+      "intervention_priority_id": 1,
+      "intervention_post_id": 4,
+      "intervention_post_name": "Façade",
+      "parent_intervention": 45621,
+      "required_previous": [45624],
+      "checks": [
+        "Panels are not aligned",
+        "Quality on angles",
+        "Openings are operational",
+        "No internal shadowing",
+        "Panels overlap openings",
+        "Panels are reinforced with screws"
+      ]
+    },
+    {
+      "id": 45626,
+      "name": "Sub-coating",
+      "description": "Apply sub-coating to protect the panels",
+      "start_date": "2022-06-21",
+      "end_date": "2022-06-24",
+      "intervention_priority_id": 1,
+      "intervention_post_id": 4,
+      "intervention_post_name": "Façade",
+      "parent_intervention": 45621,
+      "required_previous": [45625],
+      "checks": [
+        "The sub-coating adherence is correct",
+        "Install a glass mesh on top of the façade",
+        "Wait for 48h/72h"
+      ]
+    },
+    {
+      "id": 45627,
+      "name": "Finishing",
+      "description": "Install the finishing. Could be wooden panels, coating...",
+      "start_date": "2022-06-25",
+      "end_date": "2022-06-31",
+      "intervention_priority_id": 3,
+      "intervention_post_id": 4,
+      "intervention_post_name": "Façade",
+      "parent_intervention": 45621,
+      "required_previous": [45624],
+      "checks": ["Solidity of the installation"]
+    }
+  ]
+}

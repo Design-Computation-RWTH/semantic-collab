@@ -37,7 +37,7 @@ class RepresentationDetails extends React.Component {
 
   render() {
 
-    Viewer_instance = this.props.viewer.XeokitInst.viewer;
+    Viewer_instance = this.props.viewer.viewer;
 
     let storeys = Viewer_instance.metaScene.getObjectIDsByType("IfcBuildingStorey")
 
