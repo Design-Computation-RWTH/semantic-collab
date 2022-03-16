@@ -73,9 +73,6 @@ class Tasks extends React.Component<TasksProps,TasksState> {
                         } else {
                             alert("Please load an IFC Building Representation First")
                         }
-
-
-
                     }}>
                         <i className="icon bi-plus-square btn-caia-icon-size"/>
                     </button>
