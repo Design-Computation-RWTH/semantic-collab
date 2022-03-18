@@ -1,4 +1,4 @@
-import React from "react";
+import React, {MouseEventHandler} from "react";
 
 import {Accordion, Form} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -17,9 +17,11 @@ type TaskListProps = {
 type TaskListState = {
     tasks:any;
     documents: any;
+    users: any;
 };
 
-let viewer_instance;
+let viewer_instance: XeoKitView["viewer"];
+
 let FilteredIfcElements: any = {};
 
 export class TaskListCreation extends React.Component<TaskListProps,TaskListState> {
@@ -29,10 +31,39 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
         this.state = {
             tasks: null,
             documents: null,
+            users: null,
         }
     }
 
     componentWillUnmount() {
+
+    }
+
+    CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {
+        console.log("Create Tasks Graph")
+    }
+
+    DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>){
+
+        let documents = this.state.documents;
+        for (const doc in documents) {
+            if(event.target.selectedOptions[documents[doc]["@id"]]) {
+                let bcfowl=new BcfOWLService();
+                bcfowl.describe(documents[doc].hasSpatialRepresentation)
+                    .then(spatial_representation => {
+                        PubSub.publish('DocumentSelected', {
+                            id: documents[doc]["@id"],
+                            url: documents[doc].hasDocumentURL,
+                            spatial_representation: spatial_representation,
+                            //data: data.data,
+                            name: documents[doc].hasFilename,
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+        }
     }
 
     CreateDocumentsDropdown() {
@@ -40,7 +71,7 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
         if (this.state.documents) {
             DocumentOptions = this.state.documents.map((d: any) => {
                 if (d.hasFilename.endsWith(".png")){
-                    return <option value={d.hasFilename}>{d.hasFilename}</option>
+                    return <option value={d.hasFilename} id={d["@id"]}>{d.hasFilename}</option>
                 }
             })
         }
@@ -49,7 +80,15 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
     }
 
     CreatePeopleDropdown() {
+        let People: any;
+        if (this.state.users) {
+        People = this.state.users.map((p: any) => {
+            return <option id={p["@id"]}>{p.name} ({p.mbox.split("mailto:")[1]})</option>
+        })
 
+        }
+
+        return People
     }
 
     CreateSubTasks(Storeys: any) {
@@ -112,6 +151,7 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
                                             Assigned To:
                                             <Form.Select aria-label="Default select example" id={d.id + "_Document"}>
                                                 <option>Select a person/organization</option>
+                                                {this.CreatePeopleDropdown()}
                                             </Form.Select>
                                             <p/>
                                             {Elements}
@@ -170,13 +210,14 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
                     </Accordion.Header>
                     <Accordion.Body>
                         Assign to Document:
-                        <Form.Select aria-label="Default select example" id={d.id + "_Document"}>
+                        <Form.Select aria-label="Default select example" id={d.id + "_Document"} onChange={(event) => this.DocumentSelected(event)} >
                             <option>Select corresponding (2D) Document</option>
                             {this.CreateDocumentsDropdown()}
                         </Form.Select>
                         <p/>
                         Tasks:
                         {this.CreateSubTasks(d)}
+
                     </Accordion.Body>
                 </Accordion.Item>
             )
@@ -188,6 +229,11 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
                 <Accordion defaultActiveKey={ActiveKeys} alwaysOpen>
                     {AccordionList}
                 </Accordion>
+                <p/>
+                <div className={"caia-center"}>
+                    <button className="btn-caia" onClick={this.CreateTaskGraph}>Create Tasks</button>
+                </div>
+                <p/>
             </div>);
     }
 
@@ -200,6 +246,13 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
         let bcfowl=new BcfOWLService();
         let bcfowl_setup=new BcfOWLProjectSetup();
 
+        if (viewer_instance) {
+
+            viewer_instance.cameraControl.on("picked", (e: any) => {
+                console.log("Task Pick")
+                console.log(e)
+            })
+        }
         bcfowl.getDocuments()
             .then((value: any) => {
                 if(value["@graph"])
@@ -225,6 +278,7 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
                     bcfowl.describeUser(user).then(u => {
                             list = list.concat(u);
                             console.log(list);
+                            this.setState({users: list})
                         }
                     )
 

@@ -27,6 +27,7 @@ import Sidebar from "../Sidebar/Sidebar";
 
 const wkt = require("terraformer-wkt-parser");
 
+
 let XeoKitView_instance = null;
 let annotation_instance = null;
 let NavCubeInst = null;
@@ -87,7 +88,6 @@ class XeoKitView extends React.Component {
     this.un_newuplplan = PubSub.subscribe("NewUploadedPlan", this.subNewUploadedPlan);
     this.un_cancelnewdocu = PubSub.subscribe("CancelNewDocument", this.subCancelNewDocument);
     this.un_changeViewMode = PubSub.subscribe("ChangeViewMode", this.changeViewMode)
-
     this.un_generateTasks = PubSub.subscribe("GenerateTasks", this.subGenerateTasks)
   }
 
@@ -200,10 +200,9 @@ class XeoKitView extends React.Component {
     node.scale = [node.scale[0] * data.value , node.scale[1] * data.value, node.scale[2] * data.value];
   }
 
+  //Load a Document by its URI. If the Document is already in the list (XeoKitView_instance.documents) just make it visible
+  //and don't download it again
   subDocumentSelected(msg, data) {
-    // console.log("Xeokit Select Document: Incoming Data")
-    // console.log(data)
-    // To keep the naming consistent:
     let document_uri = data.id;
     let file_uri = data.url;
     let name = data.name;
@@ -253,7 +252,8 @@ class XeoKitView extends React.Component {
                 name
             );
           })
-        } else if (file_uri.endsWith(".ifc")) {
+        }
+        else if (file_uri.endsWith(".ifc")) {
           let ifc = XeoKitView_instance.imageservice.getImageData4URL(file_uri + ".xkt");
           ifc.then((ifcblob) => {
             XeoKitView_instance.loadIFC(
@@ -444,11 +444,11 @@ class XeoKitView extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("xeokitView did update!");
+
   }
 
   componentDidMount() {
-    console.log("xeokitView did mount!");
+
     XeoKitView_instance.documents = new Set();
     XeoKitView_instance.document_nodes = {};
 
@@ -476,6 +476,8 @@ class XeoKitView extends React.Component {
     distanceMeasurements_instance = new DistanceMeasurementsPlugin(
       XeoKitView_instance.viewer
     );
+
+
 
     annotation_instance = new AnnotationsPlugin(XeoKitView_instance.viewer, {
 
@@ -614,7 +616,6 @@ class XeoKitView extends React.Component {
     });
 
     //const xktLoader = new XKTLoaderPlugin(this.viewer);
-
     this.addBIMModel();
   }
 
@@ -670,6 +671,7 @@ class XeoKitView extends React.Component {
         };
       }
   }
+
 
   loadIFC(document_url, ifcblob, location, rotation, scale, name) {
 

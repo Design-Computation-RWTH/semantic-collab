@@ -131,7 +131,6 @@ class Representations extends React.Component {
                         let imageService = new ImageService();
                         let bcfowl = new BcfOWLService();
 
-                        console.log(file.name)
 
                         imageService.postFile(file, file.name)
                             .then((message) => {
@@ -272,7 +271,7 @@ class Representations extends React.Component {
                 if(!Array.isArray(value))
                     value=[value];
                 this.setState({ documents: value });
-                console.log("Documents Get")
+
                 ReactSession.set("project_documents_pid"+this.project_id, value);
                 ReactSession.set("project_documents_lastime_pid"+this.project_id, thisMoment);
 

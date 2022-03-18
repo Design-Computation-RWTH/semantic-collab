@@ -27,7 +27,7 @@ export class TaskListPreview extends React.Component<TaskListProps,TaskListState
 
         return (
             <div className="caia-fill caia-background">
-                hey
+                Task List
             </div>);
     }
 
