@@ -173,8 +173,7 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
 
         return TasksNew
     }
-
-
+    
     render() {
 
         viewer_instance = this.props.viewer.viewer;
