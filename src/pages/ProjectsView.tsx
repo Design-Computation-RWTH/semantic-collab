@@ -1,6 +1,7 @@
 import React from "react";
+import { SimpleGrid, Button, Center } from '@mantine/core';
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Button from "react-bootstrap/Button";
+//import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import BCFAPIService from "../services/BCFApIService";
 // @ts-ignore
@@ -65,7 +66,7 @@ function CustomInternalToggle({OnClick, children, eventKey }:ToggleClickAction) 
         }
     );
         return (
-            <Button onClick={decoratedOnClick} variant="outline-dark">
+            <Button onClick={decoratedOnClick} >
                 {children}
             </Button>
         )
@@ -81,6 +82,7 @@ type ProjectListViewState = {
     projects: any[],
     add_button_text: string,
 };
+
 class ProjectListView extends React.Component<ProjectListViewProps,ProjectListViewState> {
     private bcfowl_setup: BcfOWLProjectSetup;
 
@@ -121,16 +123,19 @@ class ProjectListView extends React.Component<ProjectListViewProps,ProjectListVi
         let binx=1000;
         return (
             <div>
-                <ButtonGroup vertical className="d-flex mx-3">
-                    {this.state.projects.map((d) =>
-                        <ProjectElement
-                            project={{projectName: d.name, projectId: d.project_id}}
-                            key={String(binx++)}
-                            keyvalue={String(binx)}
-                            //keyvalue={String(binx++)}
-                            //TODO: What is this history for?
-                            history={this.props.history}/>)}
-                </ButtonGroup>
+                <Center p={"md"}>
+                    <SimpleGrid cols={4} >
+                        {this.state.projects.map((d) =>
+                            <ProjectElement
+                                project={{projectName: d.name, projectId: d.project_id}}
+                                key={String(binx++)}
+                                keyvalue={String(binx)}
+                                //keyvalue={String(binx++)}
+                                //TODO: What is this history for?
+                                history={this.props.history}/>)}
+                    </SimpleGrid>
+                </Center>
+
                 <Accordion>
                     <Card>
                         <Card.Header>
@@ -143,7 +148,7 @@ class ProjectListView extends React.Component<ProjectListViewProps,ProjectListVi
                                         <Form.Control type="text" onChange={this.handleValue} placeholder="Enter project name"/>
                                     </Form.Group>
                                     <CustomInternalToggle OnClick={(txt:string)=> this.setState({add_button_text: txt})} eventKey="0"> Cancel</CustomInternalToggle>
-                                    <Button variant="outline-dark" type="submit">
+                                    <Button type="submit">
                                         Add
                                     </Button>
                                 </Form>
@@ -152,13 +157,11 @@ class ProjectListView extends React.Component<ProjectListViewProps,ProjectListVi
                     </Card>
                 </Accordion>
                 <div className="main-refresh">
-                    <BasicButton
-                        title="Refresh"
-                        onButtonClick={() => {
+                    <Button onClick={() => {
                                 console.log("RefreshTest")
                             this.update()
                             }
-                        }/>
+                    }> Refresh </Button>
                 </div>
 
             </div>

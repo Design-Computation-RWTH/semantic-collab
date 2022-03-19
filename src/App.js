@@ -178,26 +178,6 @@ class CAIA extends React.Component {
   }
 
   render() {
-/*    const toasts_list = this.state.notifications
-      .filter((m) => m)
-      .map((message) => {
-        return (
-          <Col md={4} className="mb-2">
-            <Toast onClose={(e) => this.closeToast(message)}>
-              <Toast.Header>
-                <img
-                  src="holder.js/20x20?text=%20"
-                  className="rounded me-2"
-                  alt=""
-                />
-                <strong className="me-auto">Info</strong>
-                <small />
-              </Toast.Header>
-              <Toast.Body>{message}</Toast.Body>
-            </Toast>
-          </Col>
-        );
-      });*/
 
     if (getAccessToken()) {
       let token = parseJWT(getAccessToken());
