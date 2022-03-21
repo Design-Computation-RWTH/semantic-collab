@@ -1,5 +1,5 @@
 // @ts-ignore
-import * as data from "./assets/Gantt.json"
+import * as gantt_data from "./assets/Gantt.json"
 
 const N3 = require('n3');
 const { DataFactory } = N3;
@@ -45,7 +45,7 @@ function streamToString (stream) {
     })
 }
 
-function convert()
+function convert(data:any)
 {
     let inst_uri="http://example.org/inst/";
     let bcdOWL_uri="http://lbd.arch.rwth-aachen.de/bcfOWL#";
@@ -198,8 +198,11 @@ function convert()
     //const quadStream = store.match(null, null, null);
     //quadStream.pipe(new N3.StreamWriter())
     //    .pipe(process.stdout);
-    writer.end((error: any, result: any) => console.log(result));
+    let result_string:string;
+    writer.end((error: any, rdf_result: any) => {
+        console.log(rdf_result)
+    });
 }
 
-convert();
+convert(gantt_data);
 
