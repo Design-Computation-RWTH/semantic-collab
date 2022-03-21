@@ -195,9 +195,6 @@ function convert(data:any)
         }
     })
 
-    //const quadStream = store.match(null, null, null);
-    //quadStream.pipe(new N3.StreamWriter())
-    //    .pipe(process.stdout);
     let result_string:string;
     writer.end((error: any, rdf_result: any) => {
         console.log(rdf_result)
