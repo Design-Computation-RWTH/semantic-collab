@@ -26,7 +26,6 @@ class Representations extends React.Component {
         };
         this.project_id = ReactSession.get("projectid");
         this.un_SidebarName=PubSub.publish('SidebarName', {name: "Representations"})
-        this.un_UploadedPlanCreated=PubSub.subscribe("UploadedPlanCreated", this.onUploadedPlanCreated)
         this.un_DocumentsViewStateChange = PubSub.subscribe("DocumentsViewStateChange", this.onDocumentsViewStateChange.bind(this))
         this.un_SetSelectedDocument = PubSub.subscribe("SetSelectedDocument", this.onDocumentSelected.bind(this));
         this.un_ShowDocument = PubSub.subscribe("ShowDocument", this.onShowDocument.bind(this));
@@ -43,10 +42,6 @@ class Representations extends React.Component {
         PubSub.unsubscribe(this.un_UnSelectDocument);
     }
 
-    onUploadedPlanCreated(msg, data) {
-        // this.setState({ selected_document: "new_temp_plan" });
-        // this.setState({ screen: 1 });
-    }
 
     onDocumentSelected(msg, data) {
         this.setState({ selected_document: data.id });
@@ -65,8 +60,6 @@ class Representations extends React.Component {
             ids.push(data.id)
             this.setState({selected_ids: ids})
         }
-        console.log("Current ID: " + data.id)
-        console.log(this.state.selected_ids)
         let bcfowl=new BcfOWLService();
         bcfowl.describe(data.spatial_representation)
             .then(spatial_representation => {
@@ -85,7 +78,7 @@ class Representations extends React.Component {
     }
 
     onDocumentUnSelected(msg, data) {
-        console.log("Unselected!")
+
         let ids = this.state.selected_ids
         if (ids.includes(data.id)) {
             ids = ids.filter(item => item !== data.id)
@@ -157,7 +150,6 @@ class Representations extends React.Component {
 
                     break;
                 case "png":
-                    console.log('picked png');
                     // We send the raw data to the XeoKitView:
                     PubSub.publish('NewUploadedPlan', {name: file.name, rawvalue: file});
                     this.setState({ new_file_name: file.name});
@@ -172,9 +164,6 @@ class Representations extends React.Component {
                     console.log('picked default');
                     break;
             }
-
-
-            //=> ArrayBuffer {byteLength: ...}
         })
 
     }
@@ -216,7 +205,6 @@ class Representations extends React.Component {
         }
         else
         {
-            console.log("selected: "+this.state.selected_document)
             leftPanel =
                     <div>
                         <CloseButton onClick={() => {

@@ -88,10 +88,11 @@ class XeoKitView extends React.Component {
     this.un_newuplplan = PubSub.subscribe("NewUploadedPlan", this.subNewUploadedPlan);
     this.un_cancelnewdocu = PubSub.subscribe("CancelNewDocument", this.subCancelNewDocument);
     this.un_changeViewMode = PubSub.subscribe("ChangeViewMode", this.changeViewMode)
-    this.un_generateTasks = PubSub.subscribe("GenerateTasks", this.subGenerateTasks)
   }
 
   componentWillUnmount() {
+
+    console.log("unmount")
     PubSub.unsubscribe(this.un_subsel);
     PubSub.unsubscribe(this.un_subdocun);
     PubSub.unsubscribe(this.un_docmov);
@@ -106,10 +107,14 @@ class XeoKitView extends React.Component {
 
     XeoKitView_instance.documents = new Set();
     XeoKitView_instance.document_nodes = {};
+    console.log(this.viewer)
+    this.viewer.destroy();
+    //
+    //distanceMeasurements_instance.destroy();
+    if (XeoKitView_instance.viewer) {
 
-    XeoKitView_instance.viewer.destroy();
+    }
 
-    distanceMeasurements_instance.destroy();
   }
 
   subSetClickMode(msg, data) {
@@ -138,51 +143,6 @@ class XeoKitView extends React.Component {
     let node = XeoKitView_instance.document_nodes[document_uri];
     if (data.rotation != null) {
       node.rotation = [0, data.rotation[2], 0];
-    }
-    //
-  }
-
-  subGenerateTasks(msg, data) {
-    console.log("Test")
-    let viewer = XeoKitView_instance.viewer;
-    let tasks = data.tasks
-    for (let task in tasks) {
-      console.log(tasks[task])
-      let currentTask = tasks[task];
-      if (currentTask.id === "my_replace_window_task") {
-        let metaObjects = viewer.metaScene.getObjectIDsByType("IfcWindow")
-        // console.log(metaObjects)
-        for (let guid in metaObjects) {
-          let object = viewer.scene.objects[metaObjects[guid]]
-          //console.log(metaObjects[guid])
-          //console.log(viewer.scene.objects[metaObjects[guid]])
-          let bbox = object.aabb
-          let center = [object.aabb]
-          center = [(bbox[0]+bbox[3])/2, (bbox[1]+bbox[4])/2, (bbox[2]+bbox[5])/2]
-          console.log(center)
-          // new SpriteMarker(XeoKitView_instance.scene, {
-          //   worldPos: center,
-          //   src: "../Branding/Icon_v2_192.png",
-          //   size: 1,
-          //   occludable: true
-          // })
-          annotation_instance.createAnnotation({
-            id: currentTask.id + "_" + metaObjects[guid],
-            worldPos: center,
-            occludable: false,
-            markerShown: true,
-            labelShown: false,
-
-            values: {                   // Optional, overrides AnnotationPlugin's defaults
-              glyph: "!",
-              title: "My Annotation",
-              description: "This is my annotation."
-            }
-
-          })
-        }
-
-      }
     }
     //
   }
@@ -464,20 +424,9 @@ class XeoKitView extends React.Component {
 
     this.context = this.viewer;
 
-    // eslint-disable-next-line no-unused-vars
-/*    const treeView = new TreeViewPlugin(XeoKitView_instance.viewer, {
-      containerElement: document.getElementById("treeViewContainer"),
-      autoExpandDepth: 3,
-      hierarchy: "containment",
-      autoAddModels: true,
-      pruneEmptyNodes: false,
-    });*/
-
     distanceMeasurements_instance = new DistanceMeasurementsPlugin(
       XeoKitView_instance.viewer
     );
-
-
 
     annotation_instance = new AnnotationsPlugin(XeoKitView_instance.viewer, {
 
@@ -508,11 +457,6 @@ class XeoKitView extends React.Component {
       collidable: false
     });
 
-    // eslint-disable-next-line no-unused-vars
-    let canvas = document.getElementsByTagName("viewport_canvas")[0];
-    // canvas.width  = window.innerWidth * 1.0;
-    // canvas.height = window.innerHeight * 1.0;
-
     cameraControl = this.viewer.cameraControl;
 
     cameraControl.navMode = "planView";
@@ -526,7 +470,6 @@ class XeoKitView extends React.Component {
     this.viewer.camera.orbitYaw(180)
 
     let lastSelection;
-    //let lastViewpoint; // Never used
     let lastViewpointId;
 
     let measureCount = 0;
@@ -586,10 +529,6 @@ class XeoKitView extends React.Component {
       }
     });
 
-/*    this.viewer.camera.eye = [-3.933, 2.855, 27.018];
-    this.viewer.camera.look = [4.4, 3.724, 8.899];
-    this.viewer.camera.up = [-0.018, 0.999, 0.039];*/
-
     NavCubeInst = new NavCubePlugin(XeoKitView_instance.viewer, {
       canvasId: "myNavCubeCanvas",
       color: "lightblue",
@@ -615,7 +554,6 @@ class XeoKitView extends React.Component {
       space: "view",
     });
 
-    //const xktLoader = new XKTLoaderPlugin(this.viewer);
     this.addBIMModel();
   }
 
@@ -671,7 +609,6 @@ class XeoKitView extends React.Component {
         };
       }
   }
-
 
   loadIFC(document_url, ifcblob, location, rotation, scale, name) {
 

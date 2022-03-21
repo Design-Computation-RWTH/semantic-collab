@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import 'react-notifications/lib/notifications.css';
-import {MantineProvider , ColorSchemeProvider, ColorScheme} from "@mantine/core";
+import {MantineProvider , ColorSchemeProvider, ColorScheme, AppShell, Navbar, Header, Text} from "@mantine/core";
 import CAIA from "./App";
 
 const Root = () => {

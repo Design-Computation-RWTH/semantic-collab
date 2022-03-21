@@ -8,22 +8,21 @@ import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 import PubSub from "pubsub-js";
 
+import {BsFillPuzzleFill, BsGearFill, BsGearWideConnected, BsHouse} from "react-icons/bs";
+import logo from "./components/Branding/Icon_v2.svg";
+
 import Login from "./services/Login";
-import AuthenticatedRoute from "./services/Authentication";
 import { Logout, id, parseJWT } from "./services/AuthenticationUtils";
 
 import ProjectListView from "./pages/ProjectsView";
-import AdvancedView from "./pages/AdvancedView";
 
 import SetupView from "./pages/SetupsView";
 import XeoKitView from "./components/Viewport/XeoKitView";
 
-import NavBrand from "./components/Navigation/NavBrand";
-import Footer from "./components/Navigation/Footer";
-
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import { useNavigate } from 'react-router-dom';
+import {AppShell, Header, Navbar, Space, Text, } from "@mantine/core";
 
 
 export const getAccessToken = () => Cookies.get("access_token");
@@ -98,7 +97,7 @@ class CAIA extends React.Component {
     PubSub.unsubscribe(this.un_subAlert);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     document.body.style.overflow = "clip";
   }
 
@@ -106,11 +105,6 @@ class CAIA extends React.Component {
     caia_notifications = caia_notifications.filter((e) => e !== message);
     caia_app.setState({ notifications: caia_notifications });
   }
-
-  // subCloseMenu(msg, data) {
-  //   ReactSession.remove("projectname");
-  //   caia_app.setState({ projectSelected: false });
-  // }
 
   createNotification = (type) => {
     return () => {
@@ -179,13 +173,26 @@ class CAIA extends React.Component {
 
   render() {
 
+    let projectsIconColor = "";
+    let overview = `/projects/${this.state.projectName}/`;
+    let setup = `/projects/${this.state.projectName}/setup`;
+
+    if (this.state.projectName) {
+      projectsIconColor = "white";
+
+    } else {
+      projectsIconColor = "gray";
+      overview = "javascript:void(0)";
+      setup = "javascript:void(0)";
+    }
+
     if (getAccessToken()) {
       let token = parseJWT(getAccessToken());
       this.name = token.name;
       this.useruri = token.URI;
     } else this.name = "";
     return (
-        <div className="main">
+/*        <div className="main">
           <header className="header">
             <NavBrand
                 //TODO: Fix ID
@@ -218,8 +225,64 @@ class CAIA extends React.Component {
           </div>
           <Footer/>
           <NotificationContainer/>
-        </div>
+        </div>*/
+      <AppShell
+          padding="0"
+          navbar={
+            <Navbar  width={{ base: 100}} p="xl" >
+              <Navbar.Section mt="xl">
 
+                  <a className={"navbar-icons"} href={`/projects/`}><BsHouse size="30" color="white"/></a>
+
+              </Navbar.Section>
+              <Navbar.Section mt="xl" >
+
+                  <a className={"navbar-icons"} href={overview}><BsFillPuzzleFill size="30" color={projectsIconColor}/></a>
+
+              </Navbar.Section>
+              <Navbar.Section mt="xl">
+
+                  <a className={"navbar-icons"} href={setup}><BsGearWideConnected size="30" color={projectsIconColor}/></a>
+
+              </Navbar.Section>
+            </Navbar>
+          }
+          header={
+            <Header height={80} p="xs">
+              <div className={"caia-header-row"}>
+                <img
+                    src={logo}
+                    width="60"
+                    height="60"
+                    className="d-inline-block align-content-center"
+                    alt="CAIA Logo"
+                />
+                <Space w="xl" />
+                <Text size="xl" color="white">{this.state.projectName}</Text>
+              </div>
+
+            </Header>
+          }
+          styles={(theme) => ({
+            main: { backgroundColor: theme.colorScheme === 'light' ? theme.colors.dark[8] : theme.colors.gray[0] },
+          })}
+      >
+          <Routes class="caia-fill">
+            <Route path="/login" element={<Login/>} />
+            <Route path="/logout" element={<Logout/>} />
+            <Route path="/projects/:id/setup" element={<SetupView/>} />
+            <Route path="/projects/:id/" element={
+              <div className="caia-fill">
+                <XeoKitView class="viewport" id={"MyViewport"}/>
+              </div>}
+            />
+            <Route
+                path="/projects"
+                element={<ProjectListView/>}/>
+            <Route path="/web-ifc.wasm" element={<reload/>} />
+            <Route path="" element={<Login/>} />
+          </Routes>
+      </AppShell>
     );
   }
 

@@ -1,7 +1,5 @@
 import React from "react";
 import { SimpleGrid, Button, Center } from '@mantine/core';
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-//import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import BCFAPIService from "../services/BCFApIService";
 // @ts-ignore
@@ -35,7 +33,6 @@ export const withRouter = (Component: any) => {
 
     return Wrapper;
 };
-
 
 function CustomToggle({OnClick, children, eventKey }:ToggleClickAction) {
     const decoratedOnClick = useAccordionButton(eventKey, () => {
@@ -170,6 +167,10 @@ class ProjectListView extends React.Component<ProjectListViewProps,ProjectListVi
 
     componentDidMount() {
         this.update();
+    }
+
+    componentWillUnmount() {
+
     }
 
     update() {

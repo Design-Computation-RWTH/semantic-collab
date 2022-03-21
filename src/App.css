@@ -7,6 +7,14 @@
   --caia-highlighted-2: #cb483c;
   --caia-background: #F0F0F0;
   --caia-font: "Trebuchet MS";
+  max-height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.navbar-icons {
+  align-items: center;
+  padding-top: 10px;
 }
 
 .canvas {
@@ -124,8 +132,18 @@
 
 .caia-row {
   height: 100%;
+  max-height: 100%;
+  width: 100%;
+  overflow: hidden;
+  flex-direction: row;
+  display: flex;
+}
+
+.caia-header-row {
+  height: 100%;
   width: 100%;
   flex-direction: row;
+  align-items: center;
   display: flex;
 }
 
@@ -236,33 +254,12 @@ a:hover{
   height: 100%;
 }
 
-.viewport2 {
+.viewport {
   height: 100%;
   max-height: 100%;
   width: 100%;
   max-width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;  /* The width of the sidebar. */ /* We do not have to move the viewport by the amount of the sidebar!
-   The sidebar could possibly also hidden etc.*/
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-}
-
-.viewport {
-  height: 100%;
-  max-height: 100%;
-  width: 70vw;
-  max-width: 70vw;
-  z-index: 0;
-}
-
-#viewport_canvas {
-  height: 100%;
-  max-height: 100%;
-  width: 70vw;
-  max-width: 70vw;
+  overflow: hidden;
   z-index: 0;
 }
 
