@@ -13,55 +13,37 @@ type GenericDeleteFormProps = {
     deleteValue:string;
 };
 
-type GenericDeleteFormState = {
-    value?: any;
-};
+function GenericDeleteForm(props: GenericDeleteFormProps)  {
 
-
-class GenericDeleteForm extends React.Component<GenericDeleteFormProps, GenericDeleteFormState>  {
-    private bcfowl_setup: any;
-
-    state: GenericDeleteFormState = {
-    };
-
-    constructor(props: GenericDeleteFormProps | Readonly<GenericDeleteFormProps>) {
-        super(props);
-        this.bcfowl_setup=new BcfOWLProjectSetup();
-
-    }
-
-    execute = (event: { preventDefault: () => void; }) => {
+    const execute = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        console.log("Delete values prop: "+this.props.bcfOWLProperty);
-        console.log("Delete values val: "+this.props.deleteValue);
-        this.bcfowl_setup.removePropertyValue(this.props.bcfOWLProperty.trim(),this.props.deleteValue.trim()).then(()=> {
-            PubSub.publish('Update', {txt: "Deleted " + this.props.bcfOWLProperty.trim() + " - " + this.props.deleteValue.trim()});
+        console.log("Delete values prop: "+props.bcfOWLProperty);
+        console.log("Delete values val: "+props.deleteValue);
+        let bcfowl_setup =new BcfOWLProjectSetup();
+        bcfowl_setup.removePropertyValue(props.bcfOWLProperty.trim(),props.deleteValue.trim()).then(()=> {
+            PubSub.publish('Update', {txt: "Deleted " + props.bcfOWLProperty.trim() + " - " + props.deleteValue.trim()});
             PubSub.publish('SetupUpdate', "Update view.");
         }
        );
-        this.props.onHide();
+        props.onHide();
 
     };
 
-    render() {
-        return (
-            <Modal {...this.props} aria-labelledby="contained-modal-title-vcenter">
+        return <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
                 <Modal.Header closeButton>
                     <Modal.Title>Confirm deletion</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
-                    Remove the {this.props.item} from the project. {this.props.bcfOWLProperty}
-                    <br/>    Selected value is: <b>{this.props.deleteValue}</b>
+                    Remove the {props.item} from the project. {props.bcfOWLProperty}
+                    <br/>    Selected value is: <b>{props.deleteValue}</b>
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button onClick={this.props.onHide}>Cancel</Button>
-                    <Button onClick={this.execute} variant="primary">Remove selected</Button>
+                    <Button onClick={props.onHide}>Cancel</Button>
+                    <Button onClick={execute} variant="primary">Remove selected</Button>
                 </Modal.Footer>
-            </Modal>
-        );
-    }
+            </Modal>;
 }
 
 export default GenericDeleteForm;
