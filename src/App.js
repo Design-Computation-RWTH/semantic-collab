@@ -8,7 +8,7 @@ import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 import PubSub from "pubsub-js";
 
-import {BsFillPuzzleFill, BsGearFill, BsGearWideConnected, BsHouse} from "react-icons/bs";
+import {BsFillPuzzleFill, BsGearWideConnected, BsHouse} from "react-icons/bs";
 import logo from "./components/Branding/Icon_v2.svg";
 
 import Login from "./services/Login";
@@ -19,7 +19,7 @@ import ProjectListView from "./pages/ProjectsView";
 import SetupView from "./pages/SetupsView";
 import XeoKitView from "./components/Viewport/XeoKitView";
 
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { NotificationManager} from 'react-notifications';
 
 import { useNavigate } from 'react-router-dom';
 import {AppShell, Header, Navbar, Space, Text, } from "@mantine/core";

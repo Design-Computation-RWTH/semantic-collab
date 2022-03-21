@@ -1,5 +1,8 @@
 import React from "react";
-import { SimpleGrid, Button, Center } from '@mantine/core';
+import {useState} from "react";
+import { SimpleGrid, Button, Center, Modal, Group, Input, Textarea, Box, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useModals } from '@mantine/modals';
 import Form from "react-bootstrap/Form";
 import BCFAPIService from "../services/BCFApIService";
 // @ts-ignore
@@ -10,6 +13,7 @@ import BcfOWLProjectSetup from "../services/BcfOWLProjectSetup";
 import BasicButton from "../components/Basics/BasicButton";
 import ProjectElement from "../components/Projects/ProjectElement";
 import {useNavigate} from "react-router-dom";
+import AddProjectsModal from "../components/Modals/AddProjectsModal";
 
 let isOpen=false;
 
@@ -45,7 +49,7 @@ function CustomToggle({OnClick, children, eventKey }:ToggleClickAction) {
     );
     if(!isOpen)
     return (
-            <Button onClick={decoratedOnClick} variant="light">
+            <Button onClick={decoratedOnClick}>
                 <FaPlus/>
                 {children}
             </Button>
@@ -55,6 +59,73 @@ function CustomToggle({OnClick, children, eventKey }:ToggleClickAction) {
             <div/>
         )
 }
+
+/*function submitProjectAdd(name: string) {
+    let bcfowl_setup=new BcfOWLProjectSetup();
+
+    bcfowl_setup.addProject(name).then(
+        () =>{
+            //Target location:
+            PubSub.publish('Update', {txt: "Project created. Name: " + name});
+            projectListView_instance.update();
+        }
+    )
+};
+
+function ProjectCreationDetails() {
+    const form = useForm({
+        initialValues: {
+            Name: "",
+            Description: "",
+        },
+
+    });
+
+    return (
+        <Box sx={{ maxWidth: 300 }} mx="auto">
+            <form onSubmit={form.onSubmit((values) => console.log(values))}>
+                <TextInput
+                    required
+                    label="Project Name"
+                    placeholder="Project Name"
+                    {...form.getInputProps('Name')}
+                />
+                <Textarea
+                    label="Project Description"
+                    placeholder="Enter description"
+                    {...form.getInputProps("Description")}
+                />
+
+                <Group position="right" mt="md">
+                    <Button type="submit">Submit</Button>
+                </Group>
+            </form>
+        </Box>
+    );
+}
+
+
+
+function CreateNewProject() {
+    const [opened, setOpened] = useState(false);
+
+    return (
+        <>
+            <Modal
+                opened={opened}
+                onClose={() => setOpened(false)}
+                title="Create new Project"
+            >
+                <ProjectCreationDetails/>
+
+            </Modal>
+
+            <Group position="center">
+                <Button onClick={() => setOpened(true)}>Create Project</Button>
+            </Group>
+        </>
+    );
+}*/
 
 function CustomInternalToggle({OnClick, children, eventKey }:ToggleClickAction) {
     const decoratedOnClick = useAccordionButton(eventKey, () => {
@@ -117,6 +188,7 @@ class ProjectListView extends React.Component<ProjectListViewProps,ProjectListVi
     };
 
     render() {
+
         let binx=1000;
         return (
             <div>
@@ -132,11 +204,12 @@ class ProjectListView extends React.Component<ProjectListViewProps,ProjectListVi
                                 history={this.props.history}/>)}
                     </SimpleGrid>
                 </Center>
-
-                <Accordion>
+                <AddProjectsModal/>
+{/*                <Accordion>
                     <Card>
                         <Card.Header>
                             <CustomToggle OnClick={(txt:string)=> this.setState({add_button_text: txt})} eventKey="0"> Add Project</CustomToggle>
+
                         </Card.Header>
                         <Accordion.Collapse eventKey="0">
                             <Card.Body>
@@ -152,7 +225,7 @@ class ProjectListView extends React.Component<ProjectListViewProps,ProjectListVi
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
-                </Accordion>
+                </Accordion>*/}
                 <div className="main-refresh">
                     <Button onClick={() => {
                                 console.log("RefreshTest")

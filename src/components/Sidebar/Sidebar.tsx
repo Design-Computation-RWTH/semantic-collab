@@ -49,11 +49,6 @@ export default class Sidebar extends React.Component<SidebarProps,SidebarState> 
                                 <Tasks viewer={this.props.XeokitInst}/>
                             </div>
                         </Tab>
-                        {/*<Tab eventKey="treeview" title="Treeview">*/}
-                        {/*    <div className="yscroll">*/}
-                        {/*        <div id="treeViewContainer" className="tree-style"></div>*/}
-                        {/*    </div>*/}
-                        {/*</Tab>*/}
                     </Tabs>
                 </div>
             </div>

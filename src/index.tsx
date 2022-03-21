@@ -4,7 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import 'react-notifications/lib/notifications.css';
-import {MantineProvider , ColorSchemeProvider, ColorScheme, AppShell, Navbar, Header, Text} from "@mantine/core";
+import {MantineProvider , ColorSchemeProvider, ColorScheme} from "@mantine/core";
+import {ModalsProvider} from "@mantine/modals";
 import CAIA from "./App";
 
 const Root = () => {
@@ -21,9 +22,11 @@ const Root = () => {
                 fontFamily: 'Verdana, sans-serif',
                 spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
             }}>
-                <BrowserRouter>
-                    <CAIA/>
-                </BrowserRouter>
+                <ModalsProvider>
+                    <BrowserRouter>
+                        <CAIA/>
+                    </BrowserRouter>
+                </ModalsProvider>
             </MantineProvider>
         </ColorSchemeProvider>
     )
