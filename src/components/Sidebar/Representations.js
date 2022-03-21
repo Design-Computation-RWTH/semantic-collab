@@ -8,6 +8,7 @@ import PubSub from "pubsub-js";
 import fileToArrayBuffer from "file-to-array-buffer";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
+import {Container} from "@mantine/core";
 
 // const base_uri = "https://caia.herokuapp.com";
 
@@ -221,7 +222,9 @@ class Representations extends React.Component {
                 <div className="yscroll">
                     {leftPanel}
                 </div>
-                <div className="caia-submenu-border">
+                <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
+                        backgroundColor: theme.colors.dark
+                    })}>
                     <button className="btn-caia-icon" title="Refresh List" onClick={(e)=> {
                         this.init()
                         console.log("StateTest")
@@ -232,7 +235,7 @@ class Representations extends React.Component {
                     <button className="btn-caia-icon" disabled title="Add spatial node"><i className="icon bi-folder-plus btn-caia-icon-size"/></button>
                     <button className="btn-caia-icon"  title="Upload Spatial Representation"  onClick={()=>{this.UploadFileFieldRef.current.click()}}><i className="icon bi-box-arrow-up btn-caia-icon-size"/></button>
                     <input id="file-input" type="file" ref={this.UploadFileFieldRef} className="invisible" onChange={this.onFileSelectionChangeHandler}/>
-                </div>
+                </Container>
             </div>);
     }
 

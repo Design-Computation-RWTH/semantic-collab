@@ -1,5 +1,7 @@
 import React from "react";
-import {Tab, Tabs} from "react-bootstrap";
+import {BsCalendarCheck, BsCardImage,BsLayers} from "react-icons/bs"
+// import {Tab, Tabs} from "react-bootstrap";
+import { Tabs } from '@mantine/core';
 import Representations from "./Representations";
 import Gallery from "./Gallery";
 import Tasks from "./Tasks";
@@ -28,30 +30,45 @@ export default class Sidebar extends React.Component<SidebarProps,SidebarState> 
     render() {
 
         return (
-            <div className="image-grid">
-                <div className="sidebar">
-                    <Tabs defaultActiveKey="representation" id="uncontrolled-tab-example" className="sidebar-tab-nav">
-                        <Tab eventKey="representation" title={<span> <i
-                            className="icon bi-layers btn-caia-icon-size"/> Representation </span>}>
+                    <Tabs style={{
+                        display: "flex",
+                        width:"40vw",
+                        height:"100%",
+                        justifyContent: "flex-start",
+                        alignContent:"stretch",
+                        alignItems:"stretch",
+                        flexDirection:"column",
+
+                    }}
+                          styles={{
+                              body: {height: "100%"}
+                          }}
+                      color="dark" grow>
+                        <Tabs.Tab
+                            label="Representations"
+                            icon={<BsLayers/>}
+                        >
                             <div className="caia-fill">
                                 <Representations viewer={this.props.XeokitInst}/>
                             </div>
-                        </Tab>
-                        <Tab eventKey="gallery" title={<span> <i
-                            className="icon bi-image btn-caia-icon-size"/> Gallery </span>}>
-                            <div className="caia-fill">
+                        </Tabs.Tab>
+                        <Tabs.Tab
+                            label="Gallery"
+                            icon={<BsCardImage/>}
+                        >
+                            <div  className="caia-fill">
                                 <Gallery/>
                             </div>
-                        </Tab>
-                        <Tab eventKey="tasks" title={<span> <i
-                            className="icon bi-calendar2-event btn-caia-icon-size"/> Tasks </span>}>
-                            <div className="caia-fill">
+                        </Tabs.Tab>
+                        <Tabs.Tab
+                            label="Tasks"
+                            icon={<BsCalendarCheck/>}
+                        >
+                            <div  className="caia-fill">
                                 <Tasks viewer={this.props.XeokitInst}/>
                             </div>
-                        </Tab>
+                        </Tabs.Tab>
                     </Tabs>
-                </div>
-            </div>
         )
 
     }

@@ -1,6 +1,5 @@
 import React from "react";
-import { Gantt, ViewMode } from 'gantt-task-react';
-import {handleDblClick} from "./Tasks/tasks_gantt";
+import {Container} from "@mantine/core";
 import {TaskListPreview} from "./Tasks/TaskListPreview";
 import {TaskListCreation} from "./Tasks/TaskListCreation";
 import XeoKitView from "../Viewport/XeoKitView";
@@ -66,7 +65,9 @@ class Tasks extends React.Component<TasksProps,TasksState> {
                 <div className="yscroll">
                     {ViewState}
                 </div>
-                <div className="caia-submenu-border">
+                <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
+                    backgroundColor: theme.colors.dark
+                })}>
                     <button className="btn-caia-icon" title="Refresh Tasks" onClick={()=> {
                         if (this.props.viewer) {
                             this.setState({viewState: "Creation"})
@@ -76,7 +77,7 @@ class Tasks extends React.Component<TasksProps,TasksState> {
                     }}>
                         <i className="icon bi-plus-square btn-caia-icon-size"/>
                     </button>
-                </div>
+                </Container>
             </div>);
     }
 

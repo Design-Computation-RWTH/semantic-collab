@@ -1,9 +1,10 @@
-import Container from "react-bootstrap/Container";
+//import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import React from "react";
 import Figure from "react-bootstrap/Figure";
 import CloseButton from "react-bootstrap/CloseButton";
+import {Container} from "@mantine/core";
 
 import ImageService from "../../services/ImageService"
 import BCFAPIService from "../../services/BCFApIService"
@@ -163,10 +164,12 @@ class Gallery extends React.Component<GalleryProps,GalleryState> {
                     <div className="yscroll">
                         {gallery}
                     </div>
-                    <div className="caia-submenu-border">
+                    <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
+                        backgroundColor: theme.colors.dark
+                    })}>
                         <button className="btn-caia-icon"><i className="icon bi-funnel btn-caia-icon-size"/></button>
                         <button className="btn-caia-icon"><i className="icon bi-plus-square btn-caia-icon-size"/></button>
-                    </div>
+                    </Container>
                 </div>
 
 

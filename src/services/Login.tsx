@@ -13,7 +13,7 @@ const base_uri = "https://caia.herokuapp.com";
 async function doLogin(login: string, password: string) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    console.log("login: "+login);
+
     let raw = JSON.stringify({
         "id": login,
         "password": password
