@@ -9,6 +9,7 @@ import fileToArrayBuffer from "file-to-array-buffer";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
 import {Container} from "@mantine/core";
+import * as url from "url";
 
 type RepresentationsProps = {
     viewer: any;
@@ -22,9 +23,20 @@ type SelectedDocument = {
     name: string;
 }
 
+type DocumentsType = {
+    "@id": string;
+    "@type": string;
+    "hasDocumentURL": string;
+    "hasFilename": string;
+    "hasGuid": string;
+    "hasProject": string;
+    "hasSpatialRepresentation": string;
+    [key: string]: string;
+}
+
 export default function Representations(props: RepresentationsProps) {
     //const [checked, setChecked] = useState(false);
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState<DocumentsType[]>([]);
     const [selected_ids, setSelected_ids] = useState<string[]>([]);
     const [screen, setScreen] = useState(0);
     const [selected_document, setSelected_document] = useState<string>("");
@@ -82,7 +94,7 @@ export default function Representations(props: RepresentationsProps) {
                 if(!Array.isArray(value))
                     value=[value];
                 setDocuments(value);
-                console.log("SetDocuments")
+
                 ReactSession.set("project_documents_pid"+project_id, value);
                 ReactSession.set("project_documents_lastime_pid"+project_id, thisMoment);
 
@@ -218,7 +230,7 @@ export default function Representations(props: RepresentationsProps) {
     }
 
     function document_list() {
-        return  documents.map((d:any) => {
+        return  documents.map((d:DocumentsType) => {
             if (d["@id"]) {
                 let selectedId = selected_ids.includes(d["@id"])
                 return <RepresentationFile
