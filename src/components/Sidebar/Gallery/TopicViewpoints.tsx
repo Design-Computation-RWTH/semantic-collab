@@ -61,7 +61,7 @@ function TopicViewpointsList(props:TopicViewpointsListProps) {
 
 
    return  <div>
-             {listItems}
+             {listItems()}
            </div>
 }
 

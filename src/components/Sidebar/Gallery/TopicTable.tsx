@@ -77,7 +77,7 @@ class TopicTable extends React.Component<TopicTableProps, TopicTableState>  {
                 <div>
                     <Table striped bordered hover size="sm">
                     <tbody>
-                    {listRows}
+                    {listRows()}
                     </tbody>
                 </Table>
                 </div>
