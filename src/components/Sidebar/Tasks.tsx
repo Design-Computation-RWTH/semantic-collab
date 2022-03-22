@@ -54,9 +54,9 @@ export default function Tasks(props: TasksProps) {
 
     return (
         <div className=" caia-fill">
-            <ScrollArea style={{height:"100%"}}>
+            <div className={"yscroll"} style={{height:"100%"}}>
                 {ViewState}
-            </ScrollArea>
+            </div>
             <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
                 backgroundColor: theme.colors.dark
             })}>

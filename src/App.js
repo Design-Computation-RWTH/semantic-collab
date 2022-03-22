@@ -215,7 +215,7 @@ class CAIA extends React.Component {
             </Navbar>
           }
           header={
-            <Header height={80} p="xs">
+            <Header height={"7vh"} p="xs">
               <div className={"caia-header-row"}>
                 <img
                     src={logo}
@@ -230,11 +230,13 @@ class CAIA extends React.Component {
 
             </Header>
           }
-          styles={(theme) => ({
-            main: { backgroundColor: theme.colorScheme === 'light' ? theme.colors.dark[8] : theme.colors.gray[0] },
-          })}
+          styles={
+            (theme) => ({
+            main: { backgroundColor: theme.colorScheme === 'light' ? theme.colors.dark[8] : theme.colors.gray[0] }, body:{height:"93vh"}
+          })
+          }
       >
-          <Routes class="caia-fill">
+          <Routes style={{height:"100%"}} >
             <Route path="/login" element={<Login/>} />
             <Route path="/logout" element={<Logout/>} />
             <Route path="/projects/:id/setup" element={<SetupView/>} />

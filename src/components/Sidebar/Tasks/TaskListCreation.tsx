@@ -205,7 +205,6 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
                 <Accordion.Item eventKey={d.id}>
                     <Accordion.Header>
                         {d.name}
-
                     </Accordion.Header>
                     <Accordion.Body>
                         Assign to Document:
@@ -224,7 +223,7 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
         }   );
 
         return (
-            <div className={"accordion"} id={"accordionExample"}>
+            <div >
                 <Accordion defaultActiveKey={ActiveKeys} alwaysOpen>
                     {AccordionList}
                 </Accordion>
