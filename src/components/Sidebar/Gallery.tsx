@@ -24,7 +24,7 @@ class SnapShotThumbnail {
     }
 }
 
-function Gallery() {
+export default function Gallery() {
     const [viewpoints, setViewpoints] = useState<any[]>([]);
     const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
     const [active_topic, setActive_topic] = useState<any>(null);
@@ -85,15 +85,15 @@ function Gallery() {
     }
 
     function gallery() {
-        let gallery;
+        let gallery_content;
         if (screen === 0) // DEFAULT VIEW
         {
-            gallery = <Container className="caia-fill">
+            gallery_content = <Container className="caia-fill">
                 <Row>
                     <div>
                         <Row>
                             <Col xs={11} md={11}>
-                                {imageslist1}
+                                {imageslist1()}
                             </Col>
                         </Row>
                     </div>
@@ -102,7 +102,7 @@ function Gallery() {
         }
         if (screen === 1) {
 
-            gallery = <div>
+            gallery_content = <div>
                 <Container>
                     <div>
                         {/*  //TODO variant="black" does not exist
@@ -128,7 +128,7 @@ function Gallery() {
                 </Container>
             </div>
         }
-    return gallery;
+    return gallery_content;
     }
 
 
@@ -158,18 +158,15 @@ function Gallery() {
             })
     }
 
-return <div className="caia-fill caia-background">
-    <div className="yscroll">
-        {gallery}
+    return <div className="caia-fill caia-background">
+     <div className="yscroll">
+        {gallery()}
+     </div>
+     <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({backgroundColor: theme.colors.dark})}>
+         <button className="btn-caia-icon"><i className="icon bi-funnel btn-caia-icon-size"/></button>
+            <button className="btn-caia-icon"><i className="icon bi-plus-square btn-caia-icon-size"/></button>
+        </Container>
     </div>
-    <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
-        backgroundColor: theme.colors.dark
-    })}>
-        <button className="btn-caia-icon"><i className="icon bi-funnel btn-caia-icon-size"/></button>
-        <button className="btn-caia-icon"><i className="icon bi-plus-square btn-caia-icon-size"/></button>
-    </Container>
-</div>
 
 }
 
-export default Gallery;

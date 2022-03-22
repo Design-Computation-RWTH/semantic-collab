@@ -40,7 +40,7 @@ export default function Representations(props: RepresentationsProps) {
     const [selected_ids, setSelected_ids] = useState<string[]>([]);
     const [screen, setScreen] = useState(0);
     const [selected_document, setSelected_document] = useState<string>("");
-    const [new_file_name, setNew_file_name] = useState(null);
+    const [new_file_name, setNew_file_name] = useState<string>("");
     const [file, setFile] = useState(null);
 
     //
@@ -285,7 +285,6 @@ export default function Representations(props: RepresentationsProps) {
     return  <div className="caia-fill caia-background">
                 <div className="yscroll">
                     {leftPanel()}
-                    Test
                 </div>
                 <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
                         backgroundColor: theme.colors.dark
