@@ -107,7 +107,7 @@ export default function Gallery() {
                     <div>
                         {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
-                        <CloseButton variant="black" onClick={() => setScreen(0)}/>
+                        <CloseButton variant="white" onClick={() => setScreen(0)}/>
                     </div>
                     <div>
                         <div className="image-div">
