@@ -1,7 +1,7 @@
 //import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Figure from "react-bootstrap/Figure";
 import CloseButton from "react-bootstrap/CloseButton";
 import {Container} from "@mantine/core";
@@ -131,7 +131,11 @@ export default function Gallery() {
     return gallery_content;
     }
 
+    useEffect(() => {
+        console.log("Mount")
+        init();
 
+    }, [])
 
     function init() {
         let bcfapi=new BCFAPIService();
