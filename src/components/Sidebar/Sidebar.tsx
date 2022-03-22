@@ -2,7 +2,7 @@ import React, {FC} from "react";
 import {BsCalendarCheck, BsCardImage,BsLayers} from "react-icons/bs"
 // import {Tab, Tabs} from "react-bootstrap";
 import { Tabs } from '@mantine/core';
-import Representations from "./Representations";
+import Representations from "./RepresentationsFunction";
 import Gallery from "./Gallery";
 import Tasks from "./Tasks";
 import XeoKitView from "../Viewport/XeoKitView";
@@ -59,6 +59,7 @@ export default function Sidebar({XeokitInst}: SidebarProps) {
             </Tabs>
         )
 }
+/*
  class Sidebar_2 extends React.Component<SidebarProps,SidebarState> {
 
     constructor(props: SidebarProps | Readonly<SidebarProps>) {
@@ -118,3 +119,4 @@ export default function Sidebar({XeokitInst}: SidebarProps) {
     }
 
 }
+*/
