@@ -68,7 +68,7 @@
   border-radius: 8px;
   border: #ffffff solid 2px;
   box-shadow: 5px 5px 15px 1px #000000;
-  z-index: 90000;
+  z-index: 70000;
 }
 
 .annotation-label:after {

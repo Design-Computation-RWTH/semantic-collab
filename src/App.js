@@ -17,7 +17,7 @@ import { Logout, id, parseJWT } from "./services/AuthenticationUtils";
 import ProjectListView from "./pages/ProjectsView";
 
 import SetupView from "./pages/SetupsView";
-import XeoKitView from "./components/Viewport/XeoKitView";
+import XeoKitView from "./components/Viewport/XeoKitViewFunction";
 
 import { NotificationManager} from 'react-notifications';
 
@@ -192,40 +192,7 @@ class CAIA extends React.Component {
       this.useruri = token.URI;
     } else this.name = "";
     return (
-/*        <div className="main">
-          <header className="header">
-            <NavBrand
-                //TODO: Fix ID
-                project={{projectName: this.state.projectName, projectId: this.state.projectSelected}}
-                user={this.name}
-            />
-          </header>
-          <div
-              aria-live="polite"
-              aria-atomic="true"
-              className="bg-light bg-gradient position-relative"
-              style={{ minHeight: "0px" }}
-          />
-          <div className="workspace">
-            <Routes class="workspace">
-              <Route path="/login" element={<Login/>} />
-              <Route path="/logout" element={<Logout/>} />
-              <Route path="/projects/:id/setup" element={<SetupView/>} />
-              <Route path="/projects/:id/" element={
-                <div className="caia-fill">
-                  <XeoKitView class="viewport" id={"MyViewport"}/>
-                </div>}
-              />
-              <Route
-                path="/projects"
-                element={<ProjectListView/>}/>
-              <Route path="/web-ifc.wasm" element={<reload/>} />
-              <Route path="" element={<Login/>} />
-            </Routes>
-          </div>
-          <Footer/>
-          <NotificationContainer/>
-        </div>*/
+
       <AppShell
           padding="0"
           navbar={

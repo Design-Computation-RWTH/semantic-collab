@@ -4,13 +4,14 @@ import {Accordion, Form} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BcfOWLService from "../../../services/BcfOWLService";
 import PubSub from "pubsub-js";
-import XeoKitView from "../../Viewport/XeoKitView";
+// @ts-ignore
+import { Viewer } from "@xeokit/xeokit-sdk";
 import BcfOWLProjectSetup from "../../../services/BcfOWLProjectSetup";
 
 type TaskListProps = {
     TaskJson: object;
     IfcStoreys: any [];
-    viewer: XeoKitView;
+    viewer: Viewer;
 };
 
 type TaskListState = {
@@ -19,7 +20,7 @@ type TaskListState = {
     users: any;
 };
 
-let viewer_instance: XeoKitView["viewer"];
+let viewer_instance: Viewer;
 
 let FilteredIfcElements: any = {};
 
@@ -175,7 +176,7 @@ export class TaskListCreation extends React.Component<TaskListProps,TaskListStat
 
     render() {
 
-        viewer_instance = this.props.viewer.viewer;
+        viewer_instance = this.props.viewer;
 
         let metaObjects = viewer_instance.metaScene.getObjectIDsByType("IfcWallStandardCase")
         for (let object in metaObjects) {
