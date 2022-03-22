@@ -7,6 +7,15 @@ import {NotificationManager} from "react-notifications";
 const base_uri = "https://caia.herokuapp.com";
 export const getAccessToken = () => Cookies.get('access_token')
 
+type ViewPointType = {
+    perspective_camera: any;
+    originating_document?: any;
+    components: any;
+    guid: string;
+    topic_guid: string;
+    [key: string]: string;
+}
+
 class BCFAPIService {
     private readonly project_id: any;
 
@@ -35,7 +44,9 @@ class BCFAPIService {
         this.project_id = ReactSession.get("projectid");
     }
 
-    async  getAllViewPoints() {
+
+
+    async  getAllViewPoints():Promise<ViewPointType[]> {
         const response = await fetch(base_uri+"/bcf/3.0/projects/"+this.project_id+"/viewpoints", this.requestGetOptions);
         if (!response.ok) {
             const message = `getAllViewPoints: An error has occured: ${response.status}`;

@@ -1,7 +1,7 @@
 //import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Figure from "react-bootstrap/Figure";
 import CloseButton from "react-bootstrap/CloseButton";
 import {Container} from "@mantine/core";
@@ -24,7 +24,7 @@ class SnapShotThumbnail {
     }
 }
 
-function Gallery() {
+export default function Gallery() {
     const [viewpoints, setViewpoints] = useState<any[]>([]);
     const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
     const [active_topic, setActive_topic] = useState<any>(null);
@@ -85,15 +85,15 @@ function Gallery() {
     }
 
     function gallery() {
-        let gallery;
+        let gallery_content;
         if (screen === 0) // DEFAULT VIEW
         {
-            gallery = <Container className="caia-fill">
+            gallery_content = <Container className="caia-fill">
                 <Row>
                     <div>
                         <Row>
                             <Col xs={11} md={11}>
-                                {imageslist1}
+                                {imageslist1()}
                             </Col>
                         </Row>
                     </div>
@@ -102,12 +102,12 @@ function Gallery() {
         }
         if (screen === 1) {
 
-            gallery = <div>
+            gallery_content = <div>
                 <Container>
                     <div>
                         {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
-                        <CloseButton variant="black" onClick={() => this.setState({screen: 0})}/>
+                        <CloseButton variant="white" onClick={() => setScreen(0)}/>
                     </div>
                     <div>
                         <div className="image-div">
@@ -128,17 +128,21 @@ function Gallery() {
                 </Container>
             </div>
         }
-    return gallery;
+    return gallery_content;
     }
 
+    useEffect(() => {
+        console.log("Mount")
+        init();
 
+    }, [])
 
     function init() {
         let bcfapi=new BCFAPIService();
         let imageservice: ImageService=new ImageService();
         bcfapi.getAllViewPoints()
             .then(value => {
-                value.forEach((viewpoint: { guid: string; topic_guid: any; }) =>
+                value.forEach((viewpoint: { guid: string; topic_guid: string; }) =>
                     {
                         let snapshot=imageservice.getThumbnailData(viewpoint.guid);
                         snapshot.then((img:any)=> {
@@ -158,18 +162,15 @@ function Gallery() {
             })
     }
 
-return <div className="caia-fill caia-background">
-    <div className="yscroll">
-        {gallery}
+    return <div className="caia-fill caia-background">
+     <div className="yscroll">
+        {gallery()}
+     </div>
+     <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({backgroundColor: theme.colors.dark})}>
+         <button className="btn-caia-icon"><i className="icon bi-funnel btn-caia-icon-size"/></button>
+            <button className="btn-caia-icon"><i className="icon bi-plus-square btn-caia-icon-size"/></button>
+        </Container>
     </div>
-    <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
-        backgroundColor: theme.colors.dark
-    })}>
-        <button className="btn-caia-icon"><i className="icon bi-funnel btn-caia-icon-size"/></button>
-        <button className="btn-caia-icon"><i className="icon bi-plus-square btn-caia-icon-size"/></button>
-    </Container>
-</div>
 
 }
 
-export default Gallery;

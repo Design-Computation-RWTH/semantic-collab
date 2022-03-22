@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import BcfOWLService from "../../../services/BcfOWLService";
 import {Table} from "react-bootstrap";
 // @ts-ignore
@@ -11,34 +11,28 @@ type TopicTableProps = {
     topic_guid:string;
 };
 
-type TopicTableState = {
-    topic_guid: string;
-    data: any;
-};
+
+function TopicTable(props:TopicTableProps)   {
+    const [topic_guid, setTopic_guid] = useState<string>(props.topic_guid);
+    const [data, setData] = useState<any>([]);
+    let project_id =ReactSession.get("projectid");
+    let  subSelectedTopicID = PubSub.subscribe('SelectedTopicID', subTopicID);
+
+    useEffect(() => {
+        console.log("Mount")
+        init();
+
+    }, [])
 
 
-class TopicTable extends React.Component<TopicTableProps, TopicTableState>  {
-    private project_id: any;
-    private readonly subSelectedTopicID: any;
+    useEffect(() => {
+        return () => {
+            console.log("Unmount");
+            PubSub.unsubscribe(subSelectedTopicID);
+        }
+    }, [])
 
-    constructor(props: TopicTableProps | Readonly<TopicTableProps>) {
-        super(props);
-        this.state = {
-            topic_guid: props.topic_guid,
-            data: [],
-
-    };
-        topictable_component=this;
-        this.project_id = ReactSession.get("projectid");
-        this.subSelectedTopicID = PubSub.subscribe('SelectedTopicID', this.subTopicID);
-    }
-
-    componentWillUnmount() {
-        PubSub.unsubscribe(this.subSelectedTopicID);
-    }
-
-
-    subTopicID(msg: any, data: { topic_guid: string; }) {
+   function subTopicID(msg: any, data: { topic_guid: string; }) {
         console.log("subTOPIC: "+data.topic_guid);
         if(data.topic_guid===topictable_component.state.topic_guid)
             return;
@@ -65,31 +59,21 @@ class TopicTable extends React.Component<TopicTableProps, TopicTableState>  {
 
     };
 
-    render() {
-            const listRows = this.state.data.map((r: { prop: string; value: string }) =>
+    function listRows() {
+            return data.map((r: { prop: string; value: string }) =>
                 <tr>
                     <td className="caia_tablefont">{r.prop}</td>
                     <td className="caia_tablefont">{r.value}</td>
                 </tr>
 
             );
-            return (
-                <div>
-                    <Table striped bordered hover size="sm">
-                    <tbody>
-                    {listRows()}
-                    </tbody>
-                </Table>
-                </div>
-            );
     }
 
 
-
-    componentDidMount() {
+    function init() {
         let bcfowl=new BcfOWLService();
-        this.setState({data: []});
-        bcfowl.getTopicByGUID(this.state.topic_guid)
+        setData([])
+        bcfowl.getTopicByGUID(topic_guid)
                 .then(topic => {
                 Object.getOwnPropertyNames(topic).forEach(p => {
                     if(p!=='@context' && !p.startsWith("@")) {
@@ -103,16 +87,15 @@ class TopicTable extends React.Component<TopicTableProps, TopicTableState>  {
                         if(pstr === "Project")
                             return;
 
-                        let valstr:string =  val.replaceAll("https://caia.herokuapp.com/graph/"+this.project_id +"/","");
-
+                        let valstr:string =  val.replaceAll("https://caia.herokuapp.com/graph/"+project_id +"/","");
 
                         if(val.startsWith("https://caia.herokuapp.com/users/"))
                         {
                             bcfowl.describeUser(val)
                                 .then(user=>{
                                      valstr=user.name;
-                                    let joined = this.state.data.concat({prop: pstr, value: valstr});
-                                    this.setState({data: joined});
+                                    let joined = data.concat({prop: pstr, value: valstr});
+                                    setData(joined);
                                 })
                                 .catch(err => {
                                     console.log(err)
@@ -146,8 +129,8 @@ class TopicTable extends React.Component<TopicTableProps, TopicTableState>  {
                                 }
 
                             }
-                            let joined = this.state.data.concat({prop: pstr, value: valstr});
-                            this.setState({data: joined});
+                            let joined = data.concat({prop: pstr, value: valstr});
+                            setData(joined);
 
                         }
                     }
@@ -158,6 +141,14 @@ class TopicTable extends React.Component<TopicTableProps, TopicTableState>  {
                 console.log(err)
             });
     }
+
+    return  <div>
+            <Table striped bordered hover size="sm">
+                <tbody>
+                {listRows()}
+                </tbody>
+            </Table>
+        </div>
 }
 
 export default TopicTable;
