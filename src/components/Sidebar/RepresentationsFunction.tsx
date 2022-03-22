@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import BcfOWLService from "../../services/BcfOWLService";
 import {Table} from "react-bootstrap";
 import {ReactSession} from "react-client-session";
@@ -22,7 +22,7 @@ type SelectedDocument = {
     name: string;
 }
 
-function Representations(props: RepresentationsProps) {
+export default function Representations(props: RepresentationsProps) {
     //const [checked, setChecked] = useState(false);
     const [documents, setDocuments] = useState([]);
     const [selected_ids, setSelected_ids] = useState<string[]>([]);
@@ -35,7 +35,64 @@ function Representations(props: RepresentationsProps) {
     let project_id:any = ReactSession.get("projectid");
     let UploadFileFieldRef:any = React.createRef();
 
-    init();
+    let un_DocumentsViewStateChange:any;
+    let un_SetSelectedDocument:any;
+    let un_ShowDocument:any;
+    let un_UnSelectDocument:any;
+
+    useEffect(() => {
+        console.log("Mount")
+        init();
+
+    }, [])
+
+    useEffect(() => {
+        return () => {
+            console.log("Unmount")
+            PubSub.unsubscribe(un_DocumentsViewStateChange);
+            PubSub.unsubscribe(un_SetSelectedDocument);
+            PubSub.unsubscribe(un_ShowDocument);
+            PubSub.unsubscribe(un_UnSelectDocument);
+        }
+    }, [])
+
+   // console.log("init")
+
+    function init() {
+
+        un_DocumentsViewStateChange = PubSub.subscribe("DocumentsViewStateChange", onDocumentsViewStateChange)
+        un_SetSelectedDocument = PubSub.subscribe("SetSelectedDocument", onDocumentSelected);
+        un_ShowDocument = PubSub.subscribe("ShowDocument", onShowDocument);
+        un_UnSelectDocument = PubSub.subscribe("DocumentUnSelected", onDocumentUnSelected);
+
+        console.log("init")
+        //TODO: Last Update is preventing force refreshing
+        let lastUpdate =ReactSession.get("project_documents_lastime_pid"+project_id);
+        let thisMoment=new Date().getTime() / 10;
+        if((thisMoment-lastUpdate)<10) {
+            let value=ReactSession.get("project_documents_pid"+project_id);
+            setDocuments(value);
+            return;
+        }
+        let bcfowl=new BcfOWLService();
+        bcfowl.getDocuments()
+            .then(value => {
+                if(value["@graph"])
+                    value=value["@graph"];
+                if(!Array.isArray(value))
+                    value=[value];
+                setDocuments(value);
+                console.log("SetDocuments")
+                ReactSession.set("project_documents_pid"+project_id, value);
+                ReactSession.set("project_documents_lastime_pid"+project_id, thisMoment);
+
+            })
+            .catch(err => {
+                console.log(err)
+            });
+    }
+
+    // init();
 
     function onDocumentSelected(msg: any, data: SelectedDocument) {
         setSelected_document(data.id);
@@ -183,20 +240,21 @@ function Representations(props: RepresentationsProps) {
         });
     }
 
-    function leftPanel()
-    {
+    function leftPanel() {
         let leftPanel;
         if (screen === 0) // DEFAULT VIEW
         {
+            console.log("Screen 0")
             leftPanel =
                 <div>
                     <Table striped bordered hover size="sm">
                         <tbody>
-                        {document_list}
+                        {document_list()}
                         </tbody>
                     </Table>
                 </div>
         } else {
+            console.log("Screen 1")
             leftPanel =
                 <div>
                     <CloseButton onClick={() => {
@@ -214,7 +272,8 @@ function Representations(props: RepresentationsProps) {
 
     return  <div className="caia-fill caia-background">
                 <div className="yscroll">
-                    {leftPanel}
+                    {leftPanel()}
+                    Test
                 </div>
                 <Container style={{display: "flex", width:"100%", justifyContent:"center"}} sx={(theme) => ({
                         backgroundColor: theme.colors.dark
@@ -230,35 +289,6 @@ function Representations(props: RepresentationsProps) {
                     <button className="btn-caia-icon"  title="Upload Spatial Representation"  onClick={()=>{UploadFileFieldRef.current.click()}}><i className="icon bi-box-arrow-up btn-caia-icon-size"/></button>
                     <input id="file-input" type="file" ref={UploadFileFieldRef} className="invisible" onChange={onFileSelectionChangeHandler}/>
                 </Container>
-            </div>;
+            </div>
 
-
-    function init() {
-        //TODO: Last Update is preventing force refreshing
-        let lastUpdate =ReactSession.get("project_documents_lastime_pid"+project_id);
-        let thisMoment=new Date().getTime() / 10;
-        if((thisMoment-lastUpdate)<10) {
-            let value=ReactSession.get("project_documents_pid"+project_id);
-            setDocuments(value);
-            return;
-        }
-        let bcfowl=new BcfOWLService();
-        bcfowl.getDocuments()
-                .then(value => {
-                if(value["@graph"])
-                    value=value["@graph"];
-                if(!Array.isArray(value))
-                    value=[value];
-                setDocuments(value);
-
-                ReactSession.set("project_documents_pid"+project_id, value);
-                ReactSession.set("project_documents_lastime_pid"+project_id, thisMoment);
-
-            })
-            .catch(err => {
-                console.log(err)
-            });
-    }
 }
-
-export default Representations;
