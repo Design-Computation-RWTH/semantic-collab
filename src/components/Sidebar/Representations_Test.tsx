@@ -12,42 +12,44 @@ import {Container} from "@mantine/core";
 
 // const base_uri = "https://caia.herokuapp.com";
 
-export default function Representations() {
+export default function Representations(props:any) {
 
     const [checked, setChecked] = useState(true);
     const [documents, setDocuments] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
-    const [selectedDocument, setSelectedDocuments] = useState(null);
+    const [selectedDocument, setSelectedDocument] = useState(null);
     const [screen, setScreen] = useState(0);
     const [newFileName, setNewFileName] = useState(null);
     const [file, setFile] = useState(null);
 
     let project_id = ReactSession.get("projectid");
     let un_SidebarName=PubSub.publish('SidebarName', {name: "Representations"})
-    let un_DocumentsViewStateChange = PubSub.subscribe("DocumentsViewStateChange", this.onDocumentsViewStateChange.bind(this))
-    let un_SetSelectedDocument = PubSub.subscribe("SetSelectedDocument", this.onDocumentSelected.bind(this));
-    let un_ShowDocument = PubSub.subscribe("ShowDocument", this.onShowDocument.bind(this));
-    let un_UnSelectDocument = PubSub.subscribe("DocumentUnSelected", this.onDocumentUnSelected.bind(this));
+    let un_DocumentsViewStateChange = PubSub.subscribe("DocumentsViewStateChange", onDocumentsViewStateChange)
+    let un_SetSelectedDocument = PubSub.subscribe("SetSelectedDocument", onDocumentSelected);
+    let un_ShowDocument = PubSub.subscribe("ShowDocument", onShowDocument);
+    let un_UnSelectDocument = PubSub.subscribe("DocumentUnSelected", onDocumentUnSelected);
     let UploadFileFieldRef = React.createRef();
 
     useEffect(() => {
-        
-    })
+        init();
+
+    }, [screen])
+
+    useEffect(() => {
+        return () => {
+            PubSub.unsubscribe(un_SidebarName);
+            PubSub.unsubscribe(un_DocumentsViewStateChange);
+            PubSub.unsubscribe(un_SetSelectedDocument);
+            PubSub.unsubscribe(un_ShowDocument);
+            PubSub.unsubscribe(un_UnSelectDocument);
+        }
+    }, [])
 
 
-    componentWillUnmount() {
-        PubSub.unsubscribe(this.un_SidebarName);
-        PubSub.unsubscribe(this.un_UploadedPlanCreated);
-        PubSub.unsubscribe(this.un_DocumentsViewStateChange);
-        PubSub.unsubscribe(this.un_SetSelectedDocument);
-        PubSub.unsubscribe(this.un_ShowDocument);
-        PubSub.unsubscribe(this.un_UnSelectDocument);
-    }
+    function onDocumentSelected(msg:any, data:any) {
+        setSelectedDocument(data.id);
+        setScreen(1);
 
-
-    onDocumentSelected(msg, data) {
-        this.setState({ selected_document: data.id });
-        this.setState({ screen: 1 });
         PubSub.publish("ShowDocument", {
             id: data.id,
             url: data.url,
@@ -56,11 +58,11 @@ export default function Representations() {
             name: data.name,});
     }
 
-    onShowDocument(msg, data) {
-        let ids = this.state.selected_ids
+    function onShowDocument(msg: any, data: any) {
+        let ids:any = selectedIds
         if (!ids.includes(data.id)) {
             ids.push(data.id)
-            this.setState({selected_ids: ids})
+            setSelectedIds(ids);
         }
         let bcfowl=new BcfOWLService();
         bcfowl.describe(data.spatial_representation)
@@ -79,21 +81,21 @@ export default function Representations() {
 
     }
 
-    onDocumentUnSelected(msg, data) {
+    function onDocumentUnSelected(msg: any, data: any) {
 
-        let ids = this.state.selected_ids
+        let ids:any = selectedIds;
         if (ids.includes(data.id)) {
-            ids = ids.filter(item => item !== data.id)
-            this.setState({selected_ids: ids})
+            ids = ids.filter((item: any) => item !== data.id)
+            setSelectedIds(ids)
         }
     }
 
-    onDocumentsViewStateChange(msg, data) {
-        this.setState({ screen: 0})
-        this.init();
+    function onDocumentsViewStateChange(msg: any, data: any) {
+        setScreen(0);
+        //init();
     }
 
-    onFileSelectionChangeHandler=event=>{
+    function onFileSelectionChangeHandler=(event:any)=>{
         let file = event.target.files[0];
         fileToArrayBuffer(file).then((data) => {
             let file_extension=file.name.split('.').pop().toLowerCase();
@@ -101,9 +103,9 @@ export default function Representations() {
                 case "ifc":
                     console.log(data.byteLength)
                     if (data.byteLength < 50000000) {
-                        this.setState({ new_file_name: file.name});
-                        this.setState({file: file})
-                        this.setState({ selected_document: file.name });
+                        setNewFileName(file.name);
+                        setFile(file);
+                        setSelectedDocument(file.name);
                         let spatial_json = {
                             alignment: "center",
                             location: {
@@ -154,10 +156,11 @@ export default function Representations() {
                 case "png":
                     // We send the raw data to the XeoKitView:
                     PubSub.publish('NewUploadedPlan', {name: file.name, rawvalue: file});
-                    this.setState({ new_file_name: file.name});
-                    this.setState({file: file})
-                    this.setState({ selected_document: "new_temp_plan" });
-                    this.setState({ screen: 1 });
+                    let dummyName:any = "new_temp_plan"
+                    setNewFileName(file.name)
+                    setFile(file)
+                    setSelectedDocument(dummyName);
+                    setScreen(1);
                     break;
                 case "pdf":
                     console.log('picked pdf');
@@ -170,16 +173,15 @@ export default function Representations() {
 
     }
 
-    render() {
-        const document_list = this.state.documents.map(d => {
+        const document_list = documents.map(d => {
             if (d["@id"]) {
-                let selectedId = this.state.selected_ids.includes(d["@id"])
+                let selectedId = selectedIds.includes(d["@id"])
                 return <RepresentationFile
                     data={d}
                     key={d["@id"]}
                     document={
                         {
-                            filename: d.hasFilename,
+                            filename: d["hasFilename"],
                             id: d["@id"],
                             documentURL: d["hasDocumentURL"],
                             selected: selectedId,
@@ -194,7 +196,7 @@ export default function Representations() {
 
 
         let leftPanel;
-        if(this.state.screen===0) // DEFAULT VIEW
+        if(screen===0) // DEFAULT VIEW
         {
             leftPanel =
                 <div>
@@ -211,9 +213,9 @@ export default function Representations() {
                     <div>
                         <CloseButton onClick={() => {
                             PubSub.publish("CancelNewDocument", {})
-                            this.setState({ screen: 0 })
+                            setScreen(0)
                         }}/>
-                        <RepresentationDetails selected_document={this.state.selected_document} newfilename={this.state.new_file_name} file={this.state.file} viewer={this.props.viewer}/>
+                        <RepresentationDetails selected_document={selectedDocument} newfilename={newFileName} file={file} viewer={this.props.viewer}/>
                     </div>
 
         }
@@ -245,7 +247,7 @@ export default function Representations() {
         this.init()
     }
 
-    init() {
+    function init() {
 
         //TODO: Last Update is preventing force refreshing
         let lastUpdate =ReactSession.get("project_documents_lastime_pid"+this.project_id);

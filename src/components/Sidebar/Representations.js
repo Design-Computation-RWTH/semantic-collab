@@ -36,7 +36,6 @@ class Representations extends React.Component {
 
     componentWillUnmount() {
         PubSub.unsubscribe(this.un_SidebarName);
-        PubSub.unsubscribe(this.un_UploadedPlanCreated);
         PubSub.unsubscribe(this.un_DocumentsViewStateChange);
         PubSub.unsubscribe(this.un_SetSelectedDocument);
         PubSub.unsubscribe(this.un_ShowDocument);
