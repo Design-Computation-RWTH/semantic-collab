@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Figure from "react-bootstrap/Figure";
 import ImageService from "../../../services/ImageService";
 import BCFAPIService from "../../../services/BCFApIService";
@@ -21,6 +21,11 @@ function TopicViewpointsList(props:TopicViewpointsListProps) {
     const [snapshots, setSnapshots] = useState([]);
     const [topic_id, setTopic_id] = useState(props.topic_id);
 
+    useEffect(() => {
+        console.log("Mount")
+        init();
+
+    }, [])
 
     function init(){
         let imageservice: ImageService=new ImageService();
