@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+
 // @ts-ignore
 import PubSub from "pubsub-js";
 import BcfOWLService from "../../services/BcfOWLService";
@@ -12,65 +13,50 @@ type AddUserFormProps = {
     show:boolean;
 };
 
-type AddUserFormState = {
-    value?: any;
-};
+
+function AddUserForm(props: AddUserFormProps)  {
+    const [value, setValue] = useState("");
 
 
-class AddUserForm extends React.Component<AddUserFormProps, AddUserFormState> {
-    private bcfowl: BcfOWLService;
-    private bcfowl_setup: BcfOWLProjectSetup;
-
-    state: AddUserFormState = {
+    const handleValue = (event: { target: { value: any; }; }) => {
+        setValue(event.target.value);
     };
 
-    constructor(props: AddUserFormProps | Readonly<AddUserFormProps>) {
-        super(props);
-        this.bcfowl=new BcfOWLService();
-        this.bcfowl_setup=new BcfOWLProjectSetup();
-
-    }
-
-    handleValue = (event: { target: { value: any; }; }) => {
-        this.setState({
-            value: event.target.value,
-        });
-    };
-
-    submitted = (event: { preventDefault: () => void; }) => {
+    const submitted = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        this.props.onHide();
-        this.bcfowl.getUserByEmail(this.state.value.trim())
+        let bcfowl: BcfOWLService =new BcfOWLService();
+        let bcfowl_setup: BcfOWLProjectSetup =new BcfOWLProjectSetup();
+        props.onHide();
+        bcfowl.getUserByEmail(value.trim())
             .then(user=> {
                 if (user["@id"]) {
-                    this.bcfowl_setup.insertUser(user["@id"]).then(e=>
+                    bcfowl_setup.insertUser(user["@id"]).then(()=>
                         {
-                            PubSub.publish('Update', {txt: "User " + this.state.value + " added."});
+                            PubSub.publish('Update', {txt: "User " + value + " added."});
                             PubSub.publish('SetupUpdate', "Update view.");
                         }
                     )
                 } else
-                    PubSub.publish('Update', {txt: "User " + this.state.value + " does not exist. Contact admin."});
+                    PubSub.publish('Update', {txt: "User " + value + " does not exist. Contact admin."});
             })
             .catch(err => {
                 console.log(err)
-            });;
+            });
 
     };
 
 
-    render() {
-        return <Modal {...this.props} aria-labelledby="contained-modal-title-vcenter">
+    return <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
                     Add user to the project
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">
-                <Form onSubmit={this.submitted}>
+                <Form onSubmit={submitted}>
                     <Form.Group className="mb-3" controlId="formProjectName">
                         <Form.Label>Users e-mail address</Form.Label>
-                        <Form.Control type="email" onChange={this.handleValue} placeholder="Enter users email address"/>
+                        <Form.Control type="email" onChange={handleValue} placeholder="Enter users email address"/>
                         <Form.Text className="text-muted">
                             The e-mail address of an existing user at the system.
                         </Form.Text>
@@ -81,10 +67,9 @@ class AddUserForm extends React.Component<AddUserFormProps, AddUserFormState> {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.props.onHide}>Close</Button>
+                <Button onClick={props.onHide}>Close</Button>
             </Modal.Footer>
-        </Modal>;
-    }
+    </Modal>;
 }
 
 export default AddUserForm;

@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import React from "react";
+import React, {useState} from "react";
 import Figure from "react-bootstrap/Figure";
 import ImageService from "../../../services/ImageService";
 import BCFAPIService from "../../../services/BCFApIService";
@@ -16,64 +16,53 @@ type TopicViewpointsListState = {
     topic_id: string
 };
 
-class TopicViewpointsList extends React.Component<TopicViewpointsListProps,TopicViewpointsListState> {
-    private imageservice: ImageService;
-
-    constructor(props: TopicViewpointsListProps | Readonly<TopicViewpointsListProps>) {
-        super(props);
-        this.imageservice=new ImageService();
-
-        this.state = {
-            viewpoints: [],
-            snapshots: [],
-            topic_id: props.topic_id
-        };
-    }
-
-    render() {
-        {
-            const listItems = this.state.snapshots.map((s) =>
-                    <Figure key={"topic-image:"+s.guid}>
-                        <Figure.Image
-                            width={171}
-                            height={180}
-                            alt="171x180"
-                            src={s}
-                        />
-                    </Figure>
-            );
-            return (
-                <div>
-                        {listItems}
-                </div>
-            );
-        }
-    }
+function TopicViewpointsList(props:TopicViewpointsListProps) {
+    const [viewpoints, setviewpoints] = useState([]);
+    const [snapshots, setSnapshots] = useState([]);
+    const [topic_id, setTopic_id] = useState(props.topic_id);
 
 
-
-    componentDidMount() {
+    function init(){
+        let imageservice: ImageService=new ImageService();
         let bcfapi=new BCFAPIService();
-        bcfapi.getTopicViewPoints(this.state.topic_id)
-            .then(value => {
-                value.forEach((tv: { guid: string; }) =>
-                    {
-                        let snapshot=this.imageservice.getThumbnailData(tv.guid);
-                        snapshot.then(img=> {
-                                let url = URL.createObjectURL(img);
+        bcfapi.getTopicViewPoints(topic_id)
+        .then((value:any) => {
+            value.forEach((tv: { guid: string; }) =>
+                {
+                    let snapshot=imageservice.getThumbnailData(tv.guid);
+                    snapshot.then(img=> {
+                            let url:any = URL.createObjectURL(img);
                             if(img.size >0) {
-                                let joined = this.state.snapshots.concat(url);
-                                this.setState({snapshots: joined});
-                                }
-                                }
-                            )
+                                let joined = snapshots.concat(url);
+                                setSnapshots(joined);
+                            }
                         }
-                    );
-                })
-            .catch(err => {
-                console.log(err)
-            });
+                    )
+                }
+            );
+        })
+        .catch(err => {
+            console.log(err)
+        });
     }
+
+    function listItems()
+    {
+        return snapshots.map((s:any) =>
+        <Figure key={"topic-image:"+s.guid}>
+            <Figure.Image
+                width={171}
+                height={180}
+                alt="171x180"
+                src={s}
+            />
+        </Figure>
+    )};
+
+
+   return  <div>
+             {listItems}
+           </div>
 }
 
 export default TopicViewpointsList;
