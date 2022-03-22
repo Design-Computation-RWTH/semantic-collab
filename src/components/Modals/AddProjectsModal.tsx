@@ -54,7 +54,7 @@ export default function AddProjectsModal() {
                         />
 
                         <Group position="right" mt="md">
-                            <Button type="submit">Submit</Button>
+                            <Button type="submit">Add project</Button>
                         </Group>
                     </form>
                 </Box>

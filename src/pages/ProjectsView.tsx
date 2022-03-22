@@ -1,27 +1,13 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useState} from "react";
-import { SimpleGrid, Button, Center, Modal, Group, Input, Textarea, Box, TextInput } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useModals } from '@mantine/modals';
-import Form from "react-bootstrap/Form";
+import { SimpleGrid, Button, Center} from '@mantine/core';
 import BCFAPIService from "../services/BCFApIService";
 // @ts-ignore
 import PubSub from 'pubsub-js'
-import {FaPlus} from "react-icons/fa";
-import {Accordion, Card, useAccordionButton} from "react-bootstrap";
-import BcfOWLProjectSetup from "../services/BcfOWLProjectSetup";
-import BasicButton from "../components/Basics/BasicButton";
 import ProjectElement from "../components/Projects/ProjectElement";
 import {useNavigate} from "react-router-dom";
 import AddProjectsModal from "../components/Modals/AddProjectsModal";
 
-let isOpen=false;
-
-type ToggleClickAction ={
-    OnClick:any;
-    children:any;
-    eventKey:any;
-};
 
 export const withRouter = (Component: any) => {
     const Wrapper = (props: any) => {
@@ -38,226 +24,63 @@ export const withRouter = (Component: any) => {
     return Wrapper;
 };
 
-function CustomToggle({OnClick, children, eventKey }:ToggleClickAction) {
-    const decoratedOnClick = useAccordionButton(eventKey, () => {
-            isOpen = !isOpen;
-            if(isOpen)
-                OnClick("Cancel");
-            else
-                OnClick("Add a project");
-        }
-    );
-    if(!isOpen)
-    return (
-            <Button onClick={decoratedOnClick}>
-                <FaPlus/>
-                {children}
-            </Button>
-    )
-    else
-        return (
-            <div/>
-        )
-}
-
-/*function submitProjectAdd(name: string) {
-    let bcfowl_setup=new BcfOWLProjectSetup();
-
-    bcfowl_setup.addProject(name).then(
-        () =>{
-            //Target location:
-            PubSub.publish('Update', {txt: "Project created. Name: " + name});
-            projectListView_instance.update();
-        }
-    )
-};
-
-function ProjectCreationDetails() {
-    const form = useForm({
-        initialValues: {
-            Name: "",
-            Description: "",
-        },
-
-    });
-
-    return (
-        <Box sx={{ maxWidth: 300 }} mx="auto">
-            <form onSubmit={form.onSubmit((values) => console.log(values))}>
-                <TextInput
-                    required
-                    label="Project Name"
-                    placeholder="Project Name"
-                    {...form.getInputProps('Name')}
-                />
-                <Textarea
-                    label="Project Description"
-                    placeholder="Enter description"
-                    {...form.getInputProps("Description")}
-                />
-
-                <Group position="right" mt="md">
-                    <Button type="submit">Submit</Button>
-                </Group>
-            </form>
-        </Box>
-    );
-}
 
 
 
-function CreateNewProject() {
-    const [opened, setOpened] = useState(false);
-
-    return (
-        <>
-            <Modal
-                opened={opened}
-                onClose={() => setOpened(false)}
-                title="Create new Project"
-            >
-                <ProjectCreationDetails/>
-
-            </Modal>
-
-            <Group position="center">
-                <Button onClick={() => setOpened(true)}>Create Project</Button>
-            </Group>
-        </>
-    );
-}*/
-
-function CustomInternalToggle({OnClick, children, eventKey }:ToggleClickAction) {
-    const decoratedOnClick = useAccordionButton(eventKey, () => {
-             isOpen = !isOpen;
-             OnClick("Add a project");
-        }
-    );
-        return (
-            <Button onClick={decoratedOnClick} >
-                {children}
-            </Button>
-        )
-}
-
-let projectListView_instance:ProjectListView;
 type ProjectListViewProps = {
     history:any;  // Is it needeed?
 };
 
-type ProjectListViewState = {
-    new_project_name: string | null,
-    projects: any[],
-    add_button_text: string,
-};
 
-class ProjectListView extends React.Component<ProjectListViewProps,ProjectListViewState> {
-    private bcfowl_setup: BcfOWLProjectSetup;
+function ProjectListView(props: ProjectListViewProps) {
+     const [projects, setProjects] = useState<any[]>([]);
 
-    constructor(props: ProjectListViewProps | Readonly<ProjectListViewProps>) {
-        super(props);
-        projectListView_instance=this;
-        //Target location:
+
+    useEffect(() => {
         PubSub.publish('ProjectName', {name: null})
-        this.state = {
-            new_project_name: null,
-            projects: [],
-            add_button_text: "Add new project",
-        };
-        this.bcfowl_setup=new BcfOWLProjectSetup();
-        //Target location:
         PubSub.publish('CloseMenu',"");
-    }
+        update();
+    }, [])
 
-    handleValue = (event: { target: { value: any; }; }) => {
-        this.setState({
-            new_project_name: event.target.value,
-        });
-    };
-
-
-    submitted = (event:any) => {
-        event.preventDefault();
-        this.bcfowl_setup.addProject(this.state.new_project_name).then(
-            () =>{
-                //Target location:
-               PubSub.publish('Update', {txt: "Project created. Name: "+this.state.new_project_name});
-               projectListView_instance.update();
-           }
-        )
-    };
-
-    render() {
-
-        let binx=1000;
-        return (
-            <div>
-                <Center p={"md"}>
-                    <SimpleGrid cols={4} >
-                        {this.state.projects.map((d) =>
-                            <ProjectElement
-                                project={{projectName: d.name, projectId: d.project_id}}
-                                key={String(binx++)}
-                                keyvalue={String(binx)}
-                                //keyvalue={String(binx++)}
-                                //TODO: What is this history for?
-                                history={this.props.history}/>)}
-                    </SimpleGrid>
-                </Center>
-                <AddProjectsModal/>
-{/*                <Accordion>
-                    <Card>
-                        <Card.Header>
-                            <CustomToggle OnClick={(txt:string)=> this.setState({add_button_text: txt})} eventKey="0"> Add Project</CustomToggle>
-
-                        </Card.Header>
-                        <Accordion.Collapse eventKey="0">
-                            <Card.Body>
-                                <Form onSubmit={this.submitted}>
-                                    <Form.Group className="mb-3" controlId="formProjectName">
-                                        <Form.Control type="text" onChange={this.handleValue} placeholder="Enter project name"/>
-                                    </Form.Group>
-                                    <CustomInternalToggle OnClick={(txt:string)=> this.setState({add_button_text: txt})} eventKey="0"> Cancel</CustomInternalToggle>
-                                    <Button type="submit">
-                                        Add
-                                    </Button>
-                                </Form>
-                            </Card.Body>
-                        </Accordion.Collapse>
-                    </Card>
-                </Accordion>*/}
-                <div className="main-refresh">
-                    <Button onClick={() => {
-                                console.log("RefreshTest")
-                            this.update()
-                            }
-                    }> Refresh </Button>
-                </div>
-
-            </div>
-        );
-    }
-
-    componentDidMount() {
-        this.update();
-    }
-
-    componentWillUnmount() {
-
-    }
-
-    update() {
+    function update() {
         let bcfapi=new BCFAPIService();
         bcfapi.getProjects()
             .then(value => {
                 console.log("projects read")
-                this.setState({ projects: value });
+                setProjects(value );
             })
             .catch(err => {
                 console.log(err)
         });
-        this.forceUpdate();
     }
+
+    let binx=1000;
+    return (
+        <div>
+            <Center p={"md"}>
+                <SimpleGrid cols={4} >
+                    {projects.map((d) =>
+                        <ProjectElement
+                            project={{projectName: d.name, projectId: d.project_id}}
+                            key={String(binx++)}
+                            keyvalue={String(binx)}
+                            //keyvalue={String(binx++)}
+                            //TODO: What is this history for?
+                            history={props.history}/>)}
+                </SimpleGrid>
+            </Center>
+            <AddProjectsModal/>
+            <div className="main-refresh">
+                <Button onClick={() => {
+                    console.log("RefreshTest")
+                    update()
+                }
+                }> Refresh </Button>
+            </div>
+
+        </div>
+    );
+
 }
 
 export default withRouter(ProjectListView);
