@@ -107,7 +107,7 @@ export default function Gallery() {
                     <div>
                         {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
-                        <CloseButton variant="black" onClick={() => this.setState({screen: 0})}/>
+                        <CloseButton variant="black" onClick={() => setScreen(0)}/>
                     </div>
                     <div>
                         <div className="image-div">
@@ -142,7 +142,7 @@ export default function Gallery() {
         let imageservice: ImageService=new ImageService();
         bcfapi.getAllViewPoints()
             .then(value => {
-                value.forEach((viewpoint: { guid: string; topic_guid: any; }) =>
+                value.forEach((viewpoint: { guid: string; topic_guid: string; }) =>
                     {
                         let snapshot=imageservice.getThumbnailData(viewpoint.guid);
                         snapshot.then((img:any)=> {
