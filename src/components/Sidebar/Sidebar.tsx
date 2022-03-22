@@ -5,58 +5,58 @@ import { Tabs } from '@mantine/core';
 import Representations from "./RepresentationsFunction";
 import Gallery from "./Gallery";
 import Tasks from "./Tasks";
-import XeoKitView from "../Viewport/XeoKitView";
+
+// @ts-ignore
+import { Viewer } from "@xeokit/xeokit-sdk";
 
 type SidebarProps = {
-    XeokitInst: XeoKitView
+    viewer: Viewer
 };
 
 type SidebarState = {
 
 };
 
-export default function Sidebar({XeokitInst}: SidebarProps) {
+export default function Sidebar(props: SidebarProps) {
 
-        return (
-            <Tabs style={{
-                display: "flex",
-                width:"40vw",
-                height:"100%",
-                justifyContent: "flex-start",
-                alignContent:"stretch",
-                alignItems:"stretch",
-                flexDirection:"column",
+    console.log(props.viewer)
+    console.log("Sidebar Viewer")
 
-            }}
-                  styles={{
-                      body: {height: "100%"}
-                  }}
-                  color="dark" grow>
-                <Tabs.Tab
-                    label="Representations"
-                    icon={<BsLayers/>}
-                >
-                    <div className="caia-fill">
-                        <Representations viewer={XeokitInst}/>
-                    </div>
-                </Tabs.Tab>
-                <Tabs.Tab
-                    label="Gallery"
-                    icon={<BsCardImage/>}
-                >
-                    <div  className="caia-fill">
-                        <Gallery/>
-                    </div>
-                </Tabs.Tab>
-                <Tabs.Tab
-                    label="Tasks"
-                    icon={<BsCalendarCheck/>}
-                >
-                    <div  className="caia-fill">
-                        <Tasks viewer={XeokitInst}/>
-                    </div>
-                </Tabs.Tab>
-            </Tabs>
+    return (
+        <Tabs style={{
+            display: "flex",
+            width:"40vw",
+            height:"100%",
+            maxHeight:"100%",
+            justifyContent: "flex-start",
+            alignContent:"stretch",
+            alignItems:"stretch",
+            flexDirection:"column",
+
+        }}
+              styles={{
+                  body: {height: "100%"}
+              }}
+              color="dark" grow>
+            <Tabs.Tab
+                label="Representations"
+                icon={<BsLayers/>}
+            >
+                    <Representations/>
+            </Tabs.Tab>
+            <Tabs.Tab
+                label="Gallery"
+                icon={<BsCardImage/>}
+            >
+                    <Gallery/>
+            </Tabs.Tab>
+            <Tabs.Tab
+                label="Tasks"
+                icon={<BsCalendarCheck/>}
+            >
+                    <Tasks/>
+            </Tabs.Tab>
+        </Tabs>
         )
 }
 /*

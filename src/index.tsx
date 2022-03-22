@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import 'react-notifications/lib/notifications.css';
 import {MantineProvider , ColorSchemeProvider, ColorScheme} from "@mantine/core";
+import ViewerProvider from "./context/dcwebviewerContext";
 import {ModalsProvider} from "@mantine/modals";
 import CAIA from "./App";
 
@@ -16,18 +17,20 @@ const Root = () => {
 
     return (
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-            <MantineProvider theme={{
-                colorScheme,
-                primaryColor: colorScheme === "light" ? "dark" : "gray",
-                fontFamily: 'Verdana, sans-serif',
-                spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
-            }}>
-                <ModalsProvider>
-                    <BrowserRouter>
-                        <CAIA/>
-                    </BrowserRouter>
-                </ModalsProvider>
-            </MantineProvider>
+            <ViewerProvider>
+                <MantineProvider theme={{
+                    colorScheme,
+                    primaryColor: colorScheme === "light" ? "dark" : "gray",
+                    fontFamily: 'Verdana, sans-serif',
+                    spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
+                }}>
+                    <ModalsProvider>
+                        <BrowserRouter>
+                            <CAIA/>
+                        </BrowserRouter>
+                    </ModalsProvider>
+                </MantineProvider>
+            </ViewerProvider>
         </ColorSchemeProvider>
     )
 }

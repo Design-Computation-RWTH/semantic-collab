@@ -9,10 +9,12 @@ import fileToArrayBuffer from "file-to-array-buffer";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
 import {Container} from "@mantine/core";
-import * as url from "url";
+// @ts-ignore
+import { Viewer } from "@xeokit/xeokit-sdk";
+import {ViewerContext} from "../../context/dcwebviewerContext";
+import {DcWebViewerContextType} from "../../@types/dcwebviewer";
 
 type RepresentationsProps = {
-    viewer: any;
 };
 
 type SelectedDocument = {
@@ -23,25 +25,16 @@ type SelectedDocument = {
     name: string;
 }
 
-type DocumentsType = {
-    "@id": string;
-    "@type": string;
-    "hasDocumentURL": string;
-    "hasFilename": string;
-    "hasGuid": string;
-    "hasProject": string;
-    "hasSpatialRepresentation": string;
-    [key: string]: string;
-}
-
 export default function Representations(props: RepresentationsProps) {
     //const [checked, setChecked] = useState(false);
-    const [documents, setDocuments] = useState<DocumentsType[]>([]);
+    const [documents, setDocuments] = useState([]);
     const [selected_ids, setSelected_ids] = useState<string[]>([]);
     const [screen, setScreen] = useState(0);
     const [selected_document, setSelected_document] = useState<string>("");
-    const [new_file_name, setNew_file_name] = useState<string>("");
+    const [new_file_name, setNew_file_name] = useState(null);
     const [file, setFile] = useState(null);
+
+    const {viewer} = React.useContext(ViewerContext) as DcWebViewerContextType;
 
     //
     let project_id:any = ReactSession.get("projectid");
@@ -94,7 +87,7 @@ export default function Representations(props: RepresentationsProps) {
                 if(!Array.isArray(value))
                     value=[value];
                 setDocuments(value);
-
+                console.log("SetDocuments")
                 ReactSession.set("project_documents_pid"+project_id, value);
                 ReactSession.set("project_documents_lastime_pid"+project_id, thisMoment);
 
@@ -230,7 +223,7 @@ export default function Representations(props: RepresentationsProps) {
     }
 
     function document_list() {
-        return  documents.map((d:DocumentsType) => {
+        return  documents.map((d:any) => {
             if (d["@id"]) {
                 let selectedId = selected_ids.includes(d["@id"])
                 return <RepresentationFile
@@ -274,7 +267,7 @@ export default function Representations(props: RepresentationsProps) {
                         setScreen(0);
                     }}/>
                     <RepresentationDetails selected_document={selected_document} newfilename={new_file_name}
-                                           file={file} viewer={props.viewer}/>
+                                           file={file} viewer={viewer}/>
                 </div>
 
         }
