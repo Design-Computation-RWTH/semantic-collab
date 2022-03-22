@@ -1,6 +1,5 @@
 import React from "react";
 import { Gantt, ViewMode } from 'gantt-task-react';
-// @ts-ignore
 import PubSub from "pubsub-js";
 
 type TaskListProps = {

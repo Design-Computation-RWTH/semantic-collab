@@ -1,36 +1,50 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
+// @ts-ignore
 import PubSub from "pubsub-js";
 
-export default function RepresentationFile({data, document: {filename, id, documentURL, selected, spatialRepresentation}} ) {
+type DocumentType = {
+        filename:string,
+        id:string;
+        documentURL:string;
+        selected:boolean;
+        spatialRepresentation:any;
+};
+
+type RepresentationFilePropsType = {
+    data:any;
+    document: DocumentType;
+};
+
+export default function RepresentationFile(props: RepresentationFilePropsType) {
 
     //Opens the Document Details in the Sidebar
     function showDocumentDetails() {
-        selected=true;
+        props.document.selected=true;
         //Target: Representation.js, onDocumentSelected
         PubSub.publish("SetSelectedDocument", {
-            id: id,
-            url: documentURL,
-            spatial_representation: spatialRepresentation,
-            data: data,
-            name: filename,
+            id: props.document.id,
+            url: props.document.documentURL,
+            spatial_representation: props.document.spatialRepresentation,
+            data: props.data,
+            name: props.document.filename,
         })
     }
 
     // Activates / shows the document in the Xeokit environment
     function showDocument() {
-        selected=true;
+        props.document.selected=true;
         //Target: Representation.js, onShowDocument
         PubSub.publish("ShowDocument", {
-            id: id,
-            url: documentURL,
-            spatial_representation: spatialRepresentation,
-            data: data,
-            name: filename,});
+            id: props.document.id,
+            url: props.document.documentURL,
+            spatial_representation: props.document.spatialRepresentation,
+            data: props.data,
+            name: props.document.filename,});
     }
 
     function determineEnding() {
-        if (filename.endsWith(".ifc")) {
+        if (props.document.filename.endsWith(".ifc")) {
             return "icon bi-box btn-caia-icon-size" }
         else {
             return "icon bi-file-earmark-pdf btn-caia-icon-size"
@@ -38,7 +52,7 @@ export default function RepresentationFile({data, document: {filename, id, docum
     }
 
     return (
-                <tr key={id}>
+                <tr key={props.document.id}>
                     <td className="file-component" >
                         <i className={determineEnding()}/>
                         <Button
@@ -46,30 +60,30 @@ export default function RepresentationFile({data, document: {filename, id, docum
                             className="btn-caia-hidden"
                             onClick={showDocumentDetails}
                         >
-                            {filename}
+                            {props.document.filename}
                         </Button>
                         <div className="toggle-switch">
-                            <input  id={id}  defaultChecked={selected} type="checkbox" onClick={ () => {
+                            <input  id={props.document.id}  defaultChecked={props.document.selected} type="checkbox" onClick={ () => {
                                     PubSub.publish("Alert", {type: "info"})
                                 }
                                 } onChange={e=>{
-                                    if(selected)
+                                    if(props.document.selected)
                                     {
-                                        selected=!selected;
+                                        props.document.selected=!props.document.selected;
                                     }
                                     else {
-                                        selected=true;
+                                        props.document.selected=true;
                                     }
-                                    if(selected===true) {
+                                    if(props.document.selected===true) {
                                         showDocument()
                                     }
                                     else
                                         //Target: XeoKitView.js
-                                        PubSub.publish('DocumentUnSelected', {id: id})
-                                        console.log("DocumentUnSelected" + id)
+                                        PubSub.publish('DocumentUnSelected', {id: props.document.id})
+                                        console.log("DocumentUnSelected" + props.document.id)
                                 }}
                                 className="toggle-switch-checkbox" name="toggleSwitch" />
-                            <label  className="toggle-switch-label" htmlFor={id}>
+                            <label  className="toggle-switch-label" htmlFor={props.document.id}>
                                 <span className="toggle-switch-inner"/>
                                 <span className="toggle-switch-switch"/>
                             </label>

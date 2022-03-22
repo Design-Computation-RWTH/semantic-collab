@@ -10,24 +10,34 @@ import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
 import {Container} from "@mantine/core";
 
+type RepresentationsProps = {
+    viewer: any;
+};
 
-function Representations(props) {
+type SelectedDocument = {
+    id: string;
+    url: string;
+    spatial_representation: any;
+    data: any;
+    name: string;
+}
+
+function Representations(props: RepresentationsProps) {
     //const [checked, setChecked] = useState(false);
     const [documents, setDocuments] = useState([]);
-    const [selected_ids, setSelected_ids] = useState([]);
+    const [selected_ids, setSelected_ids] = useState<string[]>([]);
     const [screen, setScreen] = useState(0);
-    const [selected_document, setSelected_document] = useState(null);
+    const [selected_document, setSelected_document] = useState<string>("");
     const [new_file_name, setNew_file_name] = useState(null);
     const [file, setFile] = useState(null);
 
     //
-    let project_id = ReactSession.get("projectid");
-    let UploadFileFieldRef = React.createRef();
+    let project_id:any = ReactSession.get("projectid");
+    let UploadFileFieldRef:any = React.createRef();
 
     init();
 
-    /*
-    function onDocumentSelected(msg, data) {
+    function onDocumentSelected(msg: any, data: SelectedDocument) {
         setSelected_document(data.id);
         setScreen(1);
         PubSub.publish("ShowDocument", {
@@ -38,7 +48,7 @@ function Representations(props) {
             name: data.name,});
     }
 
-    function onShowDocument(msg, data) {
+    function onShowDocument(msg: any, data: { id: any; spatial_representation: string; url: any; data: any; name: any; }) {
         let ids = selected_ids
         if (!ids.includes(data.id)) {
             ids.push(data.id);
@@ -61,7 +71,7 @@ function Representations(props) {
 
     }
 
-        function onDocumentUnSelected(msg, data) {
+    function onDocumentUnSelected(msg: any, data: { id: any; }) {
 
         let ids = selected_ids
         if (ids.includes(data.id)) {
@@ -70,12 +80,12 @@ function Representations(props) {
         }
     }
 
-    function onDocumentsViewStateChange(msg, data) {
+    function onDocumentsViewStateChange() {
         setScreen(0);
         init();
-    } */
+    }
 
-    const onFileSelectionChangeHandler=event=>{
+    const onFileSelectionChangeHandler=(event: any)=>{
         let file = event.target.files[0];
         fileToArrayBuffer(file).then((data) => {
             let file_extension=file.name.split('.').pop().toLowerCase();
@@ -129,7 +139,6 @@ function Representations(props) {
                     }
                     // console.log('picked ifc');
                     // // We send the raw data to the XeoKitView:
-                    // PubSub.publish('NewUploadedIFC', {name: file.name, rawvalue: data, file: file});
 
                     break;
                 case "png":
@@ -152,7 +161,7 @@ function Representations(props) {
     }
 
     function document_list() {
-        return  documents.map(d => {
+        return  documents.map((d:any) => {
             if (d["@id"]) {
                 let selectedId = selected_ids.includes(d["@id"])
                 return <RepresentationFile
@@ -202,7 +211,8 @@ function Representations(props) {
         return leftPanel;
     }
 
-        return  <div className="caia-fill caia-background">
+
+    return  <div className="caia-fill caia-background">
                 <div className="yscroll">
                     {leftPanel}
                 </div>

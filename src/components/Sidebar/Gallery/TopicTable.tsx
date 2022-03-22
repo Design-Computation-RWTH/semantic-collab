@@ -3,7 +3,6 @@ import BcfOWLService from "../../../services/BcfOWLService";
 import {Table} from "react-bootstrap";
 // @ts-ignore
 import {ReactSession} from "react-client-session";
-// @ts-ignore
 import PubSub from "pubsub-js";
 
 let topictable_component:any=null;
@@ -35,7 +34,7 @@ class TopicTable extends React.Component<TopicTableProps, TopicTableState>  {
     }
 
     componentWillUnmount() {
-        PubSub.subscribe(this.subSelectedTopicID);
+        PubSub.unsubscribe(this.subSelectedTopicID);
     }
 
 

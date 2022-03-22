@@ -3,7 +3,6 @@ import {Container} from "@mantine/core";
 import {TaskListPreview} from "./Tasks/TaskListPreview";
 import {TaskListCreation} from "./Tasks/TaskListCreation";
 import XeoKitView from "../Viewport/XeoKitView";
-// @ts-ignore
 import PubSub from "pubsub-js";
 
 const testJSON = require("./Tasks/TasksExample.json")

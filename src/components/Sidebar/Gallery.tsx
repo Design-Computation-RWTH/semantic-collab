@@ -10,7 +10,6 @@ import ImageService from "../../services/ImageService"
 import BCFAPIService from "../../services/BCFApIService"
 
 import TopicTable from "./Gallery/TopicTable";
-// @ts-ignore
 import PubSub from "pubsub-js";
 
 class SnapShotThumbnail {

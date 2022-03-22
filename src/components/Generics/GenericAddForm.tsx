@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
-// @ts-ignore
 import PubSub from "pubsub-js";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";

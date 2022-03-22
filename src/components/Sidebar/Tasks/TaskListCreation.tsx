@@ -3,7 +3,6 @@ import React, {MouseEventHandler} from "react";
 import {Accordion, Form} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BcfOWLService from "../../../services/BcfOWLService";
-// @ts-ignore
 import PubSub from "pubsub-js";
 import XeoKitView from "../../Viewport/XeoKitView";
 import BcfOWLProjectSetup from "../../../services/BcfOWLProjectSetup";

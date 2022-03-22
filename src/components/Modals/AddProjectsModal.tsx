@@ -4,7 +4,6 @@ import React, {useState} from "react";
 import {BsPlusLg} from "react-icons/bs"
 import { useModals } from '@mantine/modals';
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
-// @ts-ignore
 import PubSub from 'pubsub-js';
 
 

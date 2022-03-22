@@ -261,6 +261,7 @@ class Representations extends React.Component {
                     value=value["@graph"];
                 if(!Array.isArray(value))
                     value=[value];
+                console.log("document value: "+value);
                 this.setState({ documents: value });
 
                 ReactSession.set("project_documents_pid"+this.project_id, value);

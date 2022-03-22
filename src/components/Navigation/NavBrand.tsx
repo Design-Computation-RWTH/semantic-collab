@@ -3,7 +3,6 @@ import Navbar from "react-bootstrap/Navbar";
 import PropTypes from 'prop-types';
 import React from "react";
 import Nav from "react-bootstrap/Nav";
-// @ts-ignore
 import PubSub from "pubsub-js";
 import Cookies from "js-cookie";
 
