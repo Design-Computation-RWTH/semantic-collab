@@ -1,41 +1,35 @@
 import React from "react";
-import { Gantt, ViewMode } from 'gantt-task-react';
+import { Gantt, ViewMode } from "gantt-task-react";
 import PubSub from "pubsub-js";
 
 type TaskListProps = {
-    TaskJson: object;
+  TaskJson: object;
 };
 
 type TaskListState = {
-    tasks:any;
+  tasks: any;
 };
 
-export class TaskListPreview extends React.Component<TaskListProps,TaskListState> {
+export class TaskListPreview extends React.Component<
+  TaskListProps,
+  TaskListState
+> {
+  constructor(props: TaskListProps | Readonly<TaskListProps>) {
+    super(props);
+    this.state = {
+      tasks: null,
+    };
+  }
 
-    constructor(props: TaskListProps | Readonly<TaskListProps>) {
-        super(props);
-        this.state = {
-            tasks: null,
-        }
-    }
+  componentWillUnmount() {}
 
-    componentWillUnmount() {
-    }
+  render() {
+    return <div>Task List</div>;
+  }
 
-    render() {
+  componentDidMount() {
+    this.init();
+  }
 
-        return (
-            <div>
-                Task List
-            </div>);
-    }
-
-
-    componentDidMount() {
-        this.init()
-    }
-
-    init() {
-
-    }
+  init() {}
 }
