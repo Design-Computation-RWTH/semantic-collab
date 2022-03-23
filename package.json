@@ -4,7 +4,6 @@
   "private": true,
   "devDependencies": {
     "@types/pubsub-js": "^1.8.3",
-    "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.0",
     "prettier": "^2.6.0",
     "react-app-rewired": "^2.2.1",
