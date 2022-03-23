@@ -30,8 +30,8 @@ export default function Representations(props: RepresentationsProps) {
   const [selected_ids, setSelected_ids] = useState<string[]>([]);
   const [screen, setScreen] = useState(0);
   const [selected_document, setSelected_document] = useState<string>("");
-  const [new_file_name, setNew_file_name] = useState(null);
-  const [file, setFile] = useState(null);
+  const [new_file_name, setNew_file_name] = useState("");
+  const [file, setFile] = useState("");
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
@@ -295,8 +295,8 @@ export default function Representations(props: RepresentationsProps) {
             }}
           />
           <RepresentationDetails
-            selected_document={selected_document}
-            newfilename={new_file_name}
+            selectedDocument={selected_document}
+            newFileName={new_file_name}
             file={file}
             viewer={viewer}
           />

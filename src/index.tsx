@@ -19,31 +19,6 @@ const Root = () => {
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
-  return (
-    <ColorSchemeProvider
-      colorScheme={colorScheme}
-      toggleColorScheme={toggleColorScheme}
-    >
-      <ViewerProvider>
-        <MantineProvider
-          theme={{
-            colorScheme,
-            primaryColor: colorScheme === "light" ? "dark" : "gray",
-            fontFamily: "Verdana, sans-serif",
-            spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
-          }}
-        >
-          <ModalsProvider>
-            <BrowserRouter>
-              <CAIA />
-            </BrowserRouter>
-          </ModalsProvider>
-        </MantineProvider>
-      </ViewerProvider>
-    </ColorSchemeProvider>
-  );
-};
-
     return (
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
             <NotificationsProvider>

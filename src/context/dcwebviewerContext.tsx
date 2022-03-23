@@ -31,13 +31,7 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         };
         setVisibleDocuments([...visibleDocuments, newVisibleDocument]);
     };
-    setVisibleDocuments([...visibleDocuments, newVisibleDocument]);
-  };
 
-  /*    const addViewer = (viewer: Viewer) => {
-        const newViewer: Viewer = viewer;
-        setViewer([...viewer, newViewer]);
-    }*/
 
     return <ViewerContext.Provider value={
         {
