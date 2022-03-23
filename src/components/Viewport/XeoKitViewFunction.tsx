@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 // @ts-ignore
 
 import {
@@ -18,12 +18,11 @@ import {
   ReadableGeometry,
   Mesh,
   PhongMaterial,
-  Node,
-} // @ts-ignore
-from "@xeokit/xeokit-sdk";
+  Node, // @ts-ignore
+} from "@xeokit/xeokit-sdk";
 
-import {ViewerContext} from "../../context/dcwebviewerContext";
-import {DcWebViewerContextType} from "../../@types/dcwebviewer";
+import { ViewerContext } from "../../context/dcwebviewerContext";
+import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 import BcfOWLService from "../../services/BcfOWLService";
 import ImageService from "../../services/ImageService";
 import PubSub from "pubsub-js";
@@ -32,39 +31,37 @@ import Sidebar from "../Sidebar/Sidebar";
 
 const wkt = require("terraformer-wkt-parser");
 
-
 let XeoKitView_instance: any = null;
-let annotation_instance:any = null;
-let NavCubeInst:any = null;
-let distanceMeasurements_instance:any = null;
-let ifcdata:any = null;
-let newplandata:any = null;
-let cameraControl:any = null;
+let annotation_instance: any = null;
+let NavCubeInst: any = null;
+let distanceMeasurements_instance: any = null;
+let ifcdata: any = null;
+let newplandata: any = null;
+let cameraControl: any = null;
 
 // Since we don't have Enums in JS, we have to fall back here to Strings. Current Click Modes are:
 // - Select (for selecting/picking objects in the Viewer) Default
 // - Measure (for measuring Distances in the Viewer)
 // - MeasureOnce (for handling a one time measurement)
 
-
 class MyDataSource {
+  // Gets the contents of the given IFC file in an arraybuffer
+  getIFC(src: any, ok: any, error: any) {
+    console.log("get IFC SRC: " + src);
 
-    // Gets the contents of the given IFC file in an arraybuffer
-    getIFC(src:any, ok:any, error:any) {
-        console.log("get IFC SRC: " + src);
-
-        //ok(this.buffer)
-        ok(ifcdata)
-        /*if(ifcdata)
+    //ok(this.buffer)
+    ok(ifcdata);
+    /*if(ifcdata)
             ok(ifcdata)
         else
             error("No IFC Data")*/
-    }
+  }
 }
 
-export default function XeoKitView () {
-
-  const { setViewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
+export default function XeoKitView() {
+  const { setViewer } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
 
   let imageservice = new ImageService();
 
@@ -77,26 +74,26 @@ export default function XeoKitView () {
 
   let clickMode = "Select";
 
-  let un_subsel:any;
-  let un_subclick:any;
-  let un_subdocun:any;
-  let un_docmov:any;
-  let un_docmeasca:any;
-  let un_docrot:any;
-  let un_docsca:any;
-  let un_newuplifc:any;
-  let un_newuplplan:any;
-  let un_cancelnewdocu:any;
-  let un_changeViewMode:any;
+  let un_subsel: any;
+  let un_subclick: any;
+  let un_subdocun: any;
+  let un_docmov: any;
+  let un_docmeasca: any;
+  let un_docrot: any;
+  let un_docsca: any;
+  let un_newuplifc: any;
+  let un_newuplplan: any;
+  let un_cancelnewdocu: any;
+  let un_changeViewMode: any;
 
   useEffect(() => {
-    console.log("Xeokit Mounted")
+    console.log("Xeokit Mounted");
     init();
-  }, [])
+  }, []);
 
   useEffect(() => {
     return () => {
-      console.log("Unmount")
+      console.log("Unmount");
       PubSub.unsubscribe(un_subsel);
       PubSub.unsubscribe(un_subdocun);
       PubSub.unsubscribe(un_docmov);
@@ -113,22 +110,27 @@ export default function XeoKitView () {
       documentNodes = {};
       viewer.destroy();
       //
-    }
-  }, [])
-
+    };
+  }, []);
 
   function init() {
     un_subsel = PubSub.subscribe("DocumentSelected", subDocumentSelected);
     un_subclick = PubSub.subscribe("SetClickMode", subSetClickMode);
     un_subdocun = PubSub.subscribe("DocumentUnSelected", DocumentUnSelected);
     un_docmov = PubSub.subscribe("DocumentMoved", subDocumentMoved);
-    un_docmeasca = PubSub.subscribe("DocumentMeasuredScale", subDocumentMeasuredScale);
+    un_docmeasca = PubSub.subscribe(
+      "DocumentMeasuredScale",
+      subDocumentMeasuredScale
+    );
     un_docrot = PubSub.subscribe("DocumentRotated", subDocumentRotated);
     un_docsca = PubSub.subscribe("DocumentScaled", subDocumentScaled);
     un_newuplifc = PubSub.subscribe("NewUploadedIFC", subNewUploadedIFC);
     un_newuplplan = PubSub.subscribe("NewUploadedPlan", subNewUploadedPlan);
-    un_cancelnewdocu = PubSub.subscribe("CancelNewDocument", subCancelNewDocument);
-    un_changeViewMode = PubSub.subscribe("ChangeViewMode", changeViewMode)
+    un_cancelnewdocu = PubSub.subscribe(
+      "CancelNewDocument",
+      subCancelNewDocument
+    );
+    un_changeViewMode = PubSub.subscribe("ChangeViewMode", changeViewMode);
 
     viewer = new Viewer({
       canvasId: "viewport_canvas",
@@ -137,19 +139,18 @@ export default function XeoKitView () {
 
     setViewer(viewer);
 
-    distanceMeasurements_instance = new DistanceMeasurementsPlugin(
-        viewer
-    );
+    distanceMeasurements_instance = new DistanceMeasurementsPlugin(viewer);
 
     annotation_instance = new AnnotationsPlugin(viewer, {
-
       //container: document.getElementById("viewport_canvas"),
       // Default HTML template for marker position
-      markerHTML: "<div class='annotation-marker' style='background-color: {{markerBGColor}};'>{{glyph}}</div>",
+      markerHTML:
+        "<div class='annotation-marker' style='background-color: {{markerBGColor}};'>{{glyph}}</div>",
 
       // Default HTML template for label
-      labelHTML: "<div class='annotation-label' style='background-color: {{labelBGColor}};'>" +
-          "<div class='annotation-title'>{{title}}</div><div class='annotation-desc'>{{description}}</div></div>",
+      labelHTML:
+        "<div class='annotation-label' style='background-color: {{labelBGColor}};'>" +
+        "<div class='annotation-title'>{{title}}</div><div class='annotation-desc'>{{description}}</div></div>",
 
       // Default values to insert into the marker and label templates
       values: {
@@ -157,17 +158,20 @@ export default function XeoKitView () {
         labelBGColor: "red",
         glyph: "X",
         title: "Untitled",
-        description: "No description"
-      }
-    })
+        description: "No description",
+      },
+    });
 
     new Mesh(viewer.scene, {
-      geometry: new VBOGeometry(viewer.scene, buildGridGeometry({
-        size: 1000,
-        divisions: 1000
-      })),
+      geometry: new VBOGeometry(
+        viewer.scene,
+        buildGridGeometry({
+          size: 1000,
+          divisions: 1000,
+        })
+      ),
       position: [0, -1.6, 0],
-      collidable: false
+      collidable: false,
     });
 
     cameraControl = viewer.cameraControl;
@@ -179,15 +183,15 @@ export default function XeoKitView () {
     viewer.camera.eye = [0, 100, 0];
     viewer.camera.look = [0, 0, 0];
     viewer.camera.up = [0, 0, 1];
-    viewer.camera.right = [0,1,0];
-    viewer.camera.orbitYaw(180)
+    viewer.camera.right = [0, 1, 0];
+    viewer.camera.orbitYaw(180);
 
-    let lastSelection:any;
+    let lastSelection: any;
     let lastViewpointId;
 
     let measureCount = 0;
 
-    cameraControl.on("picked", (e:any) => {
+    cameraControl.on("picked", (e: any) => {
       if (clickMode === "Select") {
         const entity = e.entity;
         if (lastSelection) {
@@ -195,9 +199,9 @@ export default function XeoKitView () {
         }
         entity.selected = true;
         lastSelection = entity;
-        console.log(entity)
-        const metaObj = viewer.metaScene.metaObjects[entity.id]
-        console.log(metaObj)
+        console.log(entity);
+        const metaObj = viewer.metaScene.metaObjects[entity.id];
+        console.log(metaObj);
         // if id = SM_Image3D it means the object is a viewpoint
         // store the "real" id in lastViewpointId var
         if (entity.id === "SM_Image3D") {
@@ -236,7 +240,7 @@ export default function XeoKitView () {
       }
     });
 
-    cameraControl.on("pickedNothing", (e:any) => {
+    cameraControl.on("pickedNothing", (e: any) => {
       if (lastSelection) {
         lastSelection.selected = false;
       }
@@ -266,10 +270,9 @@ export default function XeoKitView () {
       intensity: 0.5,
       space: "view",
     });
-
   }
 
-  function subSetClickMode(msg:any, data:any) {
+  function subSetClickMode(msg: any, data: any) {
     clickMode = data.clickMode;
     console.log(clickMode);
     if (clickMode === "MeasureOnce") {
@@ -277,7 +280,7 @@ export default function XeoKitView () {
     }
   }
 
-  function subDocumentMoved(msg:any, data:any) {
+  function subDocumentMoved(msg: any, data: any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
     if (!node.isPerformanceModel) {
@@ -290,7 +293,7 @@ export default function XeoKitView () {
     }
   }
 
-  function subDocumentRotated(msg:any, data:any) {
+  function subDocumentRotated(msg: any, data: any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
     if (data.rotation != null) {
@@ -299,46 +302,49 @@ export default function XeoKitView () {
     //
   }
 
-  function subDocumentScaled(msg:any, data:any) {
-    console.log("scaled")
+  function subDocumentScaled(msg: any, data: any) {
+    console.log("scaled");
     let document_uri = data.id;
     let node = documentNodes[document_uri];
     node.scale = [data.scale, data.scale, data.scale];
   }
 
-  function subDocumentMeasuredScale(msg:any, data:any) {
+  function subDocumentMeasuredScale(msg: any, data: any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
-    node.scale = [node.scale[0] * data.value , node.scale[1] * data.value, node.scale[2] * data.value];
+    node.scale = [
+      node.scale[0] * data.value,
+      node.scale[1] * data.value,
+      node.scale[2] * data.value,
+    ];
   }
 
   //Load a Document by its URI. If the Document is already in the list (XeoKitView_instance.documents) just make it visible
   //and don't download it again
-  function subDocumentSelected(msg:any, data:any) {
+  function subDocumentSelected(msg: any, data: any) {
     let document_uri = data.id;
     let file_uri = data.url;
     let name = data.name;
     if (!file_uri) {
-      console.log("Xeokit Select Document: File URI is missing!")
-      return
-    };
+      console.log("Xeokit Select Document: File URI is missing!");
+      return;
+    }
     if (documents.has(document_uri)) {
-      console.log("Xeokit Select Document: Document URI is missing!")
+      console.log("Xeokit Select Document: Document URI is missing!");
       // Just to avoid double load
       return;
     }
     if (!data) {
-      console.log("Xeokit Select Document: No Data!")
-      return
-    };
+      console.log("Xeokit Select Document: No Data!");
+      return;
+    }
     if (!data.spatial_representation) {
-      console.log("Xeokit Select Document: Missing Spatial Representation!")
-      return
-    };
-    if (!data.spatial_representation.hasLocation)
-    {
+      console.log("Xeokit Select Document: Missing Spatial Representation!");
+      return;
+    }
+    if (!data.spatial_representation.hasLocation) {
       // In DC.Chair Test this was missing
-      console.log("Xeokit Select Document: Spatial Representation!")
+      console.log("Xeokit Select Document: Spatial Representation!");
       return;
     }
 
@@ -346,7 +352,7 @@ export default function XeoKitView () {
     let rotation = wkt.parse(data.spatial_representation.hasRotation);
     let scale = wkt.parse(data.spatial_representation.hasScale);
 
-    console.log("Xeokit Select Document: Success")
+    console.log("Xeokit Select Document: Success");
     documents.add(document_uri);
     if (viewer) {
       if (documentNodes[document_uri])
@@ -356,77 +362,72 @@ export default function XeoKitView () {
           let image = imageservice.getImageData4URL(file_uri);
           image.then((imgblob: Blob) => {
             loadDocument(
-                document_uri,
-                imgblob,
-                location,
-                rotation,
-                scale,
-                name
+              document_uri,
+              imgblob,
+              location,
+              rotation,
+              scale,
+              name
             );
-          })
-        }
-        else if (file_uri.endsWith(".ifc")) {
+          });
+        } else if (file_uri.endsWith(".ifc")) {
           let ifc = imageservice.getImageData4URL(file_uri + ".xkt");
           ifc.then((ifcblob: Blob) => {
-            loadIFC(
-                document_uri,
-                ifcblob,
-                location,
-                rotation,
-                scale,
-                name
-            )
-          })
+            loadIFC(document_uri, ifcblob, location, rotation, scale, name);
+          });
           console.log(ifc);
         } else {
-          PubSub.publish("Alert", {type: "warning", message: "Unknown file type", title: "ERROR: Load Spatial Representation"})
+          PubSub.publish("Alert", {
+            type: "warning",
+            message: "Unknown file type",
+            title: "ERROR: Load Spatial Representation",
+          });
         }
-
       }
     }
   }
 
-  function DocumentUnSelected(msg:any, data:any) {
+  function DocumentUnSelected(msg: any, data: any) {
     if (!documents.has(data.id)) return;
     documents.delete(data.id);
 
-    console.log("Model Node: " + documentNodes[data.id])
+    console.log("Model Node: " + documentNodes[data.id]);
 
     if (documentNodes[data.id]) {
-      console.log("Visibility: " + documentNodes[data.id])
+      console.log("Visibility: " + documentNodes[data.id]);
       documentNodes[data.id].visible = false;
     }
   }
 
-  function subNewUploadedIFC(msg:any, data:any) {
-      ifcdata=data.value;
-      console.log("subNewUploadedIFC data: "+data.name)
-      let ifcLoader = new WebIFCLoaderPlugin(viewer, {
-          wasmPath: "",
-          dataSource: new MyDataSource()
-      });
-      console.log("subNewUploadedIFC load using ifcLoader ");
+  function subNewUploadedIFC(msg: any, data: any) {
+    ifcdata = data.value;
+    console.log("subNewUploadedIFC data: " + data.name);
+    let ifcLoader = new WebIFCLoaderPlugin(viewer, {
+      wasmPath: "",
+      dataSource: new MyDataSource(),
+    });
+    console.log("subNewUploadedIFC load using ifcLoader ");
 
-      let model = ifcLoader.load({
-              id: "ifcModel",
-              src: "browser data",
-              loadMetadata: true, // Default
-              excludeTypes: ["IfcSpace"],
-              edges: true,
-      });
+    let model = ifcLoader.load({
+      id: "ifcModel",
+      src: "browser data",
+      loadMetadata: true, // Default
+      excludeTypes: ["IfcSpace"],
+      edges: true,
+    });
 
-      model.on("loaded", function () {
-              console.log("IFC model loaded")
-      });
+    model.on("loaded", function () {
+      console.log("IFC model loaded");
+    });
   }
 
-  function subNewUploadedPlan(msg:any, data:any) {
-    newplandata=data.rawvalue;
+  function subNewUploadedPlan(msg: any, data: any) {
+    newplandata = data.rawvalue;
 
     // first destroy the old new_temp_plan if available!
     if (documentNodes["new_temp_plan"]) {
       let childs = documentNodes["new_temp_plan"].children;
-      for ( let child in childs) {
+      for (let child in childs) {
         childs[child].destroy();
       }
       documentNodes["new_temp_plan"].destroy();
@@ -439,55 +440,58 @@ export default function XeoKitView () {
 
     // use the same function as for the loading of existing documents
     loadDocument(
-        "new_temp_plan",
-        newplandata,
-        location,
-        rotation,
-        scale,
-        "TempName"
+      "new_temp_plan",
+      newplandata,
+      location,
+      rotation,
+      scale,
+      "TempName"
     );
-    PubSub.publish("UploadedPlanCreated")
+    PubSub.publish("UploadedPlanCreated");
   }
 
-  function subCancelNewDocument(msg:any, data:any) {
+  function subCancelNewDocument(msg: any, data: any) {
     // destroy "new_temp_plan" if operation gets canceled!
     if (documentNodes["new_temp_plan"]) {
       let childs = documentNodes["new_temp_plan"].children;
-      for ( let child in childs) {
+      for (let child in childs) {
         childs[child].destroy();
       }
       documentNodes["new_temp_plan"].destroy();
     }
 
-    newplandata = null
-    ifcdata = null
+    newplandata = null;
+    ifcdata = null;
   }
 
-  function changeViewMode(msg:any, data:any) {
-
+  function changeViewMode(msg: any, data: any) {
     if (cameraControl) {
-      console.log(cameraControl.navMode)
+      console.log(cameraControl.navMode);
       if (cameraControl.navMode === "planView") {
         cameraControl.navMode = "orbit";
         viewer.camera.projection = "perspective";
         NavCubeInst.setVisible(true);
-
       } else if (cameraControl.navMode === "orbit") {
         cameraControl.navMode = "planView";
         viewer.camera.projection = "ortho";
         viewer.camera.eye = [0, 100, 0];
         viewer.camera.look = [0, 0, 0];
         viewer.camera.up = [0, 0, 1];
-        viewer.camera.right = [0,1,0];
-        viewer.camera.orbitYaw(180)
+        viewer.camera.right = [0, 1, 0];
+        viewer.camera.orbitYaw(180);
         NavCubeInst.setVisible(false);
       }
-
     }
-
   }
 
-  function loadDocument(document_url:string, imgblob:any, location:any, rotation:any, scale:any, name:string) {
+  function loadDocument(
+    document_url: string,
+    imgblob: any,
+    location: any,
+    rotation: any,
+    scale: any,
+    name: string
+  ) {
     if (imgblob.size > 0) {
       let image_localurl = URL.createObjectURL(imgblob);
       let img = new Image();
@@ -512,14 +516,14 @@ export default function XeoKitView () {
             new Mesh(viewer.scene, {
               //TODO: xeokit sometimes throws an error here
               geometry: new ReadableGeometry(
-                  viewer.scene,
-                  buildPlaneGeometry({
-                    center: [0, 0, 0],
-                    xSize: (width / 10) * scale.coordinates[0],
-                    zSize: (height / 10) * scale.coordinates[0],
-                    xSegments: 1,
-                    zSegments: 1,
-                  })
+                viewer.scene,
+                buildPlaneGeometry({
+                  center: [0, 0, 0],
+                  xSize: (width / 10) * scale.coordinates[0],
+                  zSize: (height / 10) * scale.coordinates[0],
+                  xSegments: 1,
+                  zSegments: 1,
+                })
               ),
               material: new PhongMaterial(viewer.scene, {
                 emissive: [0.3, 0.3, 0.3],
@@ -540,19 +544,26 @@ export default function XeoKitView () {
     }
   }
 
-  function loadIFC(document_url:string, ifcblob:any, location:any, rotation:any, scale:any, name:string) {
-    ifcblob.arrayBuffer().then((ifcbuffer:any) => {
-      let  xktLoader = new XKTLoaderPlugin(viewer);
+  function loadIFC(
+    document_url: string,
+    ifcblob: any,
+    location: any,
+    rotation: any,
+    scale: any,
+    name: string
+  ) {
+    ifcblob.arrayBuffer().then((ifcbuffer: any) => {
+      let xktLoader = new XKTLoaderPlugin(viewer);
       let model = xktLoader.load({
         id: document_url,
         xkt: ifcbuffer,
         edges: true,
-        position: [0,0,0],
+        position: [0, 0, 0],
       });
       model.on("loaded", () => {
-        console.log("!!IFC model loaded")
+        console.log("!!IFC model loaded");
       });
-      console.log(model)
+      console.log(model);
       documentNodes[document_url] = model;
     });
   }
@@ -564,72 +575,75 @@ export default function XeoKitView () {
       return;
     }
     bcfowl
-        .getViepointCameras4Document(document_uri)
-        .then((perspactivecameras) => {
-          if (perspactivecameras["@graph"])
-            perspactivecameras = perspactivecameras["@graph"];
-          if (!Array.isArray(perspactivecameras))
-            perspactivecameras = [perspactivecameras];
-          perspactivecameras.forEach((camera:any) => {
-            let node = documentNodes[document_uri];
-            const gltfLoader = new GLTFLoaderPlugin(viewer);
-            if (!camera.hasCameraViewPoint)
-                // Should always have a value
-              return;
-            let location = wkt.parse(camera.hasCameraViewPoint);
-            if (!location) return;
+      .getViepointCameras4Document(document_uri)
+      .then((perspactivecameras) => {
+        if (perspactivecameras["@graph"])
+          perspactivecameras = perspactivecameras["@graph"];
+        if (!Array.isArray(perspactivecameras))
+          perspactivecameras = [perspactivecameras];
+        perspactivecameras.forEach((camera: any) => {
+          let node = documentNodes[document_uri];
+          const gltfLoader = new GLTFLoaderPlugin(viewer);
+          if (!camera.hasCameraViewPoint)
+            // Should always have a value
+            return;
+          let location = wkt.parse(camera.hasCameraViewPoint);
+          if (!location) return;
 
-            let direction = wkt.parse(camera.hasCameraDirection);
-            if (!direction) return;
+          let direction = wkt.parse(camera.hasCameraDirection);
+          if (!direction) return;
 
-            let x = direction.coordinates[0];
-            let y = direction.coordinates[1];
-            // let z = direction.coordinates[2];
+          let x = direction.coordinates[0];
+          let y = direction.coordinates[1];
+          // let z = direction.coordinates[2];
 
-            if (x === 0) x = 0.01;
-            let tz = Math.atan(y / x);
-            tz = tz * (180 / Math.PI);
-            if (x < 0 && y > 0) tz += 180;
-            if (x < 0 && y < 0) tz -= 180;
+          if (x === 0) x = 0.01;
+          let tz = Math.atan(y / x);
+          tz = tz * (180 / Math.PI);
+          if (x < 0 && y > 0) tz += 180;
+          if (x < 0 && y < 0) tz -= 180;
 
-            let guid = camera["@id"];
-            let image3D = gltfLoader.load({
-              id: guid,
-              src: "../../Image3D.gltf",
-              edges: false,
-              rotation: [0, tz, 0], // ax, cz, by
-              position: [
-                location.coordinates[0],
-                location.coordinates[2],
-                location.coordinates[1] * -1,
-              ],
-              performance: false,
-            });
-            node.addChild(image3D);
+          let guid = camera["@id"];
+          let image3D = gltfLoader.load({
+            id: guid,
+            src: "../../Image3D.gltf",
+            edges: false,
+            rotation: [0, tz, 0], // ax, cz, by
+            position: [
+              location.coordinates[0],
+              location.coordinates[2],
+              location.coordinates[1] * -1,
+            ],
+            performance: false,
           });
-        })
-        .catch(err => {
-          console.log(err)
+          node.addChild(image3D);
         });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
-  return <div className="caia-row">
-      <Sidebar viewer={viewer}/>
-      <canvas id="viewport_canvas" className="viewport"/>
+  return (
+    <div className="caia-row">
+      <Sidebar viewer={viewer} />
+      <canvas id="viewport_canvas" className="viewport" />
       <div className="plan-toggle">
         <div className="btn-group-toggle" data-toggle="buttons">
           <label className="btn btn-secondary active">
-            <input type="checkbox" autoComplete="off" onClick={(e:any) => {
-              PubSub.publish("ChangeViewMode", {test: "test"})
-              console.log(e.target.checked)
-            }
-            }/>
-             3D Mode
+            <input
+              type="checkbox"
+              autoComplete="off"
+              onClick={(e: any) => {
+                PubSub.publish("ChangeViewMode", { test: "test" });
+                console.log(e.target.checked);
+              }}
+            />
+            3D Mode
           </label>
         </div>
       </div>
-      <canvas id="myNavCubeCanvas" className="viewport-nav-cube"/>
-  </div>;
-
-
+      <canvas id="myNavCubeCanvas" className="viewport-nav-cube" />
+    </div>
+  );
 }

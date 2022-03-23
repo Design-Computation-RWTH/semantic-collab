@@ -1,11 +1,10 @@
-
 :root {
   --caia-main-header: #2b2b2b;
   --caia-header: #424546;
   --caia-highlighted-1: #0dcc58;
   --caia-accent: #869299;
   --caia-highlighted-2: #cb483c;
-  --caia-background: #F0F0F0;
+  --caia-background: #f0f0f0;
   --caia-font: "Trebuchet MS";
   max-height: 100%;
   max-width: 100%;
@@ -20,14 +19,14 @@
 .canvas {
   position: absolute;
   z-index: 0;
-  margin : 0;
-  height : 100vh;
+  margin: 0;
+  height: 100vh;
   max-height: 100vh;
   width: 100vw;
   max-width: 100vw;
 }
 
-.submenu-header{
+.submenu-header {
   background-color: var(--caia-header);
   color: white;
   font-family: var(--caia-font);
@@ -72,7 +71,7 @@
 }
 
 .annotation-label:after {
-  content: '';
+  content: "";
   position: absolute;
   border-style: solid;
   border-width: 8px 12px 8px 0;
@@ -86,7 +85,7 @@
 }
 
 .annotation-label:before {
-  content: '';
+  content: "";
   position: absolute;
   border-style: solid;
   border-width: 9px 13px 9px 0;
@@ -108,19 +107,14 @@
   font: normal 14px arial, serif;
 }
 
-
-
-.gallery-big-image{
+.gallery-big-image {
   align-items: center;
   position: center;
   border: #cb483c;
   border-radius: 10px;
 }
 
-
-
-
-.caia-background{
+.caia-background {
   background-color: var(--caia-background);
 }
 
@@ -160,10 +154,9 @@
 }
 
 .caia-default {
-
 }
 
-.caia-submenu-border{
+.caia-submenu-border {
   background-color: var(--caia-header);
   height: 50px;
   color: white;
@@ -175,7 +168,7 @@
   align-items: center;
 }
 
-.caia-sidebar-header{
+.caia-sidebar-header {
   height: 50px;
   color: white;
   font-family: var(--caia-font);
@@ -190,20 +183,19 @@
   width: 100%;
 }
 
-.caia-default-text{
+.caia-default-text {
   color: white;
   padding-right: 20px;
   font-family: var(--caia-font);
 }
-a{
-  color: var(--caia-accent)
-
+a {
+  color: var(--caia-accent);
 }
-a:hover{
-  color: var(--caia-highlighted-2)
+a:hover {
+  color: var(--caia-highlighted-2);
 }
 
-.caia-big-center-text-black{
+.caia-big-center-text-black {
   font-family: var(--caia-font);
   font-size: x-large;
   text-align: center;
@@ -241,12 +233,12 @@ a:hover{
 .tab-content {
   height: 100px;
   flex-grow: 1;
-  display:flex;
+  display: flex;
   flex-direction: column;
 }
 
 .tab-pane {
-  height: 100%
+  height: 100%;
 }
 
 .graph {
@@ -271,7 +263,7 @@ a:hover{
   max-width: 30vw;
 }
 
-.viewport-nav-cube{
+.viewport-nav-cube {
   position: absolute;
   right: 5vh;
   bottom: 5vh;
@@ -283,16 +275,14 @@ a:hover{
   overflow: hidden;
 }
 
-.plan-toggle{
+.plan-toggle {
   position: absolute;
   right: 5vh;
   top: 15vh;
 }
 
 .plan-check {
-
 }
-
 
 .navcube {
   position: absolute;
@@ -305,7 +295,7 @@ a:hover{
 
 .left-minus-symbol {
   text-align: left;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 /*input[type="checkbox"] {
@@ -332,13 +322,11 @@ a:hover{
   background: purple;
 }*/
 
-
-
 .image {
   float: left;
-  width:  150px;
+  width: 150px;
   height: 150px;
-  object-fit:scale-down;
+  object-fit: scale-down;
   padding: 3px;
   border: 10px black;
   border-radius: 10px;
@@ -359,12 +347,11 @@ a:hover{
 }
 
 .caia_card {
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   border-color: black;
-
 }
 
-.btn-caia{
+.btn-caia {
   background-color: var(--caia-accent);
   color: white;
   padding-left: 20px;
@@ -373,10 +360,10 @@ a:hover{
   font-family: var(--caia-font);
   font-size: large;
 }
-    .btn-caia:hover{
-      background-color: var(--caia-highlighted-2);
-      border-color: var(--caia-highlighted-2);
-    }
+.btn-caia:hover {
+  background-color: var(--caia-highlighted-2);
+  border-color: var(--caia-highlighted-2);
+}
 
 .btn-caia-hidden {
   background-color: transparent;
@@ -392,29 +379,29 @@ a:hover{
   border-color: transparent;
 }
 
-.btn-caia-icon{
+.btn-caia-icon {
   background-color: rgba(255, 255, 255, 0);
   color: white;
   border: 0;
 }
-.btn-caia-icon:hover{
-  background-color: var(--caia-highlighted-2)
+.btn-caia-icon:hover {
+  background-color: var(--caia-highlighted-2);
 }
 
-.btn-caia-icon-size{
+.btn-caia-icon-size {
   font-size: 1.5rem;
 }
 
-.btn-caia-icon-black{
+.btn-caia-icon-black {
   background-color: rgba(255, 255, 255, 0);
   color: black;
   border: 0;
 }
-.btn-caia-icon-black:hover{
-  background-color: var(--caia-highlighted-2)
+.btn-caia-icon-black:hover {
+  background-color: var(--caia-highlighted-2);
 }
 
-.btn-caia-icon-size-black{
+.btn-caia-icon-size-black {
   font-size: 1.5rem;
 }
 
@@ -425,7 +412,6 @@ a:hover{
   -ms-transform: translatex(-50%);
   transform: translateX(-50%);
 }
-
 
 .caia_tablefont {
   font-size: 75%;
@@ -466,7 +452,8 @@ a:hover{
   margin-left: -100%;
   transition: margin 0.3s ease-in 0s;
 }
-.toggle-switch-inner::before, .toggle-switch-inner::after {
+.toggle-switch-inner::before,
+.toggle-switch-inner::after {
   display: block;
   float: left;
   width: 50%;
@@ -534,31 +521,31 @@ a:hover{
   background-color: var(--caia-highlighted-2);
 }
 
-.tree-style{
+.tree-style {
   list-style-type: none;
   font-family: var(--caia-font);
   font-size: large;
-}   ul {
-      list-style-type: none
-    }
+}
+ul {
+  list-style-type: none;
+}
 
-.minus{
+.minus {
   font-family: var(--caia-font);
   font-size: x-large;
   color: black;
   text-decoration-line: none;
 }
-.plus{
+.plus {
   font-family: var(--caia-font);
   font-size: x-large;
   color: black;
   text-decoration-line: none;
 }
 
-.invisible{
+.invisible {
   display: none;
 }
-
 
 /***************** NAVBAR *****************/
 
@@ -572,7 +559,7 @@ a:hover{
 .navbar-wrapper {
   font-family: var(--caia-font);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: var(--caia-main-header) ;
+  background-color: var(--caia-main-header);
   height: 120px;
   padding: 15px 20px;
   display: flex;
@@ -593,7 +580,6 @@ a:hover{
 }
 
 .navbar-logout {
-
 }
 
 .navbar-links {
@@ -603,29 +589,29 @@ a:hover{
   justify-content: space-between;
 }
 
-.navbar-text{
-  color: rgba(255,255,255,255);
+.navbar-text {
+  color: rgba(255, 255, 255, 255);
   padding: 20px;
   font-size: large;
   text-decoration: unset;
 }
 
-.navbar-text-links{
-  color: rgba(255,255,255,255);
+.navbar-text-links {
+  color: rgba(255, 255, 255, 255);
   padding: 20px;
   font-size: large;
   text-decoration: unset;
 }
 
-.navbar-text-project{
-  color: rgba(255,255,255,255);
+.navbar-text-project {
+  color: rgba(255, 255, 255, 255);
   padding: 20px;
   font-size: x-large;
   text-decoration: unset;
 }
 
 .navbar-collapse {
-  background-color: var(--caia-main-header) ;
+  background-color: var(--caia-main-header);
 }
 
 .navbar-toggle {
@@ -640,7 +626,7 @@ a:hover{
 
 .footer-text {
   font-family: var(--caia-font);
-  color: rgba(255,255,255,255);
+  color: rgba(255, 255, 255, 255);
 }
 
 .footer {
@@ -656,7 +642,7 @@ a:hover{
   line-height: 5vh;
   /* height: 5vh; */
   width: 100%;
-  z-index: 200000;  /* To ensure that the side bar is not on top of this. */
+  z-index: 200000; /* To ensure that the side bar is not on top of this. */
 }
 
 /***************** Main page *****************/
@@ -676,46 +662,46 @@ a:hover{
 }
 
 .workspace {
-  flex: 1 1 auto
+  flex: 1 1 auto;
 }
 
 .caia-main {
   position: absolute;
   z-index: 10000;
-  margin : 0;
-  height : 100vh;
+  margin: 0;
+  height: 100vh;
   width: 100vw;
 }
 
 /***************** Sidebar *****************/
 
-.sidebar-tab-nav{
+.sidebar-tab-nav {
   background-color: var(--caia-header);
   padding: 20px;
   font-family: var(--caia-font);
 }
 
-.sidebar-row{
-  width:100%;
+.sidebar-row {
+  width: 100%;
 }
 
-.nav-item{
+.nav-item {
   color: white;
 }
 
-.nav-link{
+.nav-link {
   color: white;
 
   font-size: large;
 }
-.nav-link:hover{
+.nav-link:hover {
   color: white;
 }
 
 .yscroll {
-  overflow-y:scroll;
-  background-color: var(--caia-background) ;
-  position:relative;
+  overflow-y: scroll;
+  background-color: var(--caia-background);
+  position: relative;
   height: 100%;
   padding: 0;
   margin: 0;
