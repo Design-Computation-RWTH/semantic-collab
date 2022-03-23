@@ -1,7 +1,7 @@
-import React, {FC} from "react";
-import {BsCalendarCheck, BsCardImage,BsLayers} from "react-icons/bs"
+import React, { FC } from "react";
+import { BsCalendarCheck, BsCardImage, BsLayers } from "react-icons/bs";
 // import {Tab, Tabs} from "react-bootstrap";
-import { Tabs } from '@mantine/core';
+import { Tabs } from "@mantine/core";
 import Representations from "./RepresentationsFunction";
 import Gallery from "./Gallery";
 import Tasks from "./Tasks";
@@ -10,54 +10,44 @@ import Tasks from "./Tasks";
 import { Viewer } from "@xeokit/xeokit-sdk";
 
 type SidebarProps = {
-    viewer: Viewer
+  viewer: Viewer;
 };
 
-type SidebarState = {
-
-};
+type SidebarState = {};
 
 export default function Sidebar(props: SidebarProps) {
+  console.log(props.viewer);
+  console.log("Sidebar Viewer");
 
-    console.log(props.viewer)
-    console.log("Sidebar Viewer")
-
-    return (
-        <Tabs style={{
-            display: "flex",
-            width:"40vw",
-            height:"100%",
-            maxHeight:"100%",
-            justifyContent: "flex-start",
-            alignContent:"stretch",
-            alignItems:"stretch",
-            flexDirection:"column",
-
-        }}
-              styles={{
-                  body: {height: "100%"}
-              }}
-              color="dark" grow>
-            <Tabs.Tab
-                label="Representations"
-                icon={<BsLayers/>}
-            >
-                    <Representations/>
-            </Tabs.Tab>
-            <Tabs.Tab
-                label="Gallery"
-                icon={<BsCardImage/>}
-            >
-                    <Gallery/>
-            </Tabs.Tab>
-            <Tabs.Tab
-                label="Tasks"
-                icon={<BsCalendarCheck/>}
-            >
-                    <Tasks/>
-            </Tabs.Tab>
-        </Tabs>
-        )
+  return (
+    <Tabs
+      style={{
+        display: "flex",
+        width: "40vw",
+        height: "100%",
+        maxHeight: "100%",
+        justifyContent: "flex-start",
+        alignContent: "stretch",
+        alignItems: "stretch",
+        flexDirection: "column",
+      }}
+      styles={{
+        body: { height: "100%" },
+      }}
+      color="dark"
+      grow
+    >
+      <Tabs.Tab label="Representations" icon={<BsLayers />}>
+        <Representations />
+      </Tabs.Tab>
+      <Tabs.Tab label="Gallery" icon={<BsCardImage />}>
+        <Gallery />
+      </Tabs.Tab>
+      <Tabs.Tab label="Tasks" icon={<BsCalendarCheck />}>
+        <Tasks />
+      </Tabs.Tab>
+    </Tabs>
+  );
 }
 /*
  class Sidebar_2 extends React.Component<SidebarProps,SidebarState> {

@@ -3,12 +3,15 @@ import {DcWebViewerContextType, VisibleDocument, SelectedDocument} from "../@typ
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 
-
-export const ViewerContext = React.createContext<DcWebViewerContextType | null>(null);
+export const ViewerContext = React.createContext<DcWebViewerContextType | null>(
+  null
+);
 
 const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
-    const [visibleDocuments, setVisibleDocuments] = React.useState<VisibleDocument[]>([])
-    const [viewer, setViewer] = React.useState<Viewer>();
+  const [visibleDocuments, setVisibleDocuments] = React.useState<
+    VisibleDocument[]
+  >([]);
+  const [viewer, setViewer] = React.useState<Viewer>();
 
     const [projectID, setProjectID] = React.useState("");
 
@@ -28,8 +31,10 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         };
         setVisibleDocuments([...visibleDocuments, newVisibleDocument]);
     };
+    setVisibleDocuments([...visibleDocuments, newVisibleDocument]);
+  };
 
-/*    const addViewer = (viewer: Viewer) => {
+  /*    const addViewer = (viewer: Viewer) => {
         const newViewer: Viewer = viewer;
         setViewer([...viewer, newViewer]);
     }*/

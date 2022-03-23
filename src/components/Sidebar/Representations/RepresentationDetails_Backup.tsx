@@ -195,14 +195,12 @@ export default function Representationdetails(props: RepresentaionDetailsProps)
     ));
 
     const storeyRows = storeyTemp.map((r) => (
-        <div>
+      <div>
         <tr>
-            <td className="caia_tablefont">{r.name}</td>
+          <td className="caia_tablefont">{r.name}</td>
         </tr>
-        </div>
-    ))
-
-    let details = <div/>;
+      </div>
+    ));
 
     if (name.endsWith(".png")){
         details = (
@@ -226,18 +224,54 @@ export default function Representationdetails(props: RepresentaionDetailsProps)
                                             e.target.value = name
                                         }
 
-                                    }}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p className="caia-warning" id="name-warning" hidden>Keep in mind: files should be named
-                                    uniquely</p>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+    if (this.state.name.endsWith(".png")) {
+      details = (
+        <div>
+          <div>
+            <table className="caia-table">
+              <tbody>
+                <tr>
+                  <td>
+                    <input
+                      id="document-title"
+                      type="text"
+                      className="form-control caia-title-form"
+                      disabled
+                      defaultValue={this.state.name}
+                      onChange={(e) => {
+                        let value = e.target.value;
+                        if (value.endsWith(".png")) {
+                          this.setState({ name: e.target.value });
+                        } else {
+                          e.target.value = this.state.name;
+                        }
+                      }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p className="caia-warning" id="name-warning" hidden>
+                      Keep in mind: files should be named uniquely
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <Table>
+            <tbody>{listRows}</tbody>
+          </Table>
+          <div className="Container input-group mb-3">
+            <div className="col my-col">
+              <div className="input-group-prepend">
+                <span className="input-group-text">Transformation</span>
+              </div>
+            </div>
+            <div className="row sidebar-row">
+              <div className="col">
+                <div className="input-group-prepend">
+                  <span className="input-group-text">X</span>
                 </div>
                 <Table>
                     <tbody>{listRows}</tbody>

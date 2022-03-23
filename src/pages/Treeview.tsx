@@ -1,37 +1,19 @@
 import React from "react";
 
-type TreeviewProps = {
+type TreeviewProps = {};
 
-};
+type TreeviewState = {};
 
-type TreeviewState = {
+class Treeview extends React.Component<TreeviewProps, TreeviewState> {
+  constructor(props: TreeviewProps | Readonly<TreeviewProps>) {
+    super(props);
+  }
 
-};
+  render() {
+    return <div></div>;
+  }
 
-class Treeview extends React.Component<TreeviewProps,TreeviewState> {
-
-    constructor(props: TreeviewProps | Readonly<TreeviewProps>) {
-        super(props);
-
-    }
-
-    render() {
-
-
-        return (
-
-            <div>
-
-            </div>
-        );
-    }
-
-    componentDidMount() {
-
-
-
-
-    }
+  componentDidMount() {}
 }
 
 export default Treeview;
