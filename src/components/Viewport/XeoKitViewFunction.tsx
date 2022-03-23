@@ -280,6 +280,8 @@ export default function XeoKitView () {
   function subDocumentMoved(msg:any, data:any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
+    console.log("Nodes")
+    console.log(node)
     if (!node.isPerformanceModel) {
       if (data.position != null) {
         node.position = [data.position[0], data.position[1], data.position[2]];

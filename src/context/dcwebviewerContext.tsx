@@ -1,5 +1,5 @@
 import * as React from "react";
-import {DcWebViewerContextType, VisibleDocument} from "../@types/dcwebviewer";
+import {DcWebViewerContextType, VisibleDocument, SelectedDocument} from "../@types/dcwebviewer";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 
@@ -9,6 +9,17 @@ export const ViewerContext = React.createContext<DcWebViewerContextType | null>(
 const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
     const [visibleDocuments, setVisibleDocuments] = React.useState<VisibleDocument[]>([])
     const [viewer, setViewer] = React.useState<Viewer>();
+
+    const [projectID, setProjectID] = React.useState("");
+
+    let InitialDocument:SelectedDocument = {
+        id: "",
+        url: "",
+        spatial_representation: null,
+        data: null,
+        name: ""
+    }
+    const [selectedDocument, setSelectedDocument] = React.useState<SelectedDocument>(InitialDocument)
 
     const addVisibleDocument = (visibleDocument: VisibleDocument) => {
         const newVisibleDocument: VisibleDocument = {
@@ -23,7 +34,12 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setViewer([...viewer, newViewer]);
     }*/
 
-    return <ViewerContext.Provider value={{viewer, setViewer, visibleDocuments, addVisibleDocument}}>{children}</ViewerContext.Provider>;
+    return <ViewerContext.Provider value={
+        {
+            viewer, setViewer,
+            projectID, setProjectID,
+            selectedDocument, setSelectedDocument,
+            visibleDocuments, addVisibleDocument}}>{children}</ViewerContext.Provider>;
 };
 
 export default ViewerProvider;

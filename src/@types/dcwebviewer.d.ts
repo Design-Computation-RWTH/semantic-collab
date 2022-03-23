@@ -7,9 +7,25 @@ export interface VisibleDocument {
     uri: string;
 }
 
+export type SelectedDocument = {
+    id: string;
+    url: string;
+    spatial_representation: any;
+    data: any;
+    name: string;
+}
+
 export type DcWebViewerContextType = {
+
     viewer: Viewer;
-    setViewer: Viewer;
+    setViewer: Dispatch<SetStateAction<Viewer>>;
+
+    projectID: string;
+    setProjectID: Dispatch<SetStateAction<string>>;
+
+    selectedDocument: SelectedDocument;
+    setSelectedDocument: Dispatch<SetStateAction<SelectedDocument>>;
+
     visibleDocuments: VisibleDocument[];
     addVisibleDocument: (document: VisibleDocument) => void;
     //addViewer: (viewer: Viewer) => void;
