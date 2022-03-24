@@ -25,7 +25,7 @@ class SnapShotThumbnail {
 }
 
 export default function Gallery() {
-  const [viewpoints, setViewpoints] = useState<any[]>([]);
+  const [imageslist, setImageslist] = useState<any[]>([]);
   const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
   const [active_topic, setActive_topic] = useState<any>(null);
   const [screen, setScreen] = useState<number>(0);
@@ -62,32 +62,9 @@ export default function Gallery() {
     setScreen(1);
   }
 
-  function imageslist1() {
-    let imageservice: ImageService = new ImageService();
-    return viewpoints.map((s) => (
-      <img
-        className={"image"}
-        key={s.uri}
-        src={s.uri}
-        alt={""}
-        onClick={() => {
-          setScreen(1);
-
-          let image = imageservice.getImageData4GUID(s.guid);
-          setActive_topic(s.topic_guid);
-          PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
-          image.then((img: any) => {
-            if (img.size > 0) {
-              let url = URL.createObjectURL(img);
-              setLarge_image_uri(url);
-            }
-          });
-        }}
-      />
-    ));
-  }
 
   function gallery() {
+    console.log("gallery "+imageslist.length)
     let gallery_content;
     if (screen === 0) {
       // DEFAULT VIEW
@@ -97,7 +74,7 @@ export default function Gallery() {
             <div>
               <Row>
                 <Col xs={11} md={11}>
-                  {imageslist1()}
+                  {imageslist}
                 </Col>
               </Row>
             </div>
@@ -142,6 +119,7 @@ export default function Gallery() {
     init();
   }, []);
 
+  let viewpoints:any[]=[];
   function init() {
     let bcfapi = new BCFAPIService();
     let imageservice: ImageService = new ImageService();
@@ -156,7 +134,8 @@ export default function Gallery() {
               let joined = viewpoints.concat(
                 new SnapShotThumbnail(url, viewpoint.guid, viewpoint.topic_guid)
               );
-              setViewpoints(joined);
+              viewpoints=joined;
+              fetchImagesList(joined);
             }
           });
         });
@@ -165,6 +144,33 @@ export default function Gallery() {
         console.log(err);
       });
   }
+
+  function fetchImagesList(viewpoints_list:any[]) {
+    let imageservice: ImageService = new ImageService();
+    console.log("viewpoint "+viewpoints_list.length);
+    setImageslist(viewpoints_list.map((s) => (
+        <img
+            className={"image"}
+            key={s.uri}
+            src={s.uri}
+            alt={""}
+            onClick={() => {
+              setScreen(1);
+
+              let image = imageservice.getImageData4GUID(s.guid);
+              setActive_topic(s.topic_guid);
+              PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
+              image.then((img: any) => {
+                if (img.size > 0) {
+                  let url = URL.createObjectURL(img);
+                  setLarge_image_uri(url);
+                }
+              });
+            }}
+        />
+    )));
+  }
+
 
   return (
     <div className="caia-fill caia-background">
