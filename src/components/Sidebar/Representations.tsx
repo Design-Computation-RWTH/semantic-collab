@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import BcfOWLService from "../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import { Table } from "react-bootstrap";
 import { ReactSession } from "react-client-session";
 import CloseButton from "react-bootstrap/CloseButton";
@@ -99,7 +99,7 @@ export default function Representations(props: RepresentationsProps) {
       setDocuments(value);
       return;
     }
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     bcfowl
       .getDocuments()
       .then((value) => {
@@ -146,7 +146,7 @@ export default function Representations(props: RepresentationsProps) {
       ids.push(data.id);
       setSelected_ids(ids);
     }
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     bcfowl
       .describe(data.spatial_representation)
       .then((spatial_representation) => {
@@ -207,7 +207,7 @@ export default function Representations(props: RepresentationsProps) {
             };
 
             let imageService = new ImageService();
-            let bcfowl = new BcfOWLService();
+            let bcfowl = new BcfOWL_Endpoint();
 
             imageService
               .postFile(file, file.name)

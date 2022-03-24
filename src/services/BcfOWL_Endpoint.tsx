@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
+import * as BcfOWL_Endpoint_types from "./types/BcfOWL_Endpoint_types";
 
 const base_uri = "https://caia.herokuapp.com";
 
@@ -14,7 +15,7 @@ export const geoPrefix =
   "PREFIX geo: <http://www.opengis.net/ont/geosparql#>\n\n";
 export const xsdPrefix = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>";
 
-class BcfOWLService {
+class BcfOWL_Endpoint {
   private readonly myHeaders: Headers;
   private readonly project_id: any;
   private readonly follow: RequestRedirect = "follow";
@@ -436,15 +437,8 @@ class BcfOWLService {
   async updateSpatialRepresentation(
     doc_uri: string,
     spatrep_uri: string,
-    spatial_representation: {
-      alignment?: string;
-      location: any;
-      rotation: any;
-      scale: any;
-    }
+    spatial_representation: BcfOWL_Endpoint_types.SpatialRepresentation
   ) {
-    //TODO guid not used
-    //var guid = spatrep_uri.substring(spatrep_uri.lastIndexOf('/')+1);
     if (!this.project_id) alert("Project not selected. ");
     let urlencoded = new URLSearchParams();
     urlencoded.append(
@@ -492,12 +486,7 @@ class BcfOWLService {
 
   async createDocumentWithSpatialRepresentation(
     file_name: string,
-    spatial_representation: {
-      alignment?: string;
-      location: any;
-      rotation: any;
-      scale: any;
-    }
+    spatial_representation: BcfOWL_Endpoint_types.SpatialRepresentation
   ) {
     let project_uri = base_uri + "/graph/" + this.project_id;
     let doc_guid = uuidv4();
@@ -553,4 +542,4 @@ class BcfOWLService {
   }
 }
 
-export default BcfOWLService;
+export default BcfOWL_Endpoint;

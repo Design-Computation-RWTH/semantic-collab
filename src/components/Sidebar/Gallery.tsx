@@ -7,7 +7,7 @@ import CloseButton from "react-bootstrap/CloseButton";
 import { Container } from "@mantine/core";
 
 import ImageService from "../../services/ImageService";
-import BCFAPIService from "../../services/BCFApIService";
+import BCFAPI from "../../services/BCFAPI";
 
 import TopicTable from "./Gallery/TopicTable";
 import PubSub from "pubsub-js";
@@ -88,7 +88,7 @@ export default function Gallery() {
 
   let viewpoints: any[] = [];
   function init() {
-    let bcfapi = new BCFAPIService();
+    let bcfapi = new BCFAPI();
     let imageservice: ImageService = new ImageService();
     bcfapi
       .getAllViewPoints()

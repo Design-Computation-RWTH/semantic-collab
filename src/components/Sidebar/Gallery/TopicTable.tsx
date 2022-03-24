@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import BcfOWLService from "../../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 import { Table } from "react-bootstrap";
 // @ts-ignore
 import { ReactSession } from "react-client-session";
@@ -32,7 +32,7 @@ function TopicTable(props: TopicTableProps) {
   function subTopicID(msg: any, data: { topic_guid: string }) {
     console.log("subTOPIC: " + data.topic_guid);
     if (data.topic_guid === topictable_component.state.topic_guid) return;
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     topictable_component.setState({ data: [] });
     topictable_component.setState({ topic_guid: data.topic_guid });
     bcfowl
@@ -73,7 +73,7 @@ function TopicTable(props: TopicTableProps) {
   }
 
   function init() {
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     setData([]);
     bcfowl
       .getTopicByGUID(topic_guid)

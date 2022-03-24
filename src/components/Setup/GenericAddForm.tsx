@@ -4,7 +4,7 @@ import PubSub from "pubsub-js";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import BcfOWLService from "../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 
 type GenericAddFormProps = {
   onHide(): any;

@@ -3,11 +3,11 @@ import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
-import * as bcfOWL_API from "./types/bcfOWL_API_types";
+import * as bcfOWL_API_types from "./types/bcfOWL_API_types";
 const base_uri = "https://caia.herokuapp.com";
 export const getAccessToken = () => Cookies.get("access_token");
 
-class BCFAPIService {
+class BCFAPI {
   private readonly project_id: any;
 
   private readonly follow: RequestRedirect = "follow";
@@ -44,7 +44,7 @@ class BCFAPIService {
     this.project_id = ReactSession.get("projectid");
   }
 
-  async getAllViewPoints(): Promise<bcfOWL_API.ViewPointType[]> {
+  async getAllViewPoints(): Promise<bcfOWL_API_types.ViewPointType[]> {
     const response = await fetch(
       base_uri + "/bcf/3.0/projects/" + this.project_id + "/viewpoints",
       this.requestGetOptions
@@ -57,7 +57,7 @@ class BCFAPIService {
     return await response.json();
   }
 
-  async getProjects(): Promise<bcfOWL_API.ProjectType[]> {
+  async getProjects(): Promise<bcfOWL_API_types.ProjectType[]> {
     const response = await fetch(
       base_uri + "/bcf/3.0/projects",
       this.requestGetOptions
@@ -143,4 +143,4 @@ class BCFAPIService {
   }
 }
 
-export default BCFAPIService;
+export default BCFAPI;

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { SimpleGrid, Button, Center } from "@mantine/core";
-import BCFAPIService from "../services/BCFApIService";
+import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
 import PubSub from "pubsub-js";
 import ProjectElement from "../components/Projects/ProjectElement";
@@ -33,7 +33,7 @@ function ProjectListView(props: ProjectListViewProps) {
   }, []);
 
   function update() {
-    let bcfapi = new BCFAPIService();
+    let bcfapi = new BCFAPI();
     bcfapi
       .getProjects()
       .then((value) => {

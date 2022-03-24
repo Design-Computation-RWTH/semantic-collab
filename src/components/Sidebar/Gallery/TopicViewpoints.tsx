@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import Figure from "react-bootstrap/Figure";
 import ImageService from "../../../services/ImageService";
-import BCFAPIService from "../../../services/BCFApIService";
+import BCFAPI from "../../../services/BCFAPI";
 
 export const getAccessToken = () => Cookies.get("access_token");
 type TopicViewpointsListProps = {
@@ -27,7 +27,7 @@ function TopicViewpointsList(props: TopicViewpointsListProps) {
 
   function init() {
     let imageservice: ImageService = new ImageService();
-    let bcfapi = new BCFAPIService();
+    let bcfapi = new BCFAPI();
     bcfapi
       .getTopicViewPoints(topic_id)
       .then((value: any) => {

@@ -23,7 +23,7 @@ import {
 
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
-import BcfOWLService from "../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import ImageService from "../../services/ImageService";
 import PubSub from "pubsub-js";
 
@@ -283,8 +283,8 @@ export default function XeoKitView() {
   function subDocumentMoved(msg: any, data: any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
-    console.log("Nodes")
-    console.log(node)
+    console.log("Nodes");
+    console.log(node);
     if (!node.isPerformanceModel) {
       if (data.position != null) {
         node.position = [data.position[0], data.position[1], data.position[2]];
@@ -571,7 +571,7 @@ export default function XeoKitView() {
   }
 
   function loadDocumentViewPointCameras(document_uri: string) {
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     // the Node element has to exist to connect to
     if (!documentNodes[document_uri]) {
       return;
