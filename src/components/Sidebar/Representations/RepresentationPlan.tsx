@@ -55,7 +55,7 @@ export default function RepresentationDetailsPlan(props: PlanProps)
                 setRotation(tempRotation.coordinates[2])
 
                 let tempScale = wkt.parse(spatial.hasScale) as any;
-                setScale(tempScale.coordinates[0])
+                setScale(tempScale.coordinates[0]);
 
             })
         }
