@@ -64,7 +64,6 @@ export default function Gallery() {
 
 
   function gallery() {
-    console.log("gallery "+imageslist.length)
     let gallery_content;
     if (screen === 0) {
       // DEFAULT VIEW
@@ -147,7 +146,6 @@ export default function Gallery() {
 
   function fetchImagesList(viewpoints_list:any[]) {
     let imageservice: ImageService = new ImageService();
-    console.log("viewpoint "+viewpoints_list.length);
     setImageslist(viewpoints_list.map((s) => (
         <img
             className={"image"}
