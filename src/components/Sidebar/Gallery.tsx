@@ -31,7 +31,6 @@ export default function Gallery() {
   const [screen, setScreen] = useState<number>(0);
   const [Offcanvas, setOffcanvas] = useState<boolean>(true);
 
-
   function gallery() {
     let gallery_content;
     if (screen === 0) {
@@ -57,7 +56,7 @@ export default function Gallery() {
             <div>
               {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
-              <CloseButton variant="white" onClick={() => setScreen(0)} />
+              <CloseButton onClick={() => setScreen(0)} />
             </div>
             <div>
               <div className="image-div">
@@ -87,7 +86,7 @@ export default function Gallery() {
     init();
   }, []);
 
-  let viewpoints:any[]=[];
+  let viewpoints: any[] = [];
   function init() {
     let bcfapi = new BCFAPIService();
     let imageservice: ImageService = new ImageService();
@@ -102,7 +101,7 @@ export default function Gallery() {
               let joined = viewpoints.concat(
                 new SnapShotThumbnail(url, viewpoint.guid, viewpoint.topic_guid)
               );
-              viewpoints=joined;
+              viewpoints = joined;
               fetchImagesList(joined);
             }
           });
@@ -115,31 +114,32 @@ export default function Gallery() {
 
   // Async operation is much quicker that sync even though it updates the screen many times
 
-  function fetchImagesList(viewpoints_list:any[]) {
+  function fetchImagesList(viewpoints_list: any[]) {
     let imageservice: ImageService = new ImageService();
-    setImageslist(viewpoints_list.map((s) => (
+    setImageslist(
+      viewpoints_list.map((s) => (
         <img
-            className={"image"}
-            key={s.uri}
-            src={s.uri}
-            alt={""}
-            onClick={() => {
-              setScreen(1);
+          className={"image"}
+          key={s.uri}
+          src={s.uri}
+          alt={""}
+          onClick={() => {
+            setScreen(1);
 
-              let image = imageservice.getImageData4GUID(s.guid);
-              setActive_topic(s.topic_guid);
-              PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
-              image.then((img: any) => {
-                if (img.size > 0) {
-                  let url = URL.createObjectURL(img);
-                  setLarge_image_uri(url);
-                }
-              });
-            }}
+            let image = imageservice.getImageData4GUID(s.guid);
+            setActive_topic(s.topic_guid);
+            PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
+            image.then((img: any) => {
+              if (img.size > 0) {
+                let url = URL.createObjectURL(img);
+                setLarge_image_uri(url);
+              }
+            });
+          }}
         />
-    )));
+      ))
+    );
   }
-
 
   return (
     <div className="caia-fill caia-background">
