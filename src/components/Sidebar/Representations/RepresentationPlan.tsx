@@ -156,7 +156,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
       },
     };
     if (selectedDocument.id !== "new_temp_plan") {
-      let bcfowl = new BcfOWLService();
+      let bcfowl = new BcfOWL_Endpoint();
       let document_uri = selectedDocument.url;
 
       bcfowl
@@ -174,7 +174,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
     } else {
       //TODO: Check if name is set correctly. If " " is in name -> replace by "_"
       let imageService = new ImageService();
-      let bcfowl = new BcfOWLService();
+      let bcfowl = new BcfOWL_Endpoint();
 
       imageService
         .postFile(file, fileName)
