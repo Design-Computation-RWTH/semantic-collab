@@ -114,7 +114,7 @@ export default function Gallery() {
   }
 
   // Async operation is much quicker that sync even though it updates the screen many times
-  
+
   function fetchImagesList(viewpoints_list:any[]) {
     let imageservice: ImageService = new ImageService();
     setImageslist(viewpoints_list.map((s) => (
