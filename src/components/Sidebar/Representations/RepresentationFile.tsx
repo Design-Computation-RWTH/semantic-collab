@@ -2,8 +2,11 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 // @ts-ignore
 import PubSub from "pubsub-js";
-import {ViewerContext} from "../../../context/dcwebviewerContext";
-import {DcWebViewerContextType, SelectedDocument} from "../../../@types/dcwebviewer";
+import { ViewerContext } from "../../../context/dcwebviewerContext";
+import {
+  DcWebViewerContextType,
+  SelectedDocument,
+} from "../../../@types/dcwebviewer";
 
 type DocumentType = {
   filename: string;
@@ -19,9 +22,23 @@ type RepresentationFilePropsType = {
 };
 
 export default function RepresentationFile(props: RepresentationFilePropsType) {
+  const { selectedDocument, setSelectedDocument } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
+
   //Opens the Document Details in the Sidebar
   function showDocumentDetails() {
     props.document.selected = true;
+
+    let currentSelect: SelectedDocument = {
+      id: props.document.id,
+      url: props.document.documentURL,
+      spatial_representation: props.document.spatialRepresentation,
+      data: props.data,
+      name: props.document.filename,
+    };
+    setSelectedDocument(currentSelect);
+
     //Target: Representation.js, onDocumentSelected
     PubSub.publish("SetSelectedDocument", {
       id: props.document.id,
