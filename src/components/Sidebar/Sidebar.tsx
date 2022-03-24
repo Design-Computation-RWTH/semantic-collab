@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { BsCalendarCheck, BsCardImage, BsLayers } from "react-icons/bs";
 // import {Tab, Tabs} from "react-bootstrap";
 import { Tabs } from "@mantine/core";
-import Representations from "./RepresentationsFunction";
+import Representations from "./Representations";
 import Gallery from "./Gallery";
 import Tasks from "./Tasks";
 
