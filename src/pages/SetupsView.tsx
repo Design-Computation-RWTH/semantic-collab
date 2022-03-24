@@ -15,9 +15,9 @@ import { FaMinus } from "react-icons/fa";
 import BcfOWLProjectSetup from "../services/BcfOWLProjectSetup";
 import BcfOWLService from "../services/BcfOWLService";
 
-import GenericAddForm from "../components/Generics/GenericAddForm";
+import GenericAddForm from "../components/Setup/GenericAddForm";
 import AddUserForm from "../components/Setup/AddUserForm";
-import GenericDeleteForm from "../components/Generics/GenericDeleteForm";
+import GenericDeleteForm from "../components/Setup/GenericDeleteForm";
 import DeleteUserForm from "../components/Setup/DeleteUserForm";
 
 type SetupViewProps = {};
