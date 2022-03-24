@@ -7,6 +7,7 @@ import PubSub from "pubsub-js";
 import ProjectElement from "../components/Projects/ProjectElement";
 import { useNavigate } from "react-router-dom";
 import AddProjectsModal from "../components/Modals/AddProjectsModal";
+import * as bcfOWL_API from "../services/types/bcfOWL_API_types";
 
 export const withRouter = (Component: any) => {
   const Wrapper = (props: any) => {
@@ -23,7 +24,7 @@ type ProjectListViewProps = {
 };
 
 function ProjectListView(props: ProjectListViewProps) {
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<bcfOWL_API.ProjectType[]>([]);
 
   useEffect(() => {
     PubSub.publish("ProjectName", { name: null });
@@ -36,7 +37,6 @@ function ProjectListView(props: ProjectListViewProps) {
     bcfapi
       .getProjects()
       .then((value) => {
-        console.log("projects read");
         setProjects(value);
       })
       .catch((err) => {
@@ -49,7 +49,7 @@ function ProjectListView(props: ProjectListViewProps) {
     <div>
       <Center p={"md"}>
         <SimpleGrid cols={4}>
-          {projects.map((d) => (
+          {projects.map((d: bcfOWL_API.ProjectType) => (
             <ProjectElement
               project={{ projectName: d.name, projectId: d.project_id }}
               key={String(binx++)}

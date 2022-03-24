@@ -6,3 +6,9 @@ export type ViewPointType = {
   topic_guid: string;
   [key: string]: string;
 };
+
+export type ProjectType = {
+  project_id: string;
+  name: string;
+  [key: string]: string;
+};
