@@ -67,35 +67,6 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
-  async getCurrentProject1() {
-    let urlencoded = new URLSearchParams();
-    urlencoded.append(
-      "query",
-      bcfOWLPrefixes +
-        "CONSTRUCT {?s ?p ?o}\n" +
-        "WHERE {\n" +
-        "?s a bcfOWL:Project ;\n" +
-        "?p ?o .\n" +
-        "}"
-    );
-
-    const response = await fetch(
-      base_uri + "/graph/" + this.project_id + "/query",
-      {
-        method: "POST",
-        headers: this.myHeaders,
-        body: urlencoded,
-        redirect: this.follow,
-      }
-    );
-    if (!response.ok) {
-      const message = `getCurrentProject: An error has occurred: ${response.status}`;
-      NotificationManager.warning(message, "Error", 3000);
-      throw new Error(message);
-    }
-    return await response.json();
-  }
-
   async describe(uri: string) {
     let urlencoded = new URLSearchParams();
     urlencoded.append("query", bcfOWLPrefixes + "DESCRIBE <" + uri + ">\n");
@@ -110,7 +81,7 @@ class BcfOWL_Endpoint {
       }
     );
     if (!response.ok) {
-      const message = `getCurrentProject: An error has occurred: ${response.status}`;
+      const message = `describe: An error has occurred: ${response.status}`;
       NotificationManager.warning(message, "Error", 3000);
       throw new Error(message);
     }
@@ -129,7 +100,7 @@ class BcfOWL_Endpoint {
       redirect: this.follow,
     });
     if (!response.ok) {
-      const message = `getCurrentProject: An error has occurred: ${response.status}`;
+      const message = `describeUser: An error has occurred: ${response.status}`;
       NotificationManager.warning(message, "Error", 3000);
       throw new Error(message);
     }
