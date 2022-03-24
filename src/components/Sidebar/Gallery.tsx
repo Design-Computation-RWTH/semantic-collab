@@ -7,7 +7,7 @@ import CloseButton from "react-bootstrap/CloseButton";
 import { Container } from "@mantine/core";
 
 import ImageService from "../../services/ImageService";
-import BCFAPIService from "../../services/BCFApIService";
+import BCFAPI from "../../services/BCFAPI";
 
 import TopicTable from "./Gallery/TopicTable";
 import PubSub from "pubsub-js";
@@ -30,38 +30,6 @@ export default function Gallery() {
   const [active_topic, setActive_topic] = useState<any>(null);
   const [screen, setScreen] = useState<number>(0);
   const [Offcanvas, setOffcanvas] = useState<boolean>(true);
-
-  function subViewpointSelected(msg: any, data: { id: string }) {
-    let imageservice: ImageService = new ImageService();
-    viewpoints.forEach((viewpoint) => {
-      console.log(data.id.split("/")[data.id.split("/").length - 1]);
-      if (
-        viewpoint.guid === data.id.split("/")[data.id.split("/").length - 1]
-      ) {
-        // @ts-ignore  // null handled above
-        imageGalleryView_instance.setState({ screen: 1 });
-        // @ts-ignore
-        let image = imageGalleryView_instance.imageservice.getImageData4GUID(
-          viewpoint.guid
-        );
-        // @ts-ignore
-        imageGalleryView_instance.setState({
-          active_topic: viewpoint.topic_guid,
-        });
-        PubSub.publish("SelectedTopicID", { topic_guid: viewpoint.topic_guid });
-        image.then((img: any) => {
-          if (img.size > 0) {
-            let url = URL.createObjectURL(img);
-            // @ts-ignore
-            imageGalleryView_instance.setState({ large_image_uri: url });
-          }
-        });
-      }
-    });
-
-    setScreen(1);
-  }
-
 
   function gallery() {
     let gallery_content;
@@ -88,7 +56,7 @@ export default function Gallery() {
             <div>
               {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
-              <CloseButton variant="white" onClick={() => setScreen(0)} />
+              <CloseButton onClick={() => setScreen(0)} />
             </div>
             <div>
               <div className="image-div">
@@ -118,9 +86,9 @@ export default function Gallery() {
     init();
   }, []);
 
-  let viewpoints:any[]=[];
+  let viewpoints: any[] = [];
   function init() {
-    let bcfapi = new BCFAPIService();
+    let bcfapi = new BCFAPI();
     let imageservice: ImageService = new ImageService();
     bcfapi
       .getAllViewPoints()
@@ -133,7 +101,7 @@ export default function Gallery() {
               let joined = viewpoints.concat(
                 new SnapShotThumbnail(url, viewpoint.guid, viewpoint.topic_guid)
               );
-              viewpoints=joined;
+              viewpoints = joined;
               fetchImagesList(joined);
             }
           });
@@ -144,31 +112,34 @@ export default function Gallery() {
       });
   }
 
-  function fetchImagesList(viewpoints_list:any[]) {
+  // Async operation is much quicker that sync even though it updates the screen many times
+
+  function fetchImagesList(viewpoints_list: any[]) {
     let imageservice: ImageService = new ImageService();
-    setImageslist(viewpoints_list.map((s) => (
+    setImageslist(
+      viewpoints_list.map((s) => (
         <img
-            className={"image"}
-            key={s.uri}
-            src={s.uri}
-            alt={""}
-            onClick={() => {
-              setScreen(1);
+          className={"image"}
+          key={s.uri}
+          src={s.uri}
+          alt={""}
+          onClick={() => {
+            setScreen(1);
 
-              let image = imageservice.getImageData4GUID(s.guid);
-              setActive_topic(s.topic_guid);
-              PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
-              image.then((img: any) => {
-                if (img.size > 0) {
-                  let url = URL.createObjectURL(img);
-                  setLarge_image_uri(url);
-                }
-              });
-            }}
+            let image = imageservice.getImageData4GUID(s.guid);
+            setActive_topic(s.topic_guid);
+            PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
+            image.then((img: any) => {
+              if (img.size > 0) {
+                let url = URL.createObjectURL(img);
+                setLarge_image_uri(url);
+              }
+            });
+          }}
         />
-    )));
+      ))
+    );
   }
-
 
   return (
     <div className="caia-fill caia-background">

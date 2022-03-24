@@ -1,34 +1,10 @@
 // @ts-ignore
 import * as gantt_data from "./assets/Gantt.json";
+import * as ConvertTasks2RDF_types from "./types/ConvertTasks2RDF_types";
 
 const N3 = require("n3");
 const { DataFactory } = N3;
 const { namedNode, literal, defaultGraph, quad } = DataFactory;
-
-type Intervention = {
-  id: number;
-  name: string;
-  description: string;
-  intervention_category_id?: number;
-  estimated_cost: number;
-  start_date: string;
-  end_date: string;
-  intervention_priority_id: number;
-  renovation_id: number;
-  intervention_post_id: number;
-  intervention_post_name: string;
-  parent_intervention?: number;
-  required_previous?: number[];
-  checks?: string[];
-};
-
-type InterventionPost = {
-  id: number;
-  name: string;
-  description: string;
-  energy_related: boolean;
-  multi_layer: boolean;
-};
 
 // @ts-ignore
 function streamToString(stream) {
@@ -59,7 +35,7 @@ function convert(data: any) {
   let interventions_posts_map = new Map<number, string>(); // number -> uri
   let interventions_taskmethods_map = new Map<string, string>(); // number -> uri
   let taskmethods: number = 1;
-  data.interventions.forEach((i: Intervention) => {
+  data.interventions.forEach((i: ConvertTasks2RDF_types.Intervention) => {
     let intervention_uri =
       inst_uri +
       "Intervention_" +
@@ -94,37 +70,39 @@ function convert(data: any) {
     }
   });
 
-  data.intervention_posts.forEach((i: InterventionPost) => {
-    let interventionpost_uri =
-      inst_uri +
-      "InterventionPost_" +
-      i.name.replace(/ /g, "_").replace(/ç/g, "c") +
-      "_" +
-      i.id;
-    interventions_posts_map.set(i.id, interventionpost_uri);
-    writer.addQuad(
-      namedNode(interventionpost_uri),
-      namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-      namedNode(bcdOWL_uri + "TopicType")
-    );
-    writer.addQuad(
-      namedNode(interventionpost_uri),
-      namedNode("http://purl.org/dc/terms/identifier"),
-      literal(i.id)
-    );
-    writer.addQuad(
-      namedNode(interventionpost_uri),
-      namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      literal(i.name)
-    );
-    writer.addQuad(
-      namedNode(interventionpost_uri),
-      namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
-      literal(i.description)
-    );
-  });
+  data.intervention_posts.forEach(
+    (i: ConvertTasks2RDF_types.InterventionPost) => {
+      let interventionpost_uri =
+        inst_uri +
+        "InterventionPost_" +
+        i.name.replace(/ /g, "_").replace(/ç/g, "c") +
+        "_" +
+        i.id;
+      interventions_posts_map.set(i.id, interventionpost_uri);
+      writer.addQuad(
+        namedNode(interventionpost_uri),
+        namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+        namedNode(bcdOWL_uri + "TopicType")
+      );
+      writer.addQuad(
+        namedNode(interventionpost_uri),
+        namedNode("http://purl.org/dc/terms/identifier"),
+        literal(i.id)
+      );
+      writer.addQuad(
+        namedNode(interventionpost_uri),
+        namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+        literal(i.name)
+      );
+      writer.addQuad(
+        namedNode(interventionpost_uri),
+        namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+        literal(i.description)
+      );
+    }
+  );
 
-  data.interventions.forEach((i: Intervention) => {
+  data.interventions.forEach((i: ConvertTasks2RDF_types.Intervention) => {
     let intervention_uri = interventions_map.get(i.id); // just not to recreate it
     writer.addQuad(
       namedNode(intervention_uri),

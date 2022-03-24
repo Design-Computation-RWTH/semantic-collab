@@ -14,7 +14,7 @@ import {
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { useNotifications } from "@mantine/notifications";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
-import BcfOWLService from "../../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 import wkt from "terraformer-wkt-parser";
 import { useInputState } from "@mantine/hooks";
 import PubSub from "pubsub-js";
@@ -55,7 +55,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
     bPlanCreation = false;
   }
 
-  let bcfowl = new BcfOWLService();
+  let bcfowl = new BcfOWL_Endpoint();
 
   useEffect(() => {
     init();

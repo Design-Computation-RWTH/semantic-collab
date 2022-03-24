@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Accordion from "react-bootstrap/Accordion";
-import BCFAPIService from "../../../services/BCFApIService";
+import BCFAPI from "../../../services/BCFAPI";
 
 type TopicCommentsListProps = {
   topic_id: string;
@@ -10,7 +10,7 @@ function TopicCommentsList(props: TopicCommentsListProps) {
   const [comments, setComments] = useState<any>([]);
 
   if (comments === []) {
-    let bcfapi = new BCFAPIService();
+    let bcfapi = new BCFAPI();
     bcfapi
       .getTopicComments(props.topic_id)
       .then((value) => {

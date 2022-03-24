@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import BcfOWLService from "../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import { Table } from "react-bootstrap";
 import { ReactSession } from "react-client-session";
 import CloseButton from "react-bootstrap/CloseButton";
@@ -24,9 +24,20 @@ type SelectedDocument = {
   name: string;
 };
 
+type bcfOWL_DocumentType = {
+  "@id": string;
+  "@type": string;
+  hasDocumentURL: string;
+  hasFilename: string;
+  hasGuid: string;
+  hasProject: string;
+  hasSpatialRepresentation: string;
+  [key: string]: string;
+};
+
 export default function Representations(props: RepresentationsProps) {
   //const [checked, setChecked] = useState(false);
-  const [documents, setDocuments] = useState([]);
+  const [documents, setDocuments] = useState<bcfOWL_DocumentType[]>([]);
   const [selected_ids, setSelected_ids] = useState<string[]>([]);
   const [screen, setScreen] = useState(0);
   const [selected_document, setSelected_document] = useState<string>("");
@@ -87,25 +98,25 @@ export default function Representations(props: RepresentationsProps) {
       onDocumentUnSelected
     );
 
-    console.log("init");
     //TODO: Last Update is preventing force refreshing
     let lastUpdate = ReactSession.get(
       "project_documents_lastime_pid" + project_id
     );
     let thisMoment = new Date().getTime() / 10;
     if (thisMoment - lastUpdate < 10) {
-      let value = ReactSession.get("project_documents_pid" + project_id);
+      let value: bcfOWL_DocumentType[] = ReactSession.get(
+        "project_documents_pid" + project_id
+      );
       setDocuments(value);
       return;
     }
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     bcfowl
       .getDocuments()
       .then((value) => {
         if (value["@graph"]) value = value["@graph"];
         if (!Array.isArray(value)) value = [value];
         setDocuments(value);
-        console.log("SetDocuments");
         ReactSession.set("project_documents_pid" + project_id, value);
         ReactSession.set(
           "project_documents_lastime_pid" + project_id,
@@ -146,7 +157,7 @@ export default function Representations(props: RepresentationsProps) {
       ids.push(data.id);
       setSelected_ids(ids);
     }
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     bcfowl
       .describe(data.spatial_representation)
       .then((spatial_representation) => {
@@ -207,7 +218,7 @@ export default function Representations(props: RepresentationsProps) {
             };
 
             let imageService = new ImageService();
-            let bcfowl = new BcfOWLService();
+            let bcfowl = new BcfOWL_Endpoint();
 
             imageService
               .postFile(file, file.name)

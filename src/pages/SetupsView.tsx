@@ -13,11 +13,11 @@ import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
 
 import BcfOWLProjectSetup from "../services/BcfOWLProjectSetup";
-import BcfOWLService from "../services/BcfOWLService";
+import BcfOWL_Endpoint from "../services/BcfOWL_Endpoint";
 
-import GenericAddForm from "../components/Generics/GenericAddForm";
+import GenericAddForm from "../components/Setup/GenericAddForm";
 import AddUserForm from "../components/Setup/AddUserForm";
-import GenericDeleteForm from "../components/Generics/GenericDeleteForm";
+import GenericDeleteForm from "../components/Setup/GenericDeleteForm";
 import DeleteUserForm from "../components/Setup/DeleteUserForm";
 
 type SetupViewProps = {};
@@ -60,7 +60,7 @@ let setupView_instance: any;
 class SetupView extends React.Component<SetupViewProps, SetupViewState> {
   private bcfowl_setup: BcfOWLProjectSetup;
   private readonly subNotificationstoken: any;
-  private bcfowl: BcfOWLService;
+  private bcfowl: BcfOWL_Endpoint;
 
   state: SetupViewState = {
     addUserScreen: false,
@@ -92,7 +92,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
     super(props);
     setupView_instance = this;
     this.bcfowl_setup = new BcfOWLProjectSetup();
-    this.bcfowl = new BcfOWLService();
+    this.bcfowl = new BcfOWL_Endpoint();
 
     this.subNotificationstoken = PubSub.subscribe(
       "SetupUpdate",

@@ -2,7 +2,7 @@ import React, { MouseEventHandler } from "react";
 
 import { Accordion, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import BcfOWLService from "../../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 import PubSub from "pubsub-js";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
@@ -47,7 +47,7 @@ export class TaskListCreation extends React.Component<
     let documents = this.state.documents;
     for (const doc in documents) {
       if (event.target.selectedOptions[documents[doc]["@id"]]) {
-        let bcfowl = new BcfOWLService();
+        let bcfowl = new BcfOWL_Endpoint();
         bcfowl
           .describe(documents[doc].hasSpatialRepresentation)
           .then((spatial_representation) => {
@@ -241,7 +241,7 @@ export class TaskListCreation extends React.Component<
   }
 
   init() {
-    let bcfowl = new BcfOWLService();
+    let bcfowl = new BcfOWL_Endpoint();
     let bcfowl_setup = new BcfOWLProjectSetup();
 
     if (viewer_instance) {

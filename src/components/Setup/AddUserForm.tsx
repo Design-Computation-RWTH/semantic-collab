@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
 import PubSub from "pubsub-js";
-import BcfOWLService from "../../services/BcfOWLService";
+import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
 
 type AddUserFormProps = {
@@ -21,7 +21,7 @@ function AddUserForm(props: AddUserFormProps) {
 
   const submitted = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    let bcfowl: BcfOWLService = new BcfOWLService();
+    let bcfowl: BcfOWL_Endpoint = new BcfOWL_Endpoint();
     let bcfowl_setup: BcfOWLProjectSetup = new BcfOWLProjectSetup();
     props.onHide();
     bcfowl
