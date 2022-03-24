@@ -1,5 +1,9 @@
 import * as React from "react";
-import {DcWebViewerContextType, VisibleDocument, SelectedDocument} from "../@types/dcwebviewer";
+import {
+  DcWebViewerContextType,
+  VisibleDocument,
+  SelectedDocument,
+} from "../@types/dcwebviewer";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 
@@ -13,32 +17,49 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
   >([]);
   const [viewer, setViewer] = React.useState<Viewer>();
 
-    const [projectID, setProjectID] = React.useState("");
+  const [file, setFile] = React.useState<string>("");
+  const [fileName, setFileName] = React.useState<string>("");
 
-    let InitialDocument:SelectedDocument = {
-        id: "",
-        url: "",
-        spatial_representation: null,
-        data: null,
-        name: ""
-    }
-    const [selectedDocument, setSelectedDocument] = React.useState<SelectedDocument>(InitialDocument)
+  const [projectID, setProjectID] = React.useState("");
 
-    const addVisibleDocument = (visibleDocument: VisibleDocument) => {
-        const newVisibleDocument: VisibleDocument = {
-            id: visibleDocument.id,
-            uri: visibleDocument.uri
-        };
-        setVisibleDocuments([...visibleDocuments, newVisibleDocument]);
+  let InitialDocument: SelectedDocument = {
+    id: "",
+    url: "",
+    spatial_representation: null,
+    data: null,
+    name: "",
+  };
+  const [selectedDocument, setSelectedDocument] =
+    React.useState<SelectedDocument>(InitialDocument);
+
+  const addVisibleDocument = (visibleDocument: VisibleDocument) => {
+    const newVisibleDocument: VisibleDocument = {
+      id: visibleDocument.id,
+      uri: visibleDocument.uri,
     };
+    setVisibleDocuments([...visibleDocuments, newVisibleDocument]);
+  };
 
-
-    return <ViewerContext.Provider value={
-        {
-            viewer, setViewer,
-            projectID, setProjectID,
-            selectedDocument, setSelectedDocument,
-            visibleDocuments, addVisibleDocument}}>{children}</ViewerContext.Provider>;
+  return (
+    <ViewerContext.Provider
+      value={{
+        viewer,
+        setViewer,
+        file,
+        setFile,
+        fileName,
+        setFileName,
+        projectID,
+        setProjectID,
+        selectedDocument,
+        setSelectedDocument,
+        visibleDocuments,
+        addVisibleDocument,
+      }}
+    >
+      {children}
+    </ViewerContext.Provider>
+  );
 };
 
 export default ViewerProvider;
