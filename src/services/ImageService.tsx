@@ -61,7 +61,7 @@ class ImageService {
       const message = `An error has occurred: ${response.status}`;
       throw new Error(message);
     }
-    return response.blob();
+    return await response.blob();
   }
 
   async getImageData4GUID(viewpoint_guid: string) {
@@ -74,7 +74,7 @@ class ImageService {
       const message = `An error has occurred: ${response.status}`;
       throw new Error(message);
     }
-    return response.blob();
+    return await response.blob();
   }
 
   async getImageData4URL(image_url: RequestInfo) {
@@ -84,7 +84,7 @@ class ImageService {
       const message = `An error has occurred: ${response.status}`;
       throw new Error(message);
     }
-    return response.blob();
+    return await response.blob();
   }
 
   async postFile(file: string, filename: string) {

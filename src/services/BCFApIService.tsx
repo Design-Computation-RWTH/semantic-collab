@@ -3,18 +3,10 @@ import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
-
+import * as bcfOWL_APITypes from "./bcfOWL_APITypes";
 const base_uri = "https://caia.herokuapp.com";
 export const getAccessToken = () => Cookies.get("access_token");
 
-type ViewPointType = {
-  perspective_camera: any;
-  originating_document?: any;
-  components: any;
-  guid: string;
-  topic_guid: string;
-  [key: string]: string;
-};
 
 class BCFAPIService {
   private readonly project_id: any;
@@ -53,7 +45,7 @@ class BCFAPIService {
     this.project_id = ReactSession.get("projectid");
   }
 
-  async getAllViewPoints(): Promise<ViewPointType[]> {
+  async getAllViewPoints(): Promise<bcfOWL_APITypes.ViewPointType[]> {
     const response = await fetch(
       base_uri + "/bcf/3.0/projects/" + this.project_id + "/viewpoints",
       this.requestGetOptions

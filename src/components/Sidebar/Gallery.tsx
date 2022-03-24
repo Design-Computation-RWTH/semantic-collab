@@ -31,37 +31,6 @@ export default function Gallery() {
   const [screen, setScreen] = useState<number>(0);
   const [Offcanvas, setOffcanvas] = useState<boolean>(true);
 
-  function subViewpointSelected(msg: any, data: { id: string }) {
-    let imageservice: ImageService = new ImageService();
-    viewpoints.forEach((viewpoint) => {
-      console.log(data.id.split("/")[data.id.split("/").length - 1]);
-      if (
-        viewpoint.guid === data.id.split("/")[data.id.split("/").length - 1]
-      ) {
-        // @ts-ignore  // null handled above
-        imageGalleryView_instance.setState({ screen: 1 });
-        // @ts-ignore
-        let image = imageGalleryView_instance.imageservice.getImageData4GUID(
-          viewpoint.guid
-        );
-        // @ts-ignore
-        imageGalleryView_instance.setState({
-          active_topic: viewpoint.topic_guid,
-        });
-        PubSub.publish("SelectedTopicID", { topic_guid: viewpoint.topic_guid });
-        image.then((img: any) => {
-          if (img.size > 0) {
-            let url = URL.createObjectURL(img);
-            // @ts-ignore
-            imageGalleryView_instance.setState({ large_image_uri: url });
-          }
-        });
-      }
-    });
-
-    setScreen(1);
-  }
-
 
   function gallery() {
     let gallery_content;
@@ -144,6 +113,8 @@ export default function Gallery() {
       });
   }
 
+  // Async operation is much quicker that sync even though it updates the screen many times
+  
   function fetchImagesList(viewpoints_list:any[]) {
     let imageservice: ImageService = new ImageService();
     setImageslist(viewpoints_list.map((s) => (
