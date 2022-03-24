@@ -31,9 +31,20 @@ export default function Representations(props: RepresentationsProps) {
   const [screen, setScreen] = useState(0);
   const [selected_document, setSelected_document] = useState<string>("");
   const [new_file_name, setNew_file_name] = useState("");
-  const [file, setFile] = useState("");
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
+
+  const { file, setFile } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
+
+  const { fileName, setFileName } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
+
+  const { selectedDocument, setSelectedDocument } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
 
   //
   let project_id: any = ReactSession.get("projectid");
@@ -235,8 +246,17 @@ export default function Representations(props: RepresentationsProps) {
             rawvalue: file,
           });
           setNew_file_name(file.name);
+          setFileName(file.name);
           setFile(file);
           setSelected_document("new_temp_plan");
+          let tempSelectedDocument: SelectedDocument = {
+            id: "new_temp_plan",
+            url: "",
+            spatial_representation: "",
+            data: "",
+            name: "new_temp_plan",
+          };
+          setSelectedDocument(tempSelectedDocument);
           setScreen(1);
           break;
         case "pdf":
