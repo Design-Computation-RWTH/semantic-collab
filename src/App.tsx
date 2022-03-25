@@ -193,13 +193,14 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
     let projectsIconColor = "";
     let overview = `/projects/${this.state.projectName}/`;
     let setup = `/projects/${this.state.projectName}/setup`;
+    let disabledIcons = "";
 
     if (this.state.projectName) {
       projectsIconColor = "white";
     } else {
       projectsIconColor = "gray";
-      overview = "javascript:void(0)";
-      setup = "javascript:void(0)";
+      disabledIcons = "disabled";
+      setup = `/projects/${this.state.projectName}/setup`;
     }
 
     if (getAccessToken()) {
@@ -218,12 +219,12 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
               </a>
             </Navbar.Section>
             <Navbar.Section mt="xl">
-              <a className={"navbar-icons"} href={overview}>
+              <a className={`navbar-icons ${disabledIcons}`} href={overview}>
                 <BsFillPuzzleFill size="30" color={projectsIconColor} />
               </a>
             </Navbar.Section>
             <Navbar.Section mt="xl">
-              <a className={"navbar-icons"} href={setup}>
+              <a className={`navbar-icons ${disabledIcons}`} href={setup}>
                 <BsGearWideConnected size="30" color={projectsIconColor} />
               </a>
             </Navbar.Section>

@@ -230,6 +230,11 @@ a:hover {
   display: flex;
 }
 
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
 .tab-content {
   height: 100px;
   flex-grow: 1;
