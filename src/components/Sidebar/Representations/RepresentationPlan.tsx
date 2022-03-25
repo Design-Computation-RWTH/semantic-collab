@@ -61,6 +61,16 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
     init();
     return () => {
       PubSub.unsubscribe(un_subsel);
+
+      setXValue(0);
+      setYValue(0);
+      setZValue(0);
+
+      setRotation(0);
+
+      setScale(1);
+      setMeasuredDistance(0);
+      setTargetDistance(0);
     };
   }, []);
 

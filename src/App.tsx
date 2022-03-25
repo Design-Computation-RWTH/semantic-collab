@@ -209,7 +209,7 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
     } else this.name = "";
     return (
       <AppShell
-        padding="md"
+        padding={0}
         navbar={
           <Navbar width={{ base: 100 }} p="xl">
             <Navbar.Section mt="xl">

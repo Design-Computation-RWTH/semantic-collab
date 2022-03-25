@@ -279,20 +279,28 @@ export default function XeoKitView() {
   function subDocumentMoved(msg: any, data: any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
-    if (!node.isPerformanceModel) {
-      if (data.position != null) {
-        node.position = [data.position[0], data.position[1], data.position[2]];
+    if (node) {
+      if (!node.isPerformanceModel) {
+        if (data.position != null) {
+          node.position = [
+            data.position[0],
+            data.position[1],
+            data.position[2],
+          ];
+        }
+      } else {
+        node.origin = [data.position[0], data.position[1], data.position[2]];
       }
-    } else {
-      node.origin = [data.position[0], data.position[1], data.position[2]];
     }
   }
 
   function subDocumentRotated(msg: any, data: any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
-    if (data.rotation != null) {
-      node.rotation = [0, data.rotation[2], 0];
+    if (node) {
+      if (data.rotation != null) {
+        node.rotation = [0, data.rotation[2], 0];
+      }
     }
     //
   }

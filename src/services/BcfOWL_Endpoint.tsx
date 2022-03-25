@@ -89,7 +89,6 @@ class BcfOWL_Endpoint {
   }
 
   async describeUser(uri: string) {
-    console.log("desc: " + uri);
     let urlencoded = new URLSearchParams();
     urlencoded.append("query", bcfOWLPrefixes + "DESCRIBE <" + uri + ">\n");
 
@@ -321,23 +320,6 @@ class BcfOWL_Endpoint {
     let urlencoded = new URLSearchParams();
     urlencoded.append(
       "query",
-      bcfOWLPrefixes +
-        "CONSTRUCT {?viewpoint ?p ?o}\n" +
-        "WHERE {\n" +
-        "  { ?viewpoint bcfOWL:hasOriginatingDocument <" +
-        doc_uri +
-        "> . }\n" +
-        "  UNION {?viewpoint bcfOWL:hasOriginatingDocument '" +
-        guid +
-        "' . }\n" +
-        "   ?viewpoint a bcfOWL:Viewpoint. \n" +
-        "   ?viewpoint bcfOWL:hasPerspectiveCamera ?c .\n" +
-        "   ?c ?p ?o .\n" +
-        "  \n" +
-        "}\n"
-    );
-
-    console.log(
       bcfOWLPrefixes +
         "CONSTRUCT {?viewpoint ?p ?o}\n" +
         "WHERE {\n" +

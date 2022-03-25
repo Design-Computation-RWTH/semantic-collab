@@ -69,6 +69,13 @@ export default function Representations(props: RepresentationsProps) {
   useEffect(() => {
     console.log("Mount");
     init();
+    return () => {
+      setDocuments([]);
+      setSelected_ids([]);
+      setScreen(0);
+      setSelected_document("");
+      setNew_file_name("");
+    };
   }, []);
 
   useEffect(() => {
