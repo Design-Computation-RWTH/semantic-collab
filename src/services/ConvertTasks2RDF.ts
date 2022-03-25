@@ -4,21 +4,7 @@ import * as ConvertTasks2RDF_types from "./types/ConvertTasks2RDF_types";
 
 const N3 = require("n3");
 const { DataFactory } = N3;
-const { namedNode, literal, defaultGraph, quad } = DataFactory;
-
-// @ts-ignore
-function streamToString(stream) {
-  // @ts-ignore
-  const chunks = [];
-  return new Promise((resolve, reject) => {
-    // @ts-ignore
-    stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
-    // @ts-ignore
-    stream.on("error", (err) => reject(err));
-    // @ts-ignore
-    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-  });
-}
+const { namedNode, literal } = DataFactory;
 
 function convert(data: any) {
   let inst_uri = "http://example.org/inst/";
