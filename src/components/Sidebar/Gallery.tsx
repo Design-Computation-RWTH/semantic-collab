@@ -29,7 +29,6 @@ export default function Gallery() {
   const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
   const [active_topic, setActive_topic] = useState<any>(null);
   const [screen, setScreen] = useState<number>(0);
-  const [Offcanvas, setOffcanvas] = useState<boolean>(true);
 
   function gallery() {
     let gallery_content;
@@ -69,7 +68,7 @@ export default function Gallery() {
                     src={large_image_uri}
                     onClick={() => setScreen(1)}
                   />
-                  <Figure.Caption></Figure.Caption>
+                  <Figure.Caption />
                 </Figure>
               </div>
               <TopicTable topic_guid={active_topic} />
@@ -83,7 +82,13 @@ export default function Gallery() {
 
   useEffect(() => {
     init();
-  }, []);
+    return () => {
+      setImageslist([]);
+      setLarge_image_uri("Icon_v2.svg");
+      setActive_topic(null);
+      setScreen(0);
+    };
+  });
 
   let viewpoints: any[] = [];
   function init() {
