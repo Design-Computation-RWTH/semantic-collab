@@ -1,30 +1,17 @@
 import React, { useState } from "react";
-import { Container, ScrollArea } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { TaskListPreview } from "./Tasks/TaskListPreview";
 import { TaskListCreation } from "./Tasks/TaskListCreation";
-import PubSub from "pubsub-js";
 // @ts-ignore
-import { Viewer } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 
 const testJSON = require("./Tasks/TasksExample.json");
-let Viewer_instance = null;
 
 type TaskView = "Preview" | "Creation";
 
-type TasksProps = {};
-
-type TasksState = {
-  tasks: any;
-  viewState: TaskView;
-  storeys: object;
-};
-
-export default function Tasks(props: TasksProps) {
-  const [tasks, setTasks] = useState(null);
+export default function Tasks() {
   const [viewState, setViewState] = useState<TaskView>("Preview");
-  const [storeys, setStoreys] = useState({});
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
@@ -42,9 +29,9 @@ export default function Tasks(props: TasksProps) {
 
   let ViewState = null;
 
-  if (viewState == "Preview") {
+  if (viewState === "Preview") {
     ViewState = <TaskListPreview TaskJson={testJSON} />;
-  } else if (viewState == "Creation") {
+  } else if (viewState === "Creation") {
     ViewState = (
       <TaskListCreation
         TaskJson={testJSON}

@@ -1,7 +1,7 @@
 import "./App.css";
 import React from "react";
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import { ReactSession } from "react-client-session";
 
@@ -12,17 +12,15 @@ import { BsFillPuzzleFill, BsGearWideConnected, BsHouse } from "react-icons/bs";
 import logo from "./components/Branding/Icon_v2.svg";
 
 import Login from "./services/Login";
-import { Logout, id, parseJWT } from "./services/AuthenticationUtils";
+import { Logout, parseJWT } from "./services/AuthenticationUtils";
 
 import ProjectListView from "./pages/ProjectsView";
 
 import SetupView from "./pages/SetupsView";
-import XeoKitView from "./components/Viewport/XeoKitViewFunction";
+import XeoKitView from "./components/Viewport/XeoKitView";
 
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
-
-import { useNavigate } from "react-router-dom";
 import { AppShell, Header, Navbar, Space, Text } from "@mantine/core";
 
 export const getAccessToken = () => Cookies.get("access_token");
@@ -31,19 +29,17 @@ let caia_app: CAIA | null = null;
 let caia_notifications: any[] = [];
 
 // To be able to load static files like web-ifc.wasm
-function Reload(props: any) {
+function Reload() {
   window.location.reload();
-  return <div></div>;
+  return <div />;
 }
 
 export const withRouter = (Component: any) => {
-  const Wrapper = (props: any) => {
+  return (props: any) => {
     const navigate = useNavigate();
 
     return <Component navigate={navigate} {...props} />;
   };
-
-  return Wrapper;
 };
 
 type CAIAProps = {};
@@ -56,10 +52,10 @@ type CAIAState = {
 };
 
 class CAIA extends React.Component<CAIAProps, CAIAState> {
-  private un_subProjects_token: PubSubJS.Token;
-  private un_subNotifications_token: PubSubJS.Token;
-  private un_subSidebarName_token: PubSubJS.Token;
-  private un_subAlert: PubSubJS.Token;
+  private readonly un_subProjects_token: PubSubJS.Token;
+  private readonly un_subNotifications_token: PubSubJS.Token;
+  private readonly un_subSidebarName_token: PubSubJS.Token;
+  private readonly un_subAlert: PubSubJS.Token;
   private name: any;
   private useruri: any;
 
@@ -190,7 +186,7 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
   }
 
   render() {
-    let projectsIconColor = "";
+    let projectsIconColor: string;
     let overview = `/projects/${this.state.projectName}/`;
     let setup = `/projects/${this.state.projectName}/setup`;
 
@@ -198,7 +194,9 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
       projectsIconColor = "white";
     } else {
       projectsIconColor = "gray";
+      // eslint-disable-next-line no-script-url
       overview = "javascript:void(0)";
+      // eslint-disable-next-line no-script-url
       setup = "javascript:void(0)";
     }
 

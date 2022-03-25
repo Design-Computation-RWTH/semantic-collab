@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { SimpleGrid, Button, Center, ScrollArea, Divider } from "@mantine/core";
+import React, { useEffect, useState } from "react";
+import { Button, Divider, ScrollArea, SimpleGrid } from "@mantine/core";
 import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
 import PubSub from "pubsub-js";
@@ -10,13 +9,11 @@ import AddProjectsModal from "../components/Modals/AddProjectsModal";
 import * as bcfOWL_API from "../services/types/bcfOWL_API_types";
 
 export const withRouter = (Component: any) => {
-  const Wrapper = (props: any) => {
+  return (props: any) => {
     const navigate = useNavigate();
 
     return <Component navigate={navigate} {...props} />;
   };
-
-  return Wrapper;
 };
 
 type ProjectListViewProps = {
