@@ -15,8 +15,6 @@ type GenericDeleteFormProps = {
 function GenericDeleteForm(props: GenericDeleteFormProps) {
   const execute = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    console.log("Delete values prop: " + props.bcfOWLProperty);
-    console.log("Delete values val: " + props.deleteValue);
     let bcfowl_setup = new BcfOWLProjectSetup();
     bcfowl_setup
       .removePropertyValue(

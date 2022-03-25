@@ -39,9 +39,7 @@ export class TaskListCreation extends React.Component<
 
   componentWillUnmount() {}
 
-  CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("Create Tasks Graph");
-  }
+  CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {}
 
   DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     let documents = this.state.documents;
@@ -245,10 +243,7 @@ export class TaskListCreation extends React.Component<
     let bcfowl_setup = new BcfOWLProjectSetup();
 
     if (viewer_instance) {
-      viewer_instance.cameraControl.on("picked", (e: any) => {
-        console.log("Task Pick");
-        console.log(e);
-      });
+      viewer_instance.cameraControl.on("picked", (e: any) => {});
     }
     bcfowl
       .getDocuments()
@@ -256,7 +251,6 @@ export class TaskListCreation extends React.Component<
         if (value["@graph"]) value = value["@graph"];
         if (!Array.isArray(value)) value = [value];
         this.setState({ documents: value });
-        console.log(value);
       })
       .catch((err: any) => {
         console.log(err);
@@ -267,16 +261,12 @@ export class TaskListCreation extends React.Component<
         if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
         let list: string[] = [];
         value.hasUser.forEach((user: string) => {
-          console.log("userid: " + user);
           bcfowl.describeUser(user).then((u) => {
             list = list.concat(u);
-            console.log(list);
             this.setState({ users: list });
           });
         });
-      } catch (e) {
-        console.log("No users");
-      }
+      } catch (e) {}
     });
   }
 }

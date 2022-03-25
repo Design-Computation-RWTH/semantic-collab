@@ -67,7 +67,6 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
     super(props);
     caia_app = this;
     ReactSession.setStoreType("sessionStorage");
-    console.log("CAIA this: " + id(this));
 
     this.un_subProjects_token = PubSub.subscribe(
       "ProjectName",

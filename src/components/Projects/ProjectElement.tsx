@@ -1,25 +1,17 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-  Card,
-  Text,
-  Badge,
-  Button,
-  Group,
-  useMantineTheme,
-  RingProgress,
-} from "@mantine/core";
+import { Card, Text, Button, Group, RingProgress } from "@mantine/core";
 import PubSub from "pubsub-js";
 import { ReactSession } from "react-client-session";
 import { useNavigate } from "react-router-dom";
 
-type ProjectElement = {
+type ProjectElementProps = {
   project: { projectName: string; projectId: string };
   keyvalue: string;
   history: any;
 };
 
-export default function ProjectElement(props: ProjectElement) {
+export default function ProjectElement(props: ProjectElementProps) {
   const navigate = useNavigate();
 
   function handleClick() {

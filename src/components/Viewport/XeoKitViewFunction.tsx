@@ -31,7 +31,6 @@ import Sidebar from "../Sidebar/Sidebar";
 
 const wkt = require("terraformer-wkt-parser");
 
-let XeoKitView_instance: any = null;
 let annotation_instance: any = null;
 let NavCubeInst: any = null;
 let distanceMeasurements_instance: any = null;
@@ -47,8 +46,6 @@ let cameraControl: any = null;
 class MyDataSource {
   // Gets the contents of the given IFC file in an arraybuffer
   getIFC(src: any, ok: any, error: any) {
-    console.log("get IFC SRC: " + src);
-
     //ok(this.buffer)
     ok(ifcdata);
     /*if(ifcdata)
@@ -87,13 +84,11 @@ export default function XeoKitView() {
   let un_changeViewMode: any;
 
   useEffect(() => {
-    console.log("Xeokit Mounted");
     init();
   }, []);
 
   useEffect(() => {
     return () => {
-      console.log("Unmount");
       PubSub.unsubscribe(un_subsel);
       PubSub.unsubscribe(un_subdocun);
       PubSub.unsubscribe(un_docmov);
@@ -276,7 +271,6 @@ export default function XeoKitView() {
 
   function subSetClickMode(msg: any, data: any) {
     clickMode = data.clickMode;
-    console.log(clickMode);
     if (clickMode === "MeasureOnce") {
       distanceMeasurements_instance.control.activate();
     }
@@ -285,14 +279,11 @@ export default function XeoKitView() {
   function subDocumentMoved(msg: any, data: any) {
     let document_uri = data.id;
     let node = documentNodes[document_uri];
-    console.log("Nodes");
-    console.log(node);
     if (!node.isPerformanceModel) {
       if (data.position != null) {
         node.position = [data.position[0], data.position[1], data.position[2]];
       }
     } else {
-      console.log(node);
       node.origin = [data.position[0], data.position[1], data.position[2]];
     }
   }
@@ -307,7 +298,6 @@ export default function XeoKitView() {
   }
 
   function subDocumentScaled(msg: any, data: any) {
-    console.log("scaled");
     let document_uri = data.id;
     let node = documentNodes[document_uri];
     node.scale = [data.scale, data.scale, data.scale];
@@ -330,25 +320,20 @@ export default function XeoKitView() {
     let file_uri = data.url;
     let name = data.name;
     if (!file_uri) {
-      console.log("Xeokit Select Document: File URI is missing!");
       return;
     }
     if (documents.has(document_uri)) {
-      console.log("Xeokit Select Document: Document URI is missing!");
       // Just to avoid double load
       return;
     }
     if (!data) {
-      console.log("Xeokit Select Document: No Data!");
       return;
     }
     if (!data.spatial_representation) {
-      console.log("Xeokit Select Document: Missing Spatial Representation!");
       return;
     }
     if (!data.spatial_representation.hasLocation) {
       // In DC.Chair Test this was missing
-      console.log("Xeokit Select Document: Spatial Representation!");
       return;
     }
 
@@ -356,7 +341,6 @@ export default function XeoKitView() {
     let rotation = wkt.parse(data.spatial_representation.hasRotation);
     let scale = wkt.parse(data.spatial_representation.hasScale);
 
-    console.log("Xeokit Select Document: Success");
     documents.add(document_uri);
     if (viewer) {
       if (documentNodes[document_uri])
@@ -379,7 +363,6 @@ export default function XeoKitView() {
           ifc.then((ifcblob: Blob) => {
             loadIFC(document_uri, ifcblob, location, rotation, scale, name);
           });
-          console.log(ifc);
         } else {
           PubSub.publish("Alert", {
             type: "warning",
@@ -395,22 +378,17 @@ export default function XeoKitView() {
     if (!documents.has(data.id)) return;
     documents.delete(data.id);
 
-    console.log("Model Node: " + documentNodes[data.id]);
-
     if (documentNodes[data.id]) {
-      console.log("Visibility: " + documentNodes[data.id]);
       documentNodes[data.id].visible = false;
     }
   }
 
   function subNewUploadedIFC(msg: any, data: any) {
     ifcdata = data.value;
-    console.log("subNewUploadedIFC data: " + data.name);
     let ifcLoader = new WebIFCLoaderPlugin(viewer, {
       wasmPath: "",
       dataSource: new MyDataSource(),
     });
-    console.log("subNewUploadedIFC load using ifcLoader ");
 
     let model = ifcLoader.load({
       id: "ifcModel",
@@ -420,9 +398,7 @@ export default function XeoKitView() {
       edges: true,
     });
 
-    model.on("loaded", function () {
-      console.log("IFC model loaded");
-    });
+    model.on("loaded", function () {});
   }
 
   function subNewUploadedPlan(msg: any, data: any) {
@@ -470,7 +446,6 @@ export default function XeoKitView() {
 
   function changeViewMode(msg: any, data: any) {
     if (cameraControl) {
-      console.log(cameraControl.navMode);
       if (cameraControl.navMode === "planView") {
         cameraControl.navMode = "orbit";
         viewer.camera.projection = "perspective";
@@ -564,10 +539,7 @@ export default function XeoKitView() {
         edges: true,
         position: [0, 0, 0],
       });
-      model.on("loaded", () => {
-        console.log("!!IFC model loaded");
-      });
-      console.log(model);
+      model.on("loaded", () => {});
       documentNodes[document_url] = model;
     });
   }
@@ -640,7 +612,6 @@ export default function XeoKitView() {
               autoComplete="off"
               onClick={(e: any) => {
                 PubSub.publish("ChangeViewMode", { test: "test" });
-                console.log(e.target.checked);
               }}
             />
             3D Mode

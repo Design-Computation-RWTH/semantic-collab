@@ -18,19 +18,16 @@ function TopicTable(props: TopicTableProps) {
   let subSelectedTopicID = PubSub.subscribe("SelectedTopicID", subTopicID);
 
   useEffect(() => {
-    console.log("Mount");
     init();
   }, []);
 
   useEffect(() => {
     return () => {
-      console.log("Unmount");
       PubSub.unsubscribe(subSelectedTopicID);
     };
   }, []);
 
   function subTopicID(msg: any, data: { topic_guid: string }) {
-    console.log("subTOPIC: " + data.topic_guid);
     if (data.topic_guid === topictable_component.state.topic_guid) return;
     let bcfowl = new BcfOWL_Endpoint();
     topictable_component.setState({ data: [] });
@@ -126,9 +123,7 @@ function TopicTable(props: TopicTableProps) {
                   valstr += " " + day;
                   if (valstr === "Invalid Date Invalid Date undefined")
                     valstr = valorg;
-                } catch (e) {
-                  console.log("Date time format error " + e);
-                }
+                } catch (e) {}
               }
               let joined = data.concat({ prop: pstr, value: valstr });
               setData(joined);

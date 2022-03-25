@@ -21,7 +21,6 @@ function TopicViewpointsList(props: TopicViewpointsListProps) {
   const [topic_id, setTopic_id] = useState(props.topic_id);
 
   useEffect(() => {
-    console.log("Mount");
     init();
   }, []);
 
