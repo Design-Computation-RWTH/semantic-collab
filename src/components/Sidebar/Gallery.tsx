@@ -81,6 +81,7 @@ export default function Gallery() {
   }
 
   useEffect(() => {
+    console.log("Test");
     init();
     return () => {
       setImageslist([]);
@@ -88,7 +89,7 @@ export default function Gallery() {
       setActive_topic(null);
       setScreen(0);
     };
-  });
+  }, []);
 
   let viewpoints: any[] = [];
   function init() {

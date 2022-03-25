@@ -615,7 +615,9 @@ export default function XeoKitView() {
       <canvas id="viewport_canvas" className="viewport" />
       <Paper shadow="xl" radius="xl" p="xs" className="plan-toggle">
         <Switch
-          label="3D Mode"
+          label="3D"
+          size="lg"
+          color="gray"
           onClick={(e: any) => {
             PubSub.publish("ChangeViewMode", { test: "test" });
           }}

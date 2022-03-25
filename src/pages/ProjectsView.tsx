@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, ScrollArea, SimpleGrid } from "@mantine/core";
+import { Button, Divider, ScrollArea, SimpleGrid, Grid } from "@mantine/core";
 import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
 import PubSub from "pubsub-js";
@@ -49,17 +49,20 @@ function ProjectListView(props: ProjectListViewProps) {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <ScrollArea style={{ height: "100%" }} p={"md"}>
-        <SimpleGrid cols={4}>
+        <Grid>
           {projects.map((d: bcfOWL_API.ProjectType) => (
-            <ProjectElement
-              project={{ projectName: d.name, projectId: d.project_id }}
-              key={String(binx++)}
-              keyvalue={String(binx)}
-              //TODO: What is this history for?
-              history={props.history}
-            />
+            // xs, sm, md, lg, xl
+            <Grid.Col xs={10} sm={6} md={6} lg={4} xl={3} key={String(binx++)}>
+              <ProjectElement
+                project={{ projectName: d.name, projectId: d.project_id }}
+                //key={String(binx++)}
+                keyvalue={String(binx)}
+                //TODO: What is this history for?
+                history={props.history}
+              />
+            </Grid.Col>
           ))}
-        </SimpleGrid>
+        </Grid>
       </ScrollArea>
       <Divider p={"xs"} />
       <AddProjectsModal />
