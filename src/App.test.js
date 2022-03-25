@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import Treeview from "./pages/Treeview";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+var enzyme = require("enzyme");
+
+var wrapper = enzyme.shallow(<Treeview />);
+
+it("renders without crashing", () => {
+  enzyme.shallow(<Treeview />);
 });
