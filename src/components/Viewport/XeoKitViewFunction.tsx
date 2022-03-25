@@ -199,8 +199,10 @@ export default function XeoKitView() {
         }
         entity.selected = true;
         lastSelection = entity;
+        //Don't delete this console.log
         console.log(entity);
         const metaObj = viewer.metaScene.metaObjects[entity.id];
+        //Don't delete this console.log
         console.log(metaObj);
         // if id = SM_Image3D it means the object is a viewpoint
         // store the "real" id in lastViewpointId var

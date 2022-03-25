@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { SimpleGrid, Button, Center } from "@mantine/core";
+import { SimpleGrid, Button, Center, ScrollArea, Divider } from "@mantine/core";
 import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
 import PubSub from "pubsub-js";
@@ -46,8 +46,8 @@ function ProjectListView(props: ProjectListViewProps) {
 
   let binx = 1000;
   return (
-    <div>
-      <Center p={"md"}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <ScrollArea style={{ height: "100%" }} p={"md"}>
         <SimpleGrid cols={4}>
           {projects.map((d: bcfOWL_API.ProjectType) => (
             <ProjectElement
@@ -60,12 +60,13 @@ function ProjectListView(props: ProjectListViewProps) {
             />
           ))}
         </SimpleGrid>
-      </Center>
+      </ScrollArea>
+      <Divider p={"xs"} />
       <AddProjectsModal />
+      <p />
       <div className="main-refresh">
         <Button
           onClick={() => {
-            console.log("RefreshTest");
             update();
           }}
         >
@@ -73,6 +74,7 @@ function ProjectListView(props: ProjectListViewProps) {
           Refresh{" "}
         </Button>
       </div>
+      <p />
     </div>
   );
 }

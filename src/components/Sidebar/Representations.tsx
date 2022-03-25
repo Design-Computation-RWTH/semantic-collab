@@ -298,7 +298,7 @@ export default function Representations(props: RepresentationsProps) {
           />
         );
       } else {
-        return <div />;
+        return <tr />;
       }
     });
   }

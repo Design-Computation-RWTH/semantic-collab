@@ -26,6 +26,8 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
     ViewerContext
   ) as DcWebViewerContextType;
 
+  console.log(props);
+
   //Opens the Document Details in the Sidebar
   function showDocumentDetails() {
     props.document.selected = true;
@@ -63,10 +65,13 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
   }
 
   function determineEnding() {
-    if (props.document.filename.endsWith(".ifc")) {
-      return "icon bi-box btn-caia-icon-size";
-    } else {
-      return "icon bi-file-earmark-pdf btn-caia-icon-size";
+    console.log(props.document.filename + " Filename");
+    if (props.document.filename) {
+      if (props.document.filename.endsWith(".ifc")) {
+        return "icon bi-box btn-caia-icon-size";
+      } else {
+        return "icon bi-file-earmark-pdf btn-caia-icon-size";
+      }
     }
   }
 

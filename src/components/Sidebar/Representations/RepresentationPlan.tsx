@@ -55,6 +55,11 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
     bPlanCreation = false;
   }
 
+  console.log("Filename");
+  console.log(fileName);
+  console.log("SelectedDocument");
+  console.log(selectedDocument);
+
   let bcfowl = new BcfOWL_Endpoint();
 
   useEffect(() => {
@@ -140,9 +145,9 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
     let spatial_json = {
       alignment: "center",
       location: {
-        x: xValue * 10,
-        y: yValue * 10,
-        z: zValue * 10,
+        x: xValue,
+        y: yValue,
+        z: zValue,
       },
       rotation: {
         x: 0,
@@ -155,9 +160,12 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
         z: scale,
       },
     };
+    console.log(selectedDocument.id);
     if (selectedDocument.id !== "new_temp_plan") {
+      console.log("Update");
+      console.log(selectedDocument.id);
       let bcfowl = new BcfOWL_Endpoint();
-      let document_uri = selectedDocument.url;
+      let document_uri = selectedDocument.id;
 
       bcfowl
         .updateSpatialRepresentation(
@@ -184,7 +192,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
           bcfowl
             .createDocumentWithSpatialRepresentation(fileName, spatial_json)
             .then((message) => {
-              console.log(message);
+              //TODO: Delete Current Plan
             })
             .catch((err) => {
               console.log(err);
@@ -294,7 +302,9 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
             <Button onClick={handleSetDistance} compact>
               Set Distance
             </Button>
-            <Button compact>Update/Upload</Button>
+            <Button onClick={handleUpload} compact>
+              Update/Upload
+            </Button>
           </Group>
         </Center>
       </SimpleGrid>

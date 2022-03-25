@@ -16,9 +16,6 @@ type SidebarProps = {
 type SidebarState = {};
 
 export default function Sidebar(props: SidebarProps) {
-  console.log(props.viewer);
-  console.log("Sidebar Viewer");
-
   return (
     <Tabs
       style={{
@@ -37,13 +34,13 @@ export default function Sidebar(props: SidebarProps) {
       color="dark"
       grow
     >
-      <Tabs.Tab label="Representations" icon={<BsLayers />}>
+      <Tabs.Tab title="Representations" icon={<BsLayers />}>
         <Representations />
       </Tabs.Tab>
-      <Tabs.Tab label="Gallery" icon={<BsCardImage />}>
+      <Tabs.Tab title="Gallery" icon={<BsCardImage />}>
         <Gallery />
       </Tabs.Tab>
-      <Tabs.Tab label="Tasks" icon={<BsCalendarCheck />}>
+      <Tabs.Tab title="Tasks" icon={<BsCalendarCheck />}>
         <Tasks />
       </Tabs.Tab>
     </Tabs>
