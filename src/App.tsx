@@ -19,6 +19,7 @@ import ProjectListView from "./pages/ProjectsView";
 import SetupView from "./pages/SetupsView";
 import XeoKitView from "./components/Viewport/XeoKitViewFunction";
 
+// @ts-ignore
 import { NotificationManager } from "react-notifications";
 
 import { useNavigate } from "react-router-dom";
@@ -26,14 +27,17 @@ import { AppShell, Header, Navbar, Space, Text } from "@mantine/core";
 
 export const getAccessToken = () => Cookies.get("access_token");
 
-let caia_app = null;
-let caia_notifications = [];
+let caia_app: CAIA | null = null;
+let caia_notifications: any[] = [];
 
 // To be able to load static files like web-ifc.wasm
-// const reload = () => window.location.reload();
+function Reload(props: any) {
+  window.location.reload();
+  return <div></div>;
+}
 
-export const withRouter = (Component) => {
-  const Wrapper = (props) => {
+export const withRouter = (Component: any) => {
+  const Wrapper = (props: any) => {
     const navigate = useNavigate();
 
     return <Component navigate={navigate} {...props} />;
@@ -42,9 +46,25 @@ export const withRouter = (Component) => {
   return Wrapper;
 };
 
-class CAIA extends React.Component {
-  constructor() {
-    super();
+type CAIAProps = {};
+
+type CAIAState = {
+  projectName: string;
+  notifications: any[];
+  sidebarName: string;
+  projectSelected: any;
+};
+
+class CAIA extends React.Component<CAIAProps, CAIAState> {
+  private un_subProjects_token: PubSubJS.Token;
+  private un_subNotifications_token: PubSubJS.Token;
+  private un_subSidebarName_token: PubSubJS.Token;
+  private un_subAlert: PubSubJS.Token;
+  private name: any;
+  private useruri: any;
+
+  constructor(props: CAIAProps | Readonly<CAIAProps>) {
+    super(props);
     caia_app = this;
     ReactSession.setStoreType("sessionStorage");
 
@@ -59,10 +79,6 @@ class CAIA extends React.Component {
     this.un_subSidebarName_token = PubSub.subscribe(
       "SidebarName",
       this.subSidebar
-    );
-    this.un_subCloseMenu_token = PubSub.subscribe(
-      "CloseMenu",
-      this.subCloseMenu
     );
 
     this.un_subAlert = PubSub.subscribe("Alert", this.subAlert.bind(this));
@@ -86,7 +102,6 @@ class CAIA extends React.Component {
     PubSub.unsubscribe(this.un_subProjects_token);
     PubSub.unsubscribe(this.un_subNotifications_token);
     PubSub.unsubscribe(this.un_subSidebarName_token);
-    PubSub.unsubscribe(this.un_subCloseMenu_token);
     PubSub.unsubscribe(this.un_subAlert);
   }
 
@@ -94,12 +109,13 @@ class CAIA extends React.Component {
     document.body.style.overflow = "clip";
   }
 
-  closeToast(message) {
+  closeToast(message: any) {
     caia_notifications = caia_notifications.filter((e) => e !== message);
+    // @ts-ignore  Not null.. init at the constructor
     caia_app.setState({ notifications: caia_notifications });
   }
 
-  createNotification = (type) => {
+  createNotification = (type: any) => {
     return () => {
       switch (type) {
         case "info":
@@ -126,7 +142,7 @@ class CAIA extends React.Component {
     };
   };
 
-  subAlert(msg, data) {
+  subAlert(msg: any, data: { type: any; message: any; title: any }) {
     switch (data.type) {
       case "info":
         NotificationManager.info(data.message);
@@ -147,23 +163,29 @@ class CAIA extends React.Component {
     }
   }
 
-  subProjects(msg, data) {
+  subProjects(msg: any, data: { name: any }) {
+    console.log("logout?");
+    // @ts-ignore  Not null.. init at the constructor
     caia_app.setState({ projectName: data.name });
     ReactSession.set("projectname", data.name);
     caia_notifications = caia_notifications.filter(
       (e) => e !== "Select a project"
     );
+    // @ts-ignore  Not null.. init at the constructor
     caia_app.setState({ notifications: caia_notifications });
+    // @ts-ignore  Not null.. init at the constructor
     caia_app.setState({ projectSelected: true });
   }
 
-  subUpdates(msg, data) {
+  subUpdates(msg: any, data: { txt: any }) {
     if (caia_notifications.length > 2) caia_notifications = [];
     caia_notifications = caia_notifications.concat(data.txt);
+    // @ts-ignore  Not null.. init at the constructor
     caia_app.setState({ notifications: caia_notifications });
   }
 
-  subSidebar(msg, data) {
+  subSidebar(msg: any, data: { name: any }) {
+    // @ts-ignore  Not null.. init at the constructor
     caia_app.setState({ sidebarName: data.name });
   }
 
@@ -187,7 +209,7 @@ class CAIA extends React.Component {
     } else this.name = "";
     return (
       <AppShell
-        padding="0"
+        padding="md"
         navbar={
           <Navbar width={{ base: 100 }} p="xl">
             <Navbar.Section mt="xl">
@@ -234,7 +256,7 @@ class CAIA extends React.Component {
           body: { height: "93vh" },
         })}
       >
-        <Routes style={{ height: "100%" }}>
+        <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/projects/:id/setup" element={<SetupView />} />
@@ -242,19 +264,17 @@ class CAIA extends React.Component {
             path="/projects/:id/"
             element={
               <div className="caia-fill">
-                <XeoKitView class="viewport" id={"MyViewport"} />
+                <XeoKitView />
               </div>
             }
           />
           <Route path="/projects" element={<ProjectListView />} />
-          <Route path="/web-ifc.wasm" element={<reload />} />
+          <Route path="/web-ifc.wasm" element={<Reload />} />
           <Route path="" element={<Login />} />
         </Routes>
       </AppShell>
     );
   }
-
-  componentDidMount() {}
 }
 
 export default withRouter(CAIA);
