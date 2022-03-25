@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Container, Paper, Switch } from "@mantine/core";
 // @ts-ignore
 
 import {
@@ -612,7 +613,15 @@ export default function XeoKitView() {
     <div className="caia-row">
       <Sidebar viewer={viewer} />
       <canvas id="viewport_canvas" className="viewport" />
-      <div className="plan-toggle">
+      <Paper shadow="xl" radius="xl" p="xs" className="plan-toggle">
+        <Switch
+          label="3D Mode"
+          onClick={(e: any) => {
+            PubSub.publish("ChangeViewMode", { test: "test" });
+          }}
+        />
+      </Paper>
+      {/*<div className="plan-toggle">
         <div className="btn-group-toggle" data-toggle="buttons">
           <label className="btn btn-secondary active">
             <input
@@ -625,7 +634,7 @@ export default function XeoKitView() {
             3D Mode
           </label>
         </div>
-      </div>
+      </div>*/}
       <canvas id="myNavCubeCanvas" className="viewport-nav-cube" />
     </div>
   );
