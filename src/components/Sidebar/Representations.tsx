@@ -307,7 +307,6 @@ export default function Representations(props: RepresentationsProps) {
     let leftPanel;
     if (screen === 0) {
       // DEFAULT VIEW
-      console.log("Screen 0");
       leftPanel = (
         <div>
           <Table striped bordered hover size="sm">
@@ -316,7 +315,6 @@ export default function Representations(props: RepresentationsProps) {
         </div>
       );
     } else {
-      console.log("Screen 1");
       leftPanel = (
         <div>
           <CloseButton
@@ -351,7 +349,6 @@ export default function Representations(props: RepresentationsProps) {
           title="Refresh List"
           onClick={() => {
             init();
-            console.log("StateTest");
             alert("Test alert. ");
           }}
         >

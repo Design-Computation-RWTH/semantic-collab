@@ -26,8 +26,6 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
     ViewerContext
   ) as DcWebViewerContextType;
 
-  console.log(props);
-
   //Opens the Document Details in the Sidebar
   function showDocumentDetails() {
     props.document.selected = true;
@@ -65,7 +63,6 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
   }
 
   function determineEnding() {
-    console.log(props.document.filename + " Filename");
     if (props.document.filename) {
       if (props.document.filename.endsWith(".ifc")) {
         return "icon bi-box btn-caia-icon-size";
@@ -106,7 +103,6 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
               //Target: XeoKitView.js
               else
                 PubSub.publish("DocumentUnSelected", { id: props.document.id });
-              console.log("DocumentUnSelected" + props.document.id);
             }}
             className="toggle-switch-checkbox"
             name="toggleSwitch"

@@ -55,16 +55,10 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
     bPlanCreation = false;
   }
 
-  console.log("Filename");
-  console.log(fileName);
-  console.log("SelectedDocument");
-  console.log(selectedDocument);
-
   let bcfowl = new BcfOWL_Endpoint();
 
   useEffect(() => {
     init();
-    console.log("init");
     return () => {
       PubSub.unsubscribe(un_subsel);
     };
@@ -160,10 +154,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
         z: scale,
       },
     };
-    console.log(selectedDocument.id);
     if (selectedDocument.id !== "new_temp_plan") {
-      console.log("Update");
-      console.log(selectedDocument.id);
       let bcfowl = new BcfOWL_Endpoint();
       let document_uri = selectedDocument.id;
 
@@ -173,9 +164,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
           selectedDocument.spatial_representation,
           spatial_json
         )
-        .then((message) => {
-          //console.log(message);
-        })
+        .then((message) => {})
         .catch((err) => {
           console.log(err);
         });
@@ -187,7 +176,6 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
       imageService
         .postFile(file, fileName)
         .then((message) => {
-          console.log(message);
           // let file_url = base_uri + "/files/" + this.project_id + "/" + this.props.newfilename
           bcfowl
             .createDocumentWithSpatialRepresentation(fileName, spatial_json)

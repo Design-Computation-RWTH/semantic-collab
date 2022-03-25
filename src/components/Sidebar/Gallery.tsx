@@ -82,7 +82,6 @@ export default function Gallery() {
   }
 
   useEffect(() => {
-    console.log("Mount");
     init();
   }, []);
 

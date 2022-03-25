@@ -15,7 +15,6 @@ function DeleteUserForm(props: DeleteUserFormProps) {
   const execute = (event: { preventDefault: () => void }) => {
     event.preventDefault();
     let bcfowl_setup = new BcfOWLProjectSetup();
-    console.log("Delete values val: " + props.deleteValue);
     bcfowl_setup.deletetUser(props.deleteValue.trim()).then(() => {
       PubSub.publish("Update", { txt: "Deleted user " + props.item });
       PubSub.publish("SetupUpdate", "Update view.");

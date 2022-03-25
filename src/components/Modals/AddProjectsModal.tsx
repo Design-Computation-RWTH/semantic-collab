@@ -35,7 +35,6 @@ export default function AddProjectsModal() {
                 PubSub.publish("Update", {
                   txt: "Project created. Name: " + values.Name,
                 });
-                console.log("Close??");
                 modals.closeModal("ProjectAddModal");
               });
             })}

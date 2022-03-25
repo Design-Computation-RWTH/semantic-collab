@@ -30,6 +30,9 @@ function ProjectListView(props: ProjectListViewProps) {
     PubSub.publish("ProjectName", { name: null });
     PubSub.publish("CloseMenu", "");
     update();
+    return () => {
+      setProjects([]); // This worked for me
+    };
   }, []);
 
   function update() {
@@ -37,6 +40,7 @@ function ProjectListView(props: ProjectListViewProps) {
     bcfapi
       .getProjects()
       .then((value) => {
+        console.log(value);
         setProjects(value);
       })
       .catch((err) => {
@@ -54,7 +58,6 @@ function ProjectListView(props: ProjectListViewProps) {
               project={{ projectName: d.name, projectId: d.project_id }}
               key={String(binx++)}
               keyvalue={String(binx)}
-              //keyvalue={String(binx++)}
               //TODO: What is this history for?
               history={props.history}
             />

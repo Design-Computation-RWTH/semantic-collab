@@ -30,7 +30,7 @@ let caia_app = null;
 let caia_notifications = [];
 
 // To be able to load static files like web-ifc.wasm
-const reload = () => window.location.reload();
+// const reload = () => window.location.reload();
 
 export const withRouter = (Component) => {
   const Wrapper = (props) => {
@@ -47,7 +47,6 @@ class CAIA extends React.Component {
     super();
     caia_app = this;
     ReactSession.setStoreType("sessionStorage");
-    console.log("CAIA this: " + id(this));
 
     this.un_subProjects_token = PubSub.subscribe(
       "ProjectName",
@@ -149,7 +148,6 @@ class CAIA extends React.Component {
   }
 
   subProjects(msg, data) {
-    console.log("logout?");
     caia_app.setState({ projectName: data.name });
     ReactSession.set("projectname", data.name);
     caia_notifications = caia_notifications.filter(
