@@ -69,7 +69,7 @@ export default function Login() {
   }
 
   return (
-    <Box sx={{ maxWidth: 300 }} mx="auto">
+    <Box style={{paddingTop: "10%"}} sx={{ maxWidth: 300 }} mx="auto">
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
           required

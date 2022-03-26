@@ -1,10 +1,8 @@
 //import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import React, { useEffect, useState } from "react";
 import Figure from "react-bootstrap/Figure";
 import CloseButton from "react-bootstrap/CloseButton";
-import { Container } from "@mantine/core";
+import { Container, Image, SimpleGrid, ScrollArea } from "@mantine/core";
 
 import ImageService from "../../services/ImageService";
 import BCFAPI from "../../services/BCFAPI";
@@ -33,19 +31,19 @@ export default function Gallery() {
   function gallery() {
     let gallery_content;
     if (screen === 0) {
-      // DEFAULT VIEW
       gallery_content = (
-        <Container className="caia-fill">
-          <Row>
-            <div>
-              <Row>
-                <Col xs={11} md={11}>
-                  {imageslist}
-                </Col>
-              </Row>
-            </div>
-          </Row>
-        </Container>
+        <SimpleGrid
+          style={{ padding: 10 }}
+          cols={4}
+          spacing="xs"
+          breakpoints={[
+            { maxWidth: 1600, cols: 3, spacing: "xs" },
+            { maxWidth: 1200, cols: 2, spacing: "xs" },
+            { maxWidth: 800, cols: 1, spacing: "xs" },
+          ]}
+        >
+          {imageslist}
+        </SimpleGrid>
       );
     }
     if (screen === 1) {
@@ -123,11 +121,12 @@ export default function Gallery() {
     let imageservice: ImageService = new ImageService();
     setImageslist(
       viewpoints_list.map((s) => (
-        <img
-          className={"image"}
+        <Image
+          width={100}
+          height={100}
+          radius={5}
           key={s.uri}
           src={s.uri}
-          alt={""}
           onClick={() => {
             setScreen(1);
 
@@ -147,10 +146,22 @@ export default function Gallery() {
   }
 
   return (
-    <div className="caia-fill caia-background">
-      <div className="yscroll">{gallery()}</div>
+    <div style={{ height: "100%" }} className="caia-fill">
+      <ScrollArea
+        style={{
+          position: "relative",
+          height: "95%",
+        }}
+      >
+        {gallery()}
+      </ScrollArea>
       <Container
-        style={{ display: "flex", width: "100%", justifyContent: "center" }}
+        style={{
+          height: "5%",
+          display: "flex",
+          width: "100%",
+          justifyContent: "center",
+        }}
         sx={(theme) => ({ backgroundColor: theme.colors.dark })}
       >
         <button className="btn-caia-icon">
