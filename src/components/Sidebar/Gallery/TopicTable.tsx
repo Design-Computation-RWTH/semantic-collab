@@ -62,7 +62,7 @@ function TopicTable(props: TopicTableProps) {
 
   function listRows() {
     return data.map((r: { prop: string; value: string }) => (
-      <tr style={{ display: "flex" }}>
+      <tr key={r.prop} style={{ display: "flex" }}>
         <td className="caia_tablefont">{r.prop}</td>
         <td className="caia_tablefont">{r.value}</td>
       </tr>
