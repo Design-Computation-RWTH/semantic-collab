@@ -4,7 +4,7 @@ import Col from "react-bootstrap/Col";
 import React, { useEffect, useState } from "react";
 import Figure from "react-bootstrap/Figure";
 import CloseButton from "react-bootstrap/CloseButton";
-import { Container } from "@mantine/core";
+import { Container, Image, Button, Modal } from "@mantine/core";
 
 import ImageService from "../../services/ImageService";
 import BCFAPI from "../../services/BCFAPI";
@@ -29,6 +29,7 @@ export default function Gallery() {
   const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
   const [active_topic, setActive_topic] = useState<any>(null);
   const [screen, setScreen] = useState<number>(0);
+  const [opened, setOpened] = useState(false);
 
   function gallery() {
     let gallery_content;
@@ -50,29 +51,55 @@ export default function Gallery() {
     }
     if (screen === 1) {
       gallery_content = (
-        <div>
+        <div
+          style={{
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
           <Container>
             <div>
               {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
               <CloseButton onClick={() => setScreen(0)} />
             </div>
-            <div>
-              <div className="image-div">
-                <Figure className="image-div">
-                  <Figure.Image
-                    className="rounded mx-auto d-block"
-                    width={300}
-                    height={400}
-                    alt="300x400"
-                    src={large_image_uri}
-                    onClick={() => setScreen(1)}
-                  />
-                  <Figure.Caption />
-                </Figure>
-              </div>
-              <TopicTable topic_guid={active_topic} />
-            </div>
+
+            <Modal
+              size={"720"}
+              opened={opened}
+              onClose={() => setOpened(false)}
+            >
+              <Image
+                width={700}
+                height={700}
+                fit="contain"
+                src={large_image_uri}
+                withPlaceholder
+              />
+            </Modal>
+
+            <Button
+              style={{
+                height: 300,
+                width: 300,
+                justifyContent: "center",
+                display: "flex",
+                backgroundColor: "#00000000",
+              }}
+              onClick={() => {
+                setOpened(true);
+                console.log("Hello World");
+              }}
+            >
+              <Image
+                width={300}
+                height={300}
+                fit="contain"
+                src={large_image_uri}
+                withPlaceholder
+              />
+            </Button>
+            <TopicTable topic_guid={active_topic} />
           </Container>
         </div>
       );
