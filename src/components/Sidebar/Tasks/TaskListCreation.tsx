@@ -1,6 +1,6 @@
 import React, { MouseEventHandler } from "react";
-
-import { Accordion, Form } from "react-bootstrap";
+import { Accordion, AccordionState, Text } from "@mantine/core";
+import { Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 import PubSub from "pubsub-js";
@@ -95,6 +95,35 @@ export class TaskListCreation extends React.Component<
     return People;
   }
 
+  HighlightObjects(ObjectIDs: any[], highlight: boolean) {
+    let viewerScene = viewer_instance.scene.objects;
+    console.log(ObjectIDs);
+    for (const Element in viewerScene) {
+      let elementID = viewerScene[Element].id;
+      if (ObjectIDs.includes(elementID)) {
+        viewerScene[Element].highlighted = highlight;
+      } else {
+        viewerScene[Element].highlighted = false;
+      }
+    }
+    /*    for (const ObjectID in ObjectIDs) {
+      console.log(ObjectIDs[ObjectID]);
+      viewer_instance.scene.objects[ObjectIDs[ObjectID].id].highlighted =
+        highlight;
+    }*/
+  }
+
+  SelectMainTask(event: AccordionState, ParentIntervention: any, Storeys: any) {
+    let selectedObjects: string[] = [];
+    Object.entries(FilteredIfcElements).map((e: any) => {
+      //Check if the Element is on the right storey
+      if (e[1].parent.id === Storeys.id) {
+        selectedObjects.push(e[1].id);
+      }
+    });
+    this.HighlightObjects(selectedObjects, event[0]);
+  }
+
   CreateSubTasks(Storeys: any) {
     // Iterate through all Tasks
     const TasksNew = Object.entries(this.props.TaskJson).map((d: any) => {
@@ -104,7 +133,7 @@ export class TaskListCreation extends React.Component<
         const ParentInterventions = d[1].map((p: any) => {
           if (!p.parent_intervention) {
             // Create a Card for every IFC Element
-            const Elements = Object.entries(FilteredIfcElements).map(
+            const IfcElements = Object.entries(FilteredIfcElements).map(
               (e: any) => {
                 //Check if the Element is on the right storey
                 if (e[1].parent.id === Storeys.id) {
@@ -113,21 +142,40 @@ export class TaskListCreation extends React.Component<
                     // No Parent Tasks
                     if (s.parent_intervention === p.id) {
                       // Check if the parent is the correct one
+                      //TODO: Add Task Data here!
                       return (
-                        <Accordion.Item eventKey={s.id}>
-                          <Accordion.Header>{s.name}</Accordion.Header>
-                          <Accordion.Body>Hello World</Accordion.Body>
-                        </Accordion.Item>
+                        <Accordion
+                          multiple={false}
+                          style={{ paddingLeft: "5px" }}
+                        >
+                          <Accordion.Item
+                            style={{ paddingLeft: "5px" }}
+                            label={s.name}
+                            id={s.id}
+                          >
+                            <Text>Hello World</Text>
+                          </Accordion.Item>
+                        </Accordion>
                       );
                     }
                   });
+                  // Create main tasks with Subtasks as children
                   return (
-                    <Accordion.Item eventKey={e[1].id}>
-                      <Accordion.Header>{e[1].name}</Accordion.Header>
-                      <Accordion.Body>
-                        <Accordion>{SubTasks}</Accordion>
-                      </Accordion.Body>
-                    </Accordion.Item>
+                    // This is the building element
+                    <Accordion
+                      onChange={(event: AccordionState) => {
+                        this.HighlightObjects([e[1].id], event[0]);
+                      }}
+                      style={{ paddingLeft: "5px" }}
+                    >
+                      <Accordion.Item
+                        style={{ paddingLeft: "5px" }}
+                        label={e[1].name}
+                        id={e[1].id}
+                      >
+                        {SubTasks}
+                      </Accordion.Item>
+                    </Accordion>
                   );
                 }
                 // Return empty if it does not belong to the right storey
@@ -137,25 +185,32 @@ export class TaskListCreation extends React.Component<
               }
             );
             // Check if the first Element is valid. Strange work around, but currently the script puts empty values in the Array if the Storey is wrong
-            if (Elements[0]) {
+            if (IfcElements[0]) {
+              console.log(p);
               return (
-                <Accordion.Item eventKey={p.id}>
-                  <Accordion.Header>{p.name}</Accordion.Header>
-                  <Accordion.Body>
-                    <Accordion>
-                      Assigned To:
-                      <Form.Select
-                        aria-label="Default select example"
-                        id={d.id + "_Document"}
-                      >
-                        <option>Select a person/organization</option>
-                        {this.CreatePeopleDropdown()}
-                      </Form.Select>
-                      <p />
-                      {Elements}
-                    </Accordion>
-                  </Accordion.Body>
-                </Accordion.Item>
+                <Accordion
+                  onChange={(e: AccordionState) => {
+                    this.SelectMainTask(e, p, Storeys);
+                  }}
+                  style={{ paddingLeft: "5px" }}
+                >
+                  <Accordion.Item
+                    style={{ paddingLeft: "5px" }}
+                    label={p.name}
+                    id={p.id + "_Item"}
+                  >
+                    <Text>Assigned To:</Text>
+                    <Form.Select
+                      aria-label="Default select example"
+                      id={d.id + "_Document"}
+                    >
+                      <option>Select a person/organization</option>
+                      {this.CreatePeopleDropdown()}
+                    </Form.Select>
+                    <p />
+                    {IfcElements}
+                  </Accordion.Item>
+                </Accordion>
               );
             } else {
               return <div></div>;
@@ -198,35 +253,36 @@ export class TaskListCreation extends React.Component<
     const AccordionList = this.props.IfcStoreys.map((d) => {
       ActiveKeys.push(d.id);
       return (
-        <Accordion.Item eventKey={d.id}>
-          <Accordion.Header>{d.name}</Accordion.Header>
-          <Accordion.Body>
-            Assign to Document:
-            <Form.Select
-              aria-label="Default select example"
-              id={d.id + "_Document"}
-              onChange={(event) => this.DocumentSelected(event)}
-            >
-              <option>Select corresponding (2D) Document</option>
-              {this.CreateDocumentsDropdown()}
-            </Form.Select>
-            <p />
-            Tasks:
-            {this.CreateSubTasks(d)}
-          </Accordion.Body>
+        <Accordion.Item
+          style={{ paddingLeft: "5px" }}
+          label={d.name}
+          id={d.id + "_Item"}
+        >
+          <Text>Assign to Document:</Text>
+          <Form.Select
+            aria-label="Default select example"
+            id={d.id + "_Document"}
+            onChange={(event) => this.DocumentSelected(event)}
+          >
+            <option>Select corresponding (2D) Document</option>
+            {this.CreateDocumentsDropdown()}
+          </Form.Select>
+          <p />
+          Tasks:
+          {this.CreateSubTasks(d)}
         </Accordion.Item>
       );
     });
 
     return (
       <div>
-        <Accordion defaultActiveKey={ActiveKeys} alwaysOpen>
+        <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
           {AccordionList}
         </Accordion>
         <p />
         <div className={"caia-center"}>
           <button className="btn-caia" onClick={this.CreateTaskGraph}>
-            Create Tasks
+            <Text>Create Tasks</Text>
           </button>
         </div>
         <p />

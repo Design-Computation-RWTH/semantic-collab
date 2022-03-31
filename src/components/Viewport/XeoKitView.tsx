@@ -623,20 +623,6 @@ export default function XeoKitView() {
           }}
         />
       </Paper>
-      {/*<div className="plan-toggle">
-        <div className="btn-group-toggle" data-toggle="buttons">
-          <label className="btn btn-secondary active">
-            <input
-              type="checkbox"
-              autoComplete="off"
-              onClick={(e: any) => {
-                PubSub.publish("ChangeViewMode", { test: "test" });
-              }}
-            />
-            3D Mode
-          </label>
-        </div>
-      </div>*/}
       <canvas id="myNavCubeCanvas" className="viewport-nav-cube" />
     </div>
   );

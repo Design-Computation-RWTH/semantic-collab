@@ -115,7 +115,6 @@
 }
 
 .caia-background {
-  background-color: var(--caia-background);
 }
 
 .caia-fill {
@@ -705,7 +704,6 @@ ul {
 
 .yscroll {
   overflow-y: scroll;
-  background-color: var(--caia-background);
   position: relative;
   height: 100%;
   padding: 0;

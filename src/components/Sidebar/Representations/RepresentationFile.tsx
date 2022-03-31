@@ -8,6 +8,8 @@ import {
   SelectedDocument,
 } from "../../../@types/dcwebviewer";
 
+//TODO: Move File Example: https://xeokit.github.io/xeokit-sdk/examples/#BIMOffline_XKT_metadata_moveStoreys
+
 type DocumentType = {
   filename: string;
   id: string;
