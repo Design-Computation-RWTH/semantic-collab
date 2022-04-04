@@ -17,7 +17,8 @@ export default function Sidebar(props: SidebarProps) {
     <Tabs
       style={{
         display: "flex",
-        width: "40vw",
+        width: "30%",
+        maxWidth: "30%",
         height: "100%",
         maxHeight: "100%",
         justifyContent: "flex-start",

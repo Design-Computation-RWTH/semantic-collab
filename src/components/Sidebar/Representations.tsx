@@ -8,7 +8,7 @@ import PubSub from "pubsub-js";
 import fileToArrayBuffer from "file-to-array-buffer";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
-import { Container } from "@mantine/core";
+import { Container, SimpleGrid } from "@mantine/core";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
@@ -88,8 +88,6 @@ export default function Representations(props: RepresentationsProps) {
     };
   }, []);
 
-  // console.log("init")
-
   function init() {
     un_DocumentsViewStateChange = PubSub.subscribe(
       "DocumentsViewStateChange",
@@ -134,8 +132,6 @@ export default function Representations(props: RepresentationsProps) {
         console.log(err);
       });
   }
-
-  // init();
 
   function onDocumentSelected(msg: any, data: SelectedDocument) {
     setSelected_document(data.id);
@@ -305,7 +301,7 @@ export default function Representations(props: RepresentationsProps) {
           />
         );
       } else {
-        return <tr />;
+        return <div />;
       }
     });
   }
@@ -313,12 +309,11 @@ export default function Representations(props: RepresentationsProps) {
   function leftPanel() {
     let leftPanel;
     if (screen === 0) {
-      // DEFAULT VIEW
       leftPanel = (
         <div>
-          <Table striped bordered hover size="sm">
-            <tbody>{document_list()}</tbody>
-          </Table>
+          <SimpleGrid cols={1} spacing="xs">
+            {document_list()}
+          </SimpleGrid>
         </div>
       );
     } else {

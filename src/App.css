@@ -156,7 +156,7 @@
 }
 
 .caia-submenu-border {
-  background-color: var(--caia-header);
+  /*background-color: var(--caia-header);*/
   height: 50px;
   color: white;
   font-family: var(--caia-font);

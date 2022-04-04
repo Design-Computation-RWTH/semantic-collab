@@ -610,20 +610,40 @@ export default function XeoKitView() {
   }
 
   return (
-    <div className="caia-row">
+    <Container
+      style={{
+        height: "100%",
+        maxHeight: "100%",
+        maxWidth: "100%",
+        overflow: "hidden",
+        flexDirection: "row",
+        display: "flex",
+        padding: "0px",
+        margin: "0px",
+      }}
+    >
       <Sidebar viewer={viewer} />
-      <canvas id="viewport_canvas" className="viewport" />
-      <Paper shadow="xl" radius="xl" p="xs" className="plan-toggle">
-        <Switch
-          label="3D"
-          size="lg"
-          color="gray"
-          onClick={(e: any) => {
-            PubSub.publish("ChangeViewMode", { test: "test" });
-          }}
-        />
-      </Paper>
-      <canvas id="myNavCubeCanvas" className="viewport-nav-cube" />
-    </div>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "100%",
+          padding: "0px",
+          margin: "0px",
+        }}
+      >
+        <canvas id="viewport_canvas" className="viewport" />
+        <Paper shadow="xl" radius="xl" p="xs" className="plan-toggle">
+          <Switch
+            label="3D"
+            size="lg"
+            color="gray"
+            onClick={(e: any) => {
+              PubSub.publish("ChangeViewMode", { test: "test" });
+            }}
+          />
+        </Paper>
+        <canvas id="myNavCubeCanvas" className="viewport-nav-cube" />
+      </div>
+    </Container>
   );
 }
