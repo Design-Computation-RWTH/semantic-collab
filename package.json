@@ -37,6 +37,7 @@
     "browserify-zlib": "^0.2.0",
     "dayjs": "^1.11.0",
     "enzyme": "^3.11.0",
+    "express": "^4.17.3",
     "fetch-blob": "^3.1.4",
     "file-to-array-buffer": "^1.0.0",
     "gantt-task-react": "^0.3.8",
