@@ -37,9 +37,11 @@ const Root = () => {
             }}
           >
             <ModalsProvider>
-              <BrowserRouter>
-                <CAIA />
-              </BrowserRouter>
+              <React.StrictMode>
+                <BrowserRouter>
+                  <CAIA />
+                </BrowserRouter>
+              </React.StrictMode>
             </ModalsProvider>
           </MantineProvider>
         </ViewerProvider>
