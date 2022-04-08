@@ -1,29 +1,38 @@
 import "./App.css";
 import React from "react";
-
-import { Route, Routes, useNavigate } from "react-router-dom";
-
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
 import { ReactSession } from "react-client-session";
-
-import Cookies from "js-cookie";
 import PubSub from "pubsub-js";
-
 import { BsFillPuzzleFill, BsGearWideConnected, BsHouse } from "react-icons/bs";
 import logo from "./components/Branding/Icon_v2.svg";
-
-import Login from "./services/Login";
-import { Logout, parseJWT } from "./services/AuthenticationUtils";
-
 import ProjectListView from "./pages/ProjectsView";
-
 import SetupView from "./pages/SetupsView";
 import XeoKitView from "./components/Viewport/XeoKitView";
-
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
-import { AppShell, Header, Navbar, Space, Text } from "@mantine/core";
-
+import {
+  AppShell,
+  Box,
+  Button,
+  Group,
+  Header,
+  Navbar,
+  PasswordInput,
+  Space,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { CAIAAuthProvider } from "./services/CAIA_auth";
+import { useForm } from "@mantine/form";
+import Cookies from "js-cookie";
 export const getAccessToken = () => Cookies.get("access_token");
+export const isAuthenticated = () => !!getAccessToken();
 
 let caia_app: CAIA | null = null;
 let caia_notifications: any[] = [];
@@ -41,6 +50,22 @@ export const withRouter = (Component: any) => {
     return <Component navigate={navigate} {...props} />;
   };
 };
+
+function parseJWT(token: string | undefined) {
+  // @ts-ignore
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
 
 type CAIAProps = {};
 
@@ -198,80 +223,193 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
       disabledIcons = "disabled";
       setup = `/projects/${this.state.projectName}/setup`;
     }
-
     if (getAccessToken()) {
       let token = parseJWT(getAccessToken());
       this.name = token.name;
       this.useruri = token.URI;
     } else this.name = "";
     return (
-      <AppShell
-        padding={0}
-        navbar={
-          <Navbar width={{ base: 100 }} p="xl">
-            <Navbar.Section mt="xl">
-              <a className={"navbar-icons"} href={`/projects/`}>
-                <BsHouse size="30" color="white" />
-              </a>
-            </Navbar.Section>
-            <Navbar.Section mt="xl">
-              <a className={`navbar-icons ${disabledIcons}`} href={overview}>
-                <BsFillPuzzleFill size="30" color={projectsIconColor} />
-              </a>
-            </Navbar.Section>
-            <Navbar.Section mt="xl">
-              <a className={`navbar-icons ${disabledIcons}`} href={setup}>
-                <BsGearWideConnected size="30" color={projectsIconColor} />
-              </a>
-            </Navbar.Section>
-          </Navbar>
-        }
-        header={
-          <Header height={"7vh"} p="xs">
-            <div className={"caia-header-row"}>
-              <img
-                src={logo}
-                width="60"
-                height="60"
-                className="d-inline-block align-content-center"
-                alt="CAIA Logo"
-              />
-              <Space w="xl" />
-              <Text size="xl" color="white">
-                {this.state.projectName}
-              </Text>
-            </div>
-          </Header>
-        }
-        styles={(theme) => ({
-          main: {
-            backgroundColor:
-              theme.colorScheme === "light"
-                ? theme.colors.dark[8]
-                : theme.colors.gray[0],
-          },
-          body: { height: "93vh" },
-        })}
-      >
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/projects/:id/setup" element={<SetupView />} />
-          <Route
-            path="/projects/:id/"
-            element={
-              <div className="caia-fill">
-                <XeoKitView />
+      <AuthProvider>
+        <AppShell
+          padding={0}
+          navbar={
+            <Navbar width={{ base: 100 }} p="xl">
+              <Navbar.Section mt="xl">
+                <a className={"navbar-icons"} href={`/projects/`}>
+                  <BsHouse size="30" color="white" />
+                </a>
+              </Navbar.Section>
+              <Navbar.Section mt="xl">
+                <a className={`navbar-icons ${disabledIcons}`} href={overview}>
+                  <BsFillPuzzleFill size="30" color={projectsIconColor} />
+                </a>
+              </Navbar.Section>
+              <Navbar.Section mt="xl">
+                <a className={`navbar-icons ${disabledIcons}`} href={setup}>
+                  <BsGearWideConnected size="30" color={projectsIconColor} />
+                </a>
+              </Navbar.Section>
+            </Navbar>
+          }
+          header={
+            <Header height={"7vh"} p="xs">
+              <div className={"caia-header-row"}>
+                <img
+                  src={logo}
+                  width="60"
+                  height="60"
+                  className="d-inline-block align-content-center"
+                  alt="CAIA Logo"
+                />
+                <Space w="xl" />
+                <Text size="xl" color="white">
+                  {this.state.projectName}
+                </Text>
               </div>
-            }
-          />
-          <Route path="/projects" element={<ProjectListView />} />
-          <Route path="/web-ifc.wasm" element={<Reload />} />
-          <Route path="" element={<Login />} />
-        </Routes>
-      </AppShell>
+            </Header>
+          }
+          styles={(theme) => ({
+            main: {
+              backgroundColor:
+                theme.colorScheme === "light"
+                  ? theme.colors.dark[8]
+                  : theme.colors.gray[0],
+            },
+            body: { height: "93vh" },
+          })}
+        >
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/projects/:id/setup" element={<SetupView />} />
+            <Route
+              path="/projects/:id/"
+              element={
+                <RequireAuth>
+                  <div className="caia-fill">
+                    <XeoKitView />
+                  </div>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/projects"
+              element={
+                <RequireAuth>
+                  <ProjectListView />
+                </RequireAuth>
+              }
+            />
+            <Route path="" element={<Navigate to="/projects" replace />} />
+            <Route path="/web-ifc.wasm" element={<Reload />} />
+          </Routes>
+        </AppShell>
+      </AuthProvider>
     );
   }
 }
 
+function AuthProvider({ children }: { children: React.ReactNode }) {
+  let signin = (username: string, password: string, callback: VoidFunction) => {
+    return CAIAAuthProvider.signin(username, password, () => {
+      console.log("set user: " + username);
+      callback();
+    });
+  };
+
+  let signout = (callback: VoidFunction) => {
+    return CAIAAuthProvider.signout(() => {
+      console.log("set user: null");
+      callback();
+    });
+  };
+
+  let value = { signin, signout };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+interface AuthContextType {
+  signin: (username: string, password: string, callback: VoidFunction) => void;
+  signout: (callback: VoidFunction) => void;
+}
+
+let AuthContext = React.createContext<AuthContextType>(null!);
+
+function useAuth() {
+  return React.useContext(AuthContext);
+}
+
+function RequireAuth({ children }: { children: JSX.Element }) {
+  let auth = useAuth();
+  let location = useLocation();
+
+  if (!isAuthenticated()) {
+    console.log("No user");
+    // Redirect them to the /login page, but save the current location they were
+    // trying to go to when they were redirected. This allows us to send them
+    // along to that page after they login, which is a nicer user experience
+    // than dropping them off on the home page.
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
+
+function Login() {
+  let navigate = useNavigate();
+  let location = useLocation();
+  let auth = useAuth();
+  // @ts-ignore
+  let from = location.state?.from?.pathname || "/";
+
+  const form = useForm({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+
+    validate: {
+      username: (value) =>
+        /^\S+@\S+$/.test(value) ? null : "Invalid username",
+    },
+  });
+
+  function handleSubmit(values: any) {
+    let username = values.username;
+    let password = values.password;
+
+    auth.signin(username, password, () => {
+      // Send them back to the page they tried to visit when they were
+      // redirected to the login page. Use { replace: true } so we don't create
+      // another entry in the history stack for the login page.  This means that
+      // when they get to the protected page and click the back button, they
+      // won't end up back on the login page, which is also really nice for the
+      // user experience.
+      console.log("to: " + from);
+      navigate(from, { replace: true });
+    });
+  }
+
+  return (
+    <Box style={{ paddingTop: "10%" }} sx={{ maxWidth: 300 }} mx="auto">
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <TextInput
+          required
+          label="Username"
+          placeholder="your@email.com"
+          {...form.getInputProps("username")}
+        />
+        <PasswordInput
+          required
+          label="Password"
+          placeholder="Enter your Password"
+          {...form.getInputProps("password")}
+        />
+        <Group position="right" mt="md">
+          <Button type="submit">Submit</Button>
+        </Group>
+      </form>
+    </Box>
+  );
+}
 export default withRouter(CAIA);
