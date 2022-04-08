@@ -253,7 +253,8 @@ export default function Representations(props: RepresentationsProps) {
           // // We send the raw data to the XeoKitView:
 
           break;
-        case "png":
+        // Important to keep case sensitivity in mind!
+        case "png" || "PNG":
           // We send the raw data to the XeoKitView:
           PubSub.publish("NewUploadedPlan", {
             name: file.name,

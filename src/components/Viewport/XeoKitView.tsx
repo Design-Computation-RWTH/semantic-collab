@@ -355,7 +355,7 @@ export default function XeoKitView() {
       if (documentNodes[document_uri])
         documentNodes[document_uri].visible = true;
       else {
-        if (file_uri.endsWith(".png")) {
+        if (file_uri.endsWith(".png") || file_uri.endsWith(".PNG")) {
           let image = imageservice.getImageData4URL(file_uri);
           image.then((imgblob: Blob) => {
             loadDocument(
