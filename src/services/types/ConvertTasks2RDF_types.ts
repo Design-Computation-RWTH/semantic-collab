@@ -13,6 +13,12 @@ export type Intervention = {
   parent_intervention?: number;
   required_previous?: number[];
   checks?: string[];
+  assigned_to?: string;
+
+  location?: number[];
+  up_vector?: number[];
+  forward_vector?: number[];
+  document_uri?: string;
 };
 
 export type InterventionPost = {

@@ -4,12 +4,14 @@ import { Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 import PubSub from "pubsub-js";
+import { ConvertTasks } from "../../../services/ConvertTasks2RDF";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 import BcfOWLProjectSetup from "../../../services/BcfOWLProjectSetup";
+import { InterventionPost } from "../../../services/types/ConvertTasks2RDF_types";
 
 type TaskListProps = {
-  TaskJson: object;
+  TaskJson: any;
   IfcStoreys: any[];
   viewer: Viewer;
 };
@@ -39,7 +41,11 @@ export class TaskListCreation extends React.Component<
 
   componentWillUnmount() {}
 
-  CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {}
+  // Convert the tasks to RDF and upload them to fuseki
+  CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {
+    console.log(this.props.TaskJson);
+    ConvertTasks(this.props.TaskJson);
+  }
 
   DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     let documents = this.state.documents;
@@ -128,7 +134,7 @@ export class TaskListCreation extends React.Component<
     // Iterate through all Tasks
     const TasksNew = Object.entries(this.props.TaskJson).map((d: any) => {
       // Check if they are interventions
-      if (d[0] === "intervention") {
+      if (d[0] === "interventions") {
         // Find the Parent Interventions
         const ParentInterventions = d[1].map((p: any) => {
           if (!p.parent_intervention) {
@@ -146,10 +152,10 @@ export class TaskListCreation extends React.Component<
                       return (
                         <Accordion
                           multiple={false}
-                          style={{ paddingLeft: "5px" }}
+                          style={{ paddingLeft: "1px" }}
                         >
                           <Accordion.Item
-                            style={{ paddingLeft: "5px" }}
+                            style={{ paddingLeft: "1px" }}
                             label={s.name}
                             id={s.id}
                           >
@@ -281,7 +287,10 @@ export class TaskListCreation extends React.Component<
         </Accordion>
         <p />
         <div className={"caia-center"}>
-          <button className="btn-caia" onClick={this.CreateTaskGraph}>
+          <button
+            className="btn-caia"
+            onClick={(e: any) => this.CreateTaskGraph(e)}
+          >
             <Text>Create Tasks</Text>
           </button>
         </div>

@@ -1,12 +1,13 @@
 // @ts-ignore
 import * as gantt_data from "./assets/Gantt.json";
 import * as ConvertTasks2RDF_types from "./types/ConvertTasks2RDF_types";
+const uuid = require("uuid");
 
 const N3 = require("n3");
 const { DataFactory } = N3;
-const { namedNode, literal } = DataFactory;
+const { namedNode, literal, float } = DataFactory;
 
-function convert(data: any) {
+export function ConvertTasks(data: any) {
   let inst_uri = "http://example.org/inst/";
   let bcdOWL_uri = "http://lbd.arch.rwth-aachen.de/bcfOWL#";
 
@@ -90,6 +91,7 @@ function convert(data: any) {
 
   data.interventions.forEach((i: ConvertTasks2RDF_types.Intervention) => {
     let intervention_uri = interventions_map.get(i.id); // just not to recreate it
+
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -171,6 +173,147 @@ function convert(data: any) {
         namedNode(referred_intervention_uri)
       );
     }
+
+    if (i.assigned_to) {
+      writer.addQuad(
+        namedNode(intervention_uri),
+        namedNode(bcdOWL_uri + "hasAssignedTo"),
+        namedNode(i.assigned_to)
+      );
+    }
+
+    //TODO: Check if Viewpoint needs to be created at all. e.g. no need for parent task!
+    if (i.location && i.up_vector && i.forward_vector && i.document_uri) {
+      // Generate ID for the viewpoint
+      let viewpoint_guid = uuid.v4();
+      // Create viewpoint and perspective camera URI from the GUID
+      let viewpoint_uri = inst_uri + "viewpoint_" + viewpoint_guid;
+      let pc_uri = inst_uri + "perspective_camera_" + viewpoint_guid;
+
+      // Create a Perspective Camera for the Viewpoint
+
+      writer.addQuad(
+        namedNode(pc_uri),
+        namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+        namedNode(bcdOWL_uri + "PerspectiveCamera")
+      );
+
+      writer.addQuad(
+        namedNode(pc_uri),
+        namedNode(bcdOWL_uri + "hasAspectRatio"),
+        float(1.33)
+      );
+
+      writer.addQuad(
+        namedNode(pc_uri),
+        namedNode(bcdOWL_uri + "hasFieldOfView"),
+        float(60)
+      );
+
+      writer.addQuad(
+        namedNode(pc_uri),
+        namedNode(bcdOWL_uri + "hasCameraDirection"),
+        literal("Point Z(" + ")")
+      );
+
+      writer.addQuad(
+        namedNode(pc_uri),
+        namedNode(bcdOWL_uri + "hasCameraUpVector"),
+        literal("Point Z(" + ")")
+      );
+
+      if (i.location) {
+        let wkt_location = literal(
+          "Point Z(" +
+            i.location[0] +
+            " " +
+            i.location[1] +
+            " " +
+            i.location[2] +
+            ")",
+          namedNode("http://www.opengis.net/ont/geosparql##wktLiteral")
+        );
+
+        writer.addQuad(
+          namedNode(pc_uri),
+          namedNode(bcdOWL_uri + "hasCameraViewPoint"),
+          wkt_location
+        );
+      }
+
+      if (i.up_vector) {
+        let wkt_up = literal(
+          "Point Z(" +
+            i.up_vector[0] +
+            " " +
+            i.up_vector[1] +
+            " " +
+            i.up_vector[2] +
+            ")",
+          namedNode("http://www.opengis.net/ont/geosparql##wktLiteral")
+        );
+
+        writer.addQuad(
+          namedNode(pc_uri),
+          namedNode(bcdOWL_uri + "hasCameraViewPoint"),
+          wkt_up
+        );
+      }
+
+      if (i.forward_vector) {
+        let wkt_forward = literal(
+          "Point Z(" +
+            i.forward_vector[0] +
+            " " +
+            i.forward_vector[1] +
+            " " +
+            i.forward_vector[2] +
+            ")",
+          namedNode("http://www.opengis.net/ont/geosparql##wktLiteral")
+        );
+
+        writer.addQuad(
+          namedNode(pc_uri),
+          namedNode(bcdOWL_uri + "hasCameraViewPoint"),
+          wkt_forward
+        );
+      }
+
+      //TODO: Add GUID of Building Element
+
+      // Viewpoint
+      writer.addQuad(
+        namedNode(viewpoint_uri),
+        namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+        namedNode(bcdOWL_uri + "Viewpoint")
+      );
+
+      writer.addQuad(
+        namedNode(viewpoint_uri),
+        namedNode(bcdOWL_uri + "hasGuid"),
+        literal(viewpoint_guid)
+      );
+
+      writer.addQuad(
+        namedNode(viewpoint_uri),
+        namedNode(bcdOWL_uri + "hasTopic"),
+        namedNode(intervention_uri)
+      );
+
+      writer.addQuad(
+        namedNode(viewpoint_uri),
+        namedNode(bcdOWL_uri + "hasPerspectiveCamera"),
+        namedNode(pc_uri)
+      );
+
+      if (i.document_uri) {
+        writer.addQuad(
+          namedNode(viewpoint_uri),
+          namedNode(bcdOWL_uri + "hasOriginatingDocument"),
+          namedNode(i.document_uri)
+        );
+      }
+    }
   });
 
   //const quadStream = store.match(null, null, null);
@@ -179,7 +322,8 @@ function convert(data: any) {
   let result_string: string;
   writer.end((error: any, rdf_result: any) => {
     console.log(rdf_result);
+    return rdf_result;
   });
 }
 
-convert(gantt_data);
+// convert(gantt_data);
