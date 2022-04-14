@@ -31,6 +31,21 @@ const Root = () => {
           <MantineProvider
             theme={{
               colorScheme,
+              colors: {
+                // override dark colors to change them for all components
+                dark: [
+                  "#d5d7e0",
+                  "#acaebf",
+                  "#8c8fa3",
+                  "#966980",
+                  "#4d4f66",
+                  "#34354a",
+                  "#000000",
+                  "#1010a0",
+                  "#0c0d21",
+                  "#01010a",
+                ],
+              },
               primaryColor: colorScheme === "light" ? "dark" : "gray",
               fontFamily: "Verdana, sans-serif",
               spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
