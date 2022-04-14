@@ -34,14 +34,14 @@ const Root = () => {
               colors: {
                 // override dark colors to change them for all components
                 dark: [
-                  "#dd5555",
+                  "#dd4444",
                   "#acaebf",
                   "#8c8fa3",
                   "#666980",
                   "#4d4f66",
                   "#34354a",
-                  "#000000",
-                  "#105000",
+                  "#404040",
+                  "#a0a0a0",
                   "#01c0d21",
                   "#01010a",
                 ],
