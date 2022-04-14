@@ -26,7 +26,7 @@ export interface VisualizationInfo {
 }
 
 export interface Header {
-  file: File[];
+  File: File[];
 }
 
 export interface Topic {
@@ -69,10 +69,10 @@ export interface ViewPoint {
 }
 
 export interface Components {
-  viewSetupHints: ViewSetupHints;
-  selection: ComponentSelection;
-  visibility: ComponentVisibility;
-  coloring: ComponentColoring;
+  ViewSetupHints: ViewSetupHints;
+  Selection: ComponentSelection;
+  Visibility: ComponentVisibility;
+  Coloring: ComponentColoring;
 }
 
 export interface OrthogonalCamera {
@@ -90,7 +90,7 @@ export interface PerspectiveCamera {
 }
 
 export interface Lines {
-  line: Line[];
+  Line: Line[];
 }
 
 export interface ClippingPlanes {
@@ -136,26 +136,26 @@ export interface RelatedTopic {
 }
 
 export interface Viewpoint {
-  guid: string;
+  Guid: string;
 }
 
 export interface ViewSetupHints {
-  spacesVisible: boolean;
-  spaceBoundariesVisible: boolean;
-  openingsVisible: boolean;
+  SpacesVisible: boolean;
+  SpaceBoundariesVisible: boolean;
+  OpeningsVisible: boolean;
 }
 
 export interface ComponentSelection {
-  component: Component[];
+  Component: Component[];
 }
 
 export interface ComponentVisibility {
-  exceptions: Exceptions;
-  defaultVisibility: boolean;
+  Exceptions: Exceptions;
+  DefaultVisibility: boolean;
 }
 
 export interface ComponentColoring {
-  color: Color[];
+  Color: Color[];
 }
 
 export interface Point {
@@ -193,8 +193,8 @@ export interface Exceptions {
 }
 
 export interface Color {
-  component: Component[];
-  color: string;
+  Component: Component[];
+  Color: string;
 }
 
 export type BitmapFormat = "PNG" | "JPG";
