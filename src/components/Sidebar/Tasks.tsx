@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container } from "@mantine/core";
 import { TaskListPreview } from "./Tasks/TaskListPreview";
-import { TaskListCreation } from "./Tasks/TaskListCreation";
+import TaskListCreation from "./Tasks/TaskListCreation";
 // @ts-ignore
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";

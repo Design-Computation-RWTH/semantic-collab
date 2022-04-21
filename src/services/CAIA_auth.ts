@@ -1,8 +1,4 @@
 import Cookies from "js-cookie";
-import { useForm } from "@mantine/form";
-import { ReactSession } from "react-client-session";
-import { Box, Button, Group, PasswordInput, TextInput } from "@mantine/core";
-import React from "react";
 
 const base_uri = "https://caia.herokuapp.com";
 
