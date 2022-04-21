@@ -1,18 +1,19 @@
 import React, { useState } from "react";
+import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
+import PubSub from "pubsub-js";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-
-import PubSub from "pubsub-js";
 import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
-import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
 
-type AddUserFormProps = {
+type GenericAddFormProps = {
   onHide(): any;
   show: boolean;
+  item: string;
+  bcfOWLProperty: string;
 };
 
-function AddUserForm(props: AddUserFormProps) {
+function GenericAddForm(props: GenericAddFormProps) {
   const [value, setValue] = useState("");
 
   const handleValue = (event: { target: { value: any } }) => {
@@ -21,46 +22,30 @@ function AddUserForm(props: AddUserFormProps) {
 
   const submitted = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    let bcfowl: BcfOWL_Endpoint = new BcfOWL_Endpoint();
     let bcfowl_setup: BcfOWLProjectSetup = new BcfOWLProjectSetup();
+    bcfowl_setup.insertPropertyValue(props.bcfOWLProperty.trim(), value.trim());
     props.onHide();
-    bcfowl
-      .getUserByEmail(value.trim())
-      .then((user) => {
-        if (user["@id"]) {
-          bcfowl_setup.insertUser(user["@id"]).then(() => {
-            PubSub.publish("Update", { txt: "User " + value + " added." });
-            PubSub.publish("SetupUpdate", "Update view.");
-          });
-        } else
-          PubSub.publish("Update", {
-            txt: "User " + value + " does not exist. Contact admin.",
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    PubSub.publish("Update", {
+      txt: "Inserted " + props.bcfOWLProperty.trim() + " - " + value.trim(),
+    });
+    PubSub.publish("SetupUpdate", "Update view.");
   };
 
   return (
     <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Add user to the project
+          Add new {props.item} to the project.
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="show-grid">
         <Form onSubmit={submitted}>
           <Form.Group className="mb-3" controlId="formProjectName">
-            <Form.Label>Users e-mail address</Form.Label>
             <Form.Control
-              type="email"
+              type="text"
               onChange={handleValue}
-              placeholder="Enter users email address"
+              placeholder={"Enter new " + props.item + " value "}
             />
-            <Form.Text className="text-muted">
-              The e-mail address of an existing user at the system.
-            </Form.Text>
           </Form.Group>
           <Button variant="outline-dark" type="submit">
             Add
@@ -74,4 +59,4 @@ function AddUserForm(props: AddUserFormProps) {
   );
 }
 
-export default AddUserForm;
+export default GenericAddForm;

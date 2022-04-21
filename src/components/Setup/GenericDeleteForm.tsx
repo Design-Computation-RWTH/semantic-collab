@@ -4,21 +4,33 @@ import PubSub from "pubsub-js";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-type DeleteUserFormProps = {
+type GenericDeleteFormProps = {
   onHide(): any;
   show: boolean;
   item: string;
+  bcfOWLProperty: string;
   deleteValue: string;
 };
 
-function DeleteUserForm(props: DeleteUserFormProps) {
+function GenericDeleteForm(props: GenericDeleteFormProps) {
   const execute = (event: { preventDefault: () => void }) => {
     event.preventDefault();
     let bcfowl_setup = new BcfOWLProjectSetup();
-    bcfowl_setup.deletetUser(props.deleteValue.trim()).then(() => {
-      PubSub.publish("Update", { txt: "Deleted user " + props.item });
-      PubSub.publish("SetupUpdate", "Update view.");
-    });
+    bcfowl_setup
+      .removePropertyValue(
+        props.bcfOWLProperty.trim(),
+        props.deleteValue.trim()
+      )
+      .then(() => {
+        PubSub.publish("Update", {
+          txt:
+            "Deleted " +
+            props.bcfOWLProperty.trim() +
+            " - " +
+            props.deleteValue.trim(),
+        });
+        PubSub.publish("SetupUpdate", "Update view.");
+      });
     props.onHide();
   };
 
@@ -29,7 +41,8 @@ function DeleteUserForm(props: DeleteUserFormProps) {
       </Modal.Header>
 
       <Modal.Body>
-        Remove user <b>{props.item}</b> from the project.
+        Remove the {props.item} from the project. {props.bcfOWLProperty}
+        <br /> Selected value is: <b>{props.deleteValue}</b>
       </Modal.Body>
 
       <Modal.Footer>
@@ -42,4 +55,4 @@ function DeleteUserForm(props: DeleteUserFormProps) {
   );
 }
 
-export default DeleteUserForm;
+export default GenericDeleteForm;

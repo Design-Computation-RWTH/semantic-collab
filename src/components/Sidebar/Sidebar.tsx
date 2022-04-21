@@ -1,73 +1,46 @@
 import React from "react";
-import {Tab, Tabs} from "react-bootstrap";
+import { BsCalendarCheck, BsCardImage, BsLayers } from "react-icons/bs";
+import { Tabs } from "@mantine/core";
 import Representations from "./Representations";
 import Gallery from "./Gallery";
 import Tasks from "./Tasks";
-import XeoKitView from "../Viewport/XeoKitView";
+
+// @ts-ignore
+import { Viewer } from "@xeokit/xeokit-sdk";
 
 type SidebarProps = {
-    XeokitInst: XeoKitView
+  viewer: Viewer;
 };
 
-type SidebarState = {
-
-};
-
-export default class Sidebar extends React.Component<SidebarProps,SidebarState> {
-
-    constructor(props: SidebarProps | Readonly<SidebarProps>) {
-        super(props);
-        this.state = {
-
-        }
-    }
-
-    componentWillUnmount() {
-    }
-
-    render() {
-
-        return (
-            <div className="image-grid">
-                <div className="sidebar">
-                    <Tabs defaultActiveKey="representation" id="uncontrolled-tab-example" className="sidebar-tab-nav">
-                        <Tab eventKey="representation" title={<span> <i
-                            className="icon bi-layers btn-caia-icon-size"/> Representation </span>}>
-                            <div className="caia-fill">
-                                <Representations viewer={this.props.XeokitInst}/>
-                            </div>
-                        </Tab>
-                        <Tab eventKey="gallery" title={<span> <i
-                            className="icon bi-image btn-caia-icon-size"/> Gallery </span>}>
-                            <div className="caia-fill">
-                                <Gallery/>
-                            </div>
-                        </Tab>
-                        <Tab eventKey="tasks" title={<span> <i
-                            className="icon bi-calendar2-event btn-caia-icon-size"/> Tasks </span>}>
-                            <div className="caia-fill">
-                                <Tasks viewer={this.props.XeokitInst}/>
-                            </div>
-                        </Tab>
-                        {/*<Tab eventKey="treeview" title="Treeview">*/}
-                        {/*    <div className="yscroll">*/}
-                        {/*        <div id="treeViewContainer" className="tree-style"></div>*/}
-                        {/*    </div>*/}
-                        {/*</Tab>*/}
-                    </Tabs>
-                </div>
-            </div>
-        )
-
-    }
-
-    componentDidMount() {
-        this.init()
-    }
-
-    init() {
-
-    }
-
-
+export default function Sidebar(props: SidebarProps) {
+  return (
+    <Tabs
+      style={{
+        display: "flex",
+        width: "30%",
+        maxWidth: "30%",
+        height: "100%",
+        maxHeight: "100%",
+        justifyContent: "flex-start",
+        alignContent: "stretch",
+        alignItems: "stretch",
+        flexDirection: "column",
+      }}
+      styles={{
+        body: { height: "100%" },
+      }}
+      color="dark"
+      grow
+    >
+      <Tabs.Tab title="Representations" icon={<BsLayers />}>
+        <Representations />
+      </Tabs.Tab>
+      <Tabs.Tab title="Gallery" icon={<BsCardImage />}>
+        <Gallery />
+      </Tabs.Tab>
+      <Tabs.Tab title="Tasks" icon={<BsCalendarCheck />}>
+        <Tasks />
+      </Tabs.Tab>
+    </Tabs>
+  );
 }
