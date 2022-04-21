@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { Accordion, AccordionState, Text } from "@mantine/core";
 import { Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -26,29 +26,56 @@ let viewer_instance: Viewer;
 
 let FilteredIfcElements: any = {};
 
-export class TaskListCreation extends React.Component<
-  TaskListProps,
-  TaskListState
-> {
-  constructor(props: TaskListProps | Readonly<TaskListProps>) {
-    super(props);
-    this.state = {
-      tasks: null,
-      documents: null,
-      users: null,
-    };
-  }
+export default function TaskListCreation(props: TaskListProps) {
+  const [tasks, setTasks] = useState<any>(null);
+  const [documents, setDocuments] = useState<any>(null);
+  const [users, setUsers] = useState<any>(null);
 
-  componentWillUnmount() {}
+  useEffect(() => {
+    init();
+  }, []);
+
+  useEffect(() => {}, [tasks]);
+
+  function init() {
+    let bcfowl = new BcfOWL_Endpoint();
+    let bcfowl_setup = new BcfOWLProjectSetup();
+
+    if (viewer_instance) {
+      viewer_instance.cameraControl.on("picked", (e: any) => {});
+    }
+    bcfowl
+      .getDocuments()
+      .then((value: any) => {
+        if (value["@graph"]) value = value["@graph"];
+        if (!Array.isArray(value)) value = [value];
+        setDocuments(value);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+
+    bcfowl_setup.getCurrentProject().then((value) => {
+      try {
+        if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
+        let list: string[] = [];
+        value.hasUser.forEach((user: string) => {
+          bcfowl.describeUser(user).then((u) => {
+            list = list.concat(u);
+            setUsers(list);
+          });
+        });
+      } catch (e) {}
+    });
+  }
 
   // Convert the tasks to RDF and upload them to fuseki
-  CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log(this.props.TaskJson);
-    ConvertTasks(this.props.TaskJson);
+  function CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {
+    console.log(props.TaskJson);
+    ConvertTasks(props.TaskJson);
   }
 
-  DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>) {
-    let documents = this.state.documents;
+  function DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     for (const doc in documents) {
       if (event.target.selectedOptions[documents[doc]["@id"]]) {
         let bcfowl = new BcfOWL_Endpoint();
@@ -70,10 +97,12 @@ export class TaskListCreation extends React.Component<
     }
   }
 
-  CreateDocumentsDropdown() {
+  function CreateDocumentsDropdown() {
     let DocumentOptions: any;
-    if (this.state.documents) {
-      DocumentOptions = this.state.documents.map((d: any) => {
+    if (documents) {
+      console.log("###########DOCUMENTS###########");
+      console.log(documents);
+      DocumentOptions = documents.map((d: any) => {
         if (d.hasFilename.endsWith(".png")) {
           return (
             <option value={d.hasFilename} id={d["@id"]}>
@@ -86,10 +115,10 @@ export class TaskListCreation extends React.Component<
     return DocumentOptions;
   }
 
-  CreatePeopleDropdown() {
+  function CreatePeopleDropdown() {
     let People: any;
-    if (this.state.users) {
-      People = this.state.users.map((p: any) => {
+    if (users) {
+      People = users.map((p: any) => {
         return (
           <option id={p["@id"]}>
             {p.name} ({p.mbox.split("mailto:")[1]})
@@ -101,7 +130,7 @@ export class TaskListCreation extends React.Component<
     return People;
   }
 
-  HighlightObjects(ObjectIDs: any[], highlight: boolean) {
+  function HighlightObjects(ObjectIDs: any[], highlight: boolean) {
     let viewerScene = viewer_instance.scene.objects;
     console.log(ObjectIDs);
     for (const Element in viewerScene) {
@@ -119,7 +148,11 @@ export class TaskListCreation extends React.Component<
     }*/
   }
 
-  SelectMainTask(event: AccordionState, ParentIntervention: any, Storeys: any) {
+  function SelectMainTask(
+    event: AccordionState,
+    ParentIntervention: any,
+    Storeys: any
+  ) {
     let selectedObjects: string[] = [];
     Object.entries(FilteredIfcElements).map((e: any) => {
       //Check if the Element is on the right storey
@@ -127,12 +160,12 @@ export class TaskListCreation extends React.Component<
         selectedObjects.push(e[1].id);
       }
     });
-    this.HighlightObjects(selectedObjects, event[0]);
+    HighlightObjects(selectedObjects, event[0]);
   }
 
-  CreateSubTasks(Storeys: any) {
+  function CreateSubTasks(Storeys: any) {
     // Iterate through all Tasks
-    const TasksNew = Object.entries(this.props.TaskJson).map((d: any) => {
+    const TasksNew = Object.entries(props.TaskJson).map((d: any) => {
       // Check if they are interventions
       if (d[0] === "interventions") {
         // Find the Parent Interventions
@@ -170,7 +203,7 @@ export class TaskListCreation extends React.Component<
                     // This is the building element
                     <Accordion
                       onChange={(event: AccordionState) => {
-                        this.HighlightObjects([e[1].id], event[0]);
+                        HighlightObjects([e[1].id], event[0]);
                       }}
                       style={{ paddingLeft: "5px" }}
                     >
@@ -196,7 +229,7 @@ export class TaskListCreation extends React.Component<
               return (
                 <Accordion
                   onChange={(e: AccordionState) => {
-                    this.SelectMainTask(e, p, Storeys);
+                    SelectMainTask(e, p, Storeys);
                   }}
                   style={{ paddingLeft: "5px" }}
                 >
@@ -211,7 +244,7 @@ export class TaskListCreation extends React.Component<
                       id={d.id + "_Document"}
                     >
                       <option>Select a person/organization</option>
-                      {this.CreatePeopleDropdown()}
+                      {CreatePeopleDropdown()}
                     </Form.Select>
                     <p />
                     {IfcElements}
@@ -230,108 +263,66 @@ export class TaskListCreation extends React.Component<
     return TasksNew;
   }
 
-  render() {
-    viewer_instance = this.props.viewer;
+  viewer_instance = props.viewer;
 
-    let metaObjects = viewer_instance.metaScene.getObjectIDsByType(
-      "IfcWallStandardCase"
-    );
-    for (let object in metaObjects) {
-      let IfcElement =
-        viewer_instance.metaScene.metaObjects[metaObjects[object]];
-      for (let pSet in IfcElement.propertySets) {
-        if (IfcElement.propertySets[pSet].name === "Pset_WallCommon") {
-          let propSet = IfcElement.propertySets[pSet].properties;
-          for (let propSetProp in propSet) {
-            if (
-              propSet[propSetProp].name === "IsExternal" &&
-              propSet[propSetProp].value === "T"
-            ) {
-              FilteredIfcElements[IfcElement.id] = IfcElement;
-            }
+  let metaObjects = viewer_instance.metaScene.getObjectIDsByType(
+    "IfcWallStandardCase"
+  );
+  for (let object in metaObjects) {
+    let IfcElement = viewer_instance.metaScene.metaObjects[metaObjects[object]];
+    for (let pSet in IfcElement.propertySets) {
+      if (IfcElement.propertySets[pSet].name === "Pset_WallCommon") {
+        let propSet = IfcElement.propertySets[pSet].properties;
+        for (let propSetProp in propSet) {
+          if (
+            propSet[propSetProp].name === "IsExternal" &&
+            propSet[propSetProp].value === "T"
+          ) {
+            FilteredIfcElements[IfcElement.id] = IfcElement;
           }
         }
       }
     }
+  }
 
-    let ActiveKeys = [""];
+  let ActiveKeys = [""];
 
-    const AccordionList = this.props.IfcStoreys.map((d) => {
-      ActiveKeys.push(d.id);
-      return (
-        <Accordion.Item
-          style={{ paddingLeft: "5px" }}
-          label={d.name}
-          id={d.id + "_Item"}
-        >
-          <Text>Assign to Document:</Text>
-          <Form.Select
-            aria-label="Default select example"
-            id={d.id + "_Document"}
-            onChange={(event) => this.DocumentSelected(event)}
-          >
-            <option>Select corresponding (2D) Document</option>
-            {this.CreateDocumentsDropdown()}
-          </Form.Select>
-          <p />
-          Tasks:
-          {this.CreateSubTasks(d)}
-        </Accordion.Item>
-      );
-    });
-
+  const AccordionList = props.IfcStoreys.map((d) => {
+    ActiveKeys.push(d.id);
     return (
-      <div>
-        <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
-          {AccordionList}
-        </Accordion>
+      <Accordion.Item
+        style={{ paddingLeft: "5px" }}
+        label={d.name}
+        id={d.id + "_Item"}
+      >
+        <Text>Assign to Document:</Text>
+        <Form.Select
+          aria-label="Default select example"
+          id={d.id + "_Document"}
+          onChange={(event) => DocumentSelected(event)}
+        >
+          <option>Select corresponding (2D) Document</option>
+          {CreateDocumentsDropdown()}
+        </Form.Select>
         <p />
-        <div className={"caia-center"}>
-          <button
-            className="btn-caia"
-            onClick={(e: any) => this.CreateTaskGraph(e)}
-          >
-            <Text>Create Tasks</Text>
-          </button>
-        </div>
-        <p />
-      </div>
+        Tasks:
+        {CreateSubTasks(d)}
+      </Accordion.Item>
     );
-  }
+  });
 
-  componentDidMount() {
-    this.init();
-  }
-
-  init() {
-    let bcfowl = new BcfOWL_Endpoint();
-    let bcfowl_setup = new BcfOWLProjectSetup();
-
-    if (viewer_instance) {
-      viewer_instance.cameraControl.on("picked", (e: any) => {});
-    }
-    bcfowl
-      .getDocuments()
-      .then((value: any) => {
-        if (value["@graph"]) value = value["@graph"];
-        if (!Array.isArray(value)) value = [value];
-        this.setState({ documents: value });
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-
-    bcfowl_setup.getCurrentProject().then((value) => {
-      try {
-        if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
-        let list: string[] = [];
-        value.hasUser.forEach((user: string) => {
-          bcfowl.describeUser(user).then((u) => {
-            list = list.concat(u);
-            this.setState({ users: list });
-          });
-        });
-      } catch (e) {}
-    });
-  }
+  return (
+    <div>
+      <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
+        {AccordionList}
+      </Accordion>
+      <p />
+      <div className={"caia-center"}>
+        <button className="btn-caia" onClick={(e: any) => CreateTaskGraph(e)}>
+          <Text>Create Tasks</Text>
+        </button>
+      </div>
+      <p />
+    </div>
+  );
 }
