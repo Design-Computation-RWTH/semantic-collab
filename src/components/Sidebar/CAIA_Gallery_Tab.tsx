@@ -15,6 +15,11 @@ import BCFAPI from "../../services/BCFAPI";
 import TopicTable from "./Gallery/TopicTable";
 import PubSub from "pubsub-js";
 import fileDownload from "js-file-download";
+import { Project } from "../../services/types/BCFXML_Types";
+var xml_convert = require("xml-js");
+(window as any).global = window;
+// @ts-ignore
+window.Buffer = window.Buffer || require("buffer").Buffer;
 
 class SnapShotThumbnail {
   private uri: string;
@@ -179,8 +184,12 @@ export default function CAIA_Gallery_Tab() {
   }
 
   function downloadBCF() {
-    console.log("Joo");
-    fileDownload("", "BCF.txt");
+    let p: Project = {};
+    p.Name = "jkajakjkas";
+    let options = { compact: true, ignoreComment: true, spaces: 4 };
+    let value = xml_convert.json2xml(p, options);
+    console.log("val:" + value);
+    fileDownload(value, "BCF.txt");
   }
 
   return (
