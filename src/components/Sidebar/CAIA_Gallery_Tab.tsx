@@ -14,6 +14,7 @@ import BCFAPI from "../../services/BCFAPI";
 
 import TopicTable from "./Gallery/TopicTable";
 import PubSub from "pubsub-js";
+import fileDownload from "js-file-download";
 
 class SnapShotThumbnail {
   private uri: string;
@@ -177,6 +178,11 @@ export default function CAIA_Gallery_Tab() {
     );
   }
 
+  function downloadBCF() {
+    console.log("Joo");
+    fileDownload("", "BCF.txt");
+  }
+
   return (
     <div style={{ height: "100%" }} className="caia-fill">
       <ScrollArea
@@ -202,8 +208,13 @@ export default function CAIA_Gallery_Tab() {
         <button className="btn-caia-icon">
           <i className="icon bi-plus-square btn-caia-icon-size" />
         </button>
-        <button className="btn-caia-icon" onClick={() => {}}>
-          <span className="bcficon"></span>
+        <button className="btn-caia-icon">
+          <span
+            onClick={() => {
+              downloadBCF();
+            }}
+            className="bcficon"
+          ></span>
         </button>
       </Container>
     </div>
