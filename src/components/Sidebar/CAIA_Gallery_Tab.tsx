@@ -18,8 +18,13 @@ import fileDownload from "js-file-download";
 import { Project } from "../../services/types/BCFXML_Types";
 var xml_convert = require("xml-js");
 (window as any).global = window;
+
+// for the JSON-XML conversion:
 // @ts-ignore
 window.Buffer = window.Buffer || require("buffer").Buffer;
+
+// To create BCF XML ZIP
+var JSZip = require("jszip");
 
 class SnapShotThumbnail {
   private uri: string;
