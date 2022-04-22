@@ -189,12 +189,18 @@ export default function CAIA_Gallery_Tab() {
   }
 
   function downloadBCF() {
+    var zip = new JSZip();
+    zip.file("hello.txt", "Hello[p my)6cxsw2q");
     let p: Project = {};
     p.Name = "jkajakjkas";
     let options = { compact: true, ignoreComment: true, spaces: 4 };
     let value = xml_convert.json2xml(p, options);
     console.log("val:" + value);
-    fileDownload(value, "BCF.txt");
+    zip
+      .generateAsync({ type: "uint8array" })
+      .then((z: string | ArrayBuffer | ArrayBufferView | Blob) => {
+        fileDownload(z, "BCF.zip");
+      });
   }
 
   return (
@@ -222,7 +228,12 @@ export default function CAIA_Gallery_Tab() {
         <button className="btn-caia-icon">
           <i className="icon bi-plus-square btn-caia-icon-size" />
         </button>
-        <button className="btn-caia-icon">
+        <button
+          className="btn-caia-icon"
+          onClick={() => {
+            downloadBCF();
+          }}
+        >
           <span
             onClick={() => {
               downloadBCF();
