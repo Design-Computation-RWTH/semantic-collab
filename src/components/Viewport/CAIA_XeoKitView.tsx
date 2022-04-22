@@ -28,7 +28,7 @@ import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import ImageService from "../../services/ImageService";
 import PubSub from "pubsub-js";
 
-import Sidebar from "../Sidebar/Sidebar";
+import CAIA_Sidebar from "../Sidebar/CAIA_Sidebar";
 
 const wkt = require("terraformer-wkt-parser");
 
@@ -56,7 +56,7 @@ class MyDataSource {
   }
 }
 
-export default function XeoKitView() {
+export default function CAIA_XeoKitView() {
   const { setViewer } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
@@ -622,7 +622,7 @@ export default function XeoKitView() {
         margin: "0px",
       }}
     >
-      <Sidebar viewer={viewer} />
+      <CAIA_Sidebar viewer={viewer} />
       <div
         style={{
           width: "100%",

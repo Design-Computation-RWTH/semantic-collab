@@ -13,7 +13,7 @@ import { BsFillPuzzleFill, BsGearWideConnected, BsHouse } from "react-icons/bs";
 import logo from "./components/Branding/Icon_v2.svg";
 import ProjectListView from "./pages/ProjectsView";
 import SetupView from "./pages/SetupsView";
-import XeoKitView from "./components/Viewport/XeoKitView";
+import XeoKitView from "./components/Viewport/CAIA_XeoKitView";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
 import {

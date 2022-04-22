@@ -35,7 +35,7 @@ type bcfOWL_DocumentType = {
   [key: string]: string;
 };
 
-export default function Representations(props: RepresentationsProps) {
+export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   //const [checked, setChecked] = useState(false);
   const [documents, setDocuments] = useState<bcfOWL_DocumentType[]>([]);
   const [selected_ids, setSelected_ids] = useState<string[]>([]);

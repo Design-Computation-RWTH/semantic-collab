@@ -14,6 +14,17 @@ import BCFAPI from "../../services/BCFAPI";
 
 import TopicTable from "./Gallery/TopicTable";
 import PubSub from "pubsub-js";
+import fileDownload from "js-file-download";
+import { Project } from "../../services/types/BCFXML_Types";
+var xml_convert = require("xml-js");
+(window as any).global = window;
+
+// for the JSON-XML conversion:
+// @ts-ignore
+window.Buffer = window.Buffer || require("buffer").Buffer;
+
+// To create BCF XML ZIP
+var JSZip = require("jszip");
 
 class SnapShotThumbnail {
   private uri: string;
@@ -27,7 +38,7 @@ class SnapShotThumbnail {
   }
 }
 
-export default function Gallery() {
+export default function CAIA_Gallery_Tab() {
   const [imageslist, setImageslist] = useState<any[]>([]);
   const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
   const [active_topic, setActive_topic] = useState<any>(null);
@@ -177,6 +188,15 @@ export default function Gallery() {
     );
   }
 
+  function downloadBCF() {
+    let p: Project = {};
+    p.Name = "jkajakjkas";
+    let options = { compact: true, ignoreComment: true, spaces: 4 };
+    let value = xml_convert.json2xml(p, options);
+    console.log("val:" + value);
+    fileDownload(value, "BCF.txt");
+  }
+
   return (
     <div style={{ height: "100%" }} className="caia-fill">
       <ScrollArea
@@ -201,6 +221,14 @@ export default function Gallery() {
         </button>
         <button className="btn-caia-icon">
           <i className="icon bi-plus-square btn-caia-icon-size" />
+        </button>
+        <button className="btn-caia-icon">
+          <span
+            onClick={() => {
+              downloadBCF();
+            }}
+            className="bcficon"
+          ></span>
         </button>
       </Container>
     </div>
