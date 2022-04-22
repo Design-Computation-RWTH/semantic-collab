@@ -10,7 +10,7 @@ const testJSON = require("./Tasks/TasksExample.json");
 
 type TaskView = "Preview" | "Creation";
 
-export default function Tasks() {
+export default function CAIA_Tasks_Tab() {
   const [viewState, setViewState] = useState<TaskView>("Preview");
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;

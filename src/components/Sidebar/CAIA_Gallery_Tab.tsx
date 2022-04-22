@@ -27,7 +27,7 @@ class SnapShotThumbnail {
   }
 }
 
-export default function Gallery() {
+export default function CAIA_Gallery_Tab() {
   const [imageslist, setImageslist] = useState<any[]>([]);
   const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
   const [active_topic, setActive_topic] = useState<any>(null);
@@ -201,6 +201,9 @@ export default function Gallery() {
         </button>
         <button className="btn-caia-icon">
           <i className="icon bi-plus-square btn-caia-icon-size" />
+        </button>
+        <button className="btn-caia-icon" onClick={() => {}}>
+          <span className="bcficon"></span>
         </button>
       </Container>
     </div>
