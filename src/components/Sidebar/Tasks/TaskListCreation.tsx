@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
-import { Accordion, AccordionState, Text } from "@mantine/core";
+import { Button, Accordion, AccordionState, Text } from "@mantine/core";
 import { Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
@@ -25,6 +25,7 @@ type TaskListState = {
 let viewer_instance: Viewer;
 
 let FilteredIfcElements: any = {};
+let UpdatedTasks: any = {};
 
 export default function TaskListCreation(props: TaskListProps) {
   const [tasks, setTasks] = useState<any>(null);
@@ -49,7 +50,9 @@ export default function TaskListCreation(props: TaskListProps) {
       .then((value: any) => {
         if (value["@graph"]) value = value["@graph"];
         if (!Array.isArray(value)) value = [value];
-        setDocuments(value);
+        if (!documents) {
+          setDocuments(value);
+        }
       })
       .catch((err: any) => {
         console.log(err);
@@ -62,7 +65,9 @@ export default function TaskListCreation(props: TaskListProps) {
         value.hasUser.forEach((user: string) => {
           bcfowl.describeUser(user).then((u) => {
             list = list.concat(u);
-            setUsers(list);
+            if (!users) {
+              setUsers(list);
+            }
           });
         });
       } catch (e) {}
@@ -71,11 +76,34 @@ export default function TaskListCreation(props: TaskListProps) {
 
   // Convert the tasks to RDF and upload them to fuseki
   function CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log(props.TaskJson);
-    ConvertTasks(props.TaskJson);
+    //console.log(props.TaskJson);
+    //setTasks(props.TaskJson);
+    //ConvertTasks(props.TaskJson);
+  }
+
+  function AssigneeSelected(event: React.ChangeEvent<HTMLSelectElement>) {
+    for (const [key, value] of Object.entries(UpdatedTasks)) {
+      let Task: any = value;
+      if (
+        key.includes(event.target.id) ||
+        Task.parent_intervention.includes(event.target.id)
+      ) {
+        Task["assigned_to"] = event.target.selectedOptions[0].id;
+      }
+    }
   }
 
   function DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>) {
+    for (const [key, value] of Object.entries(UpdatedTasks)) {
+      let Task: any = value;
+      if (
+        key.includes(event.target.id) ||
+        Task.parent_intervention.includes(event.target.id)
+      ) {
+        Task["document_uri"] = event.target.selectedOptions[0].id;
+      }
+    }
+
     for (const doc in documents) {
       if (event.target.selectedOptions[documents[doc]["@id"]]) {
         let bcfowl = new BcfOWL_Endpoint();
@@ -100,8 +128,6 @@ export default function TaskListCreation(props: TaskListProps) {
   function CreateDocumentsDropdown() {
     let DocumentOptions: any;
     if (documents) {
-      console.log("###########DOCUMENTS###########");
-      console.log(documents);
       DocumentOptions = documents.map((d: any) => {
         if (d.hasFilename.endsWith(".png")) {
           return (
@@ -132,7 +158,7 @@ export default function TaskListCreation(props: TaskListProps) {
 
   function HighlightObjects(ObjectIDs: any[], highlight: boolean) {
     let viewerScene = viewer_instance.scene.objects;
-    console.log(ObjectIDs);
+    //console.log(ObjectIDs);
     for (const Element in viewerScene) {
       let elementID = viewerScene[Element].id;
       if (ObjectIDs.includes(elementID)) {
@@ -164,13 +190,16 @@ export default function TaskListCreation(props: TaskListProps) {
   }
 
   function CreateSubTasks(Storeys: any) {
-    // Iterate through all Tasks
     const TasksNew = Object.entries(props.TaskJson).map((d: any) => {
       // Check if they are interventions
       if (d[0] === "interventions") {
         // Find the Parent Interventions
         const ParentInterventions = d[1].map((p: any) => {
+          // If there is no parent intervention it means it is a Parent itself!
           if (!p.parent_intervention) {
+            let ParentIntervention = { ...p };
+            ParentIntervention.id = Storeys.id + "_" + p.id;
+            UpdatedTasks[ParentIntervention.id] = ParentIntervention;
             // Create a Card for every IFC Element
             const IfcElements = Object.entries(FilteredIfcElements).map(
               (e: any) => {
@@ -180,6 +209,35 @@ export default function TaskListCreation(props: TaskListProps) {
                   const SubTasks = d[1].map((s: any) => {
                     // No Parent Tasks
                     if (s.parent_intervention === p.id) {
+                      // copy the current intervention
+                      let tempIntervention;
+                      tempIntervention = { ...s };
+
+                      // edit the ID by combining it with the element ID and change the "requiered previous" IDs
+                      tempIntervention.id = e[0] + "_" + s.id;
+                      tempIntervention.parent_intervention =
+                        ParentIntervention.id;
+
+                      if (tempIntervention.required_previous) {
+                        let RequieredPrev =
+                          tempIntervention.required_previous.map(function (
+                            x: any
+                          ) {
+                            return e[0] + "_" + x;
+                          });
+                        tempIntervention.required_previous = RequieredPrev;
+                      }
+                      let aabb = viewer_instance.scene.objects[e[0]]._aabb;
+
+                      tempIntervention.location = [
+                        (aabb[0] + aabb[3]) / 2,
+                        (aabb[1] + aabb[4]) / 2,
+                        (aabb[2] + aabb[5]) / 2,
+                      ];
+                      tempIntervention.up_vector = [0, 0, 1];
+                      tempIntervention.forward_vector = [1, 0, 0];
+
+                      UpdatedTasks[tempIntervention.id] = tempIntervention;
                       // Check if the parent is the correct one
                       //TODO: Add Task Data here!
                       return (
@@ -189,10 +247,10 @@ export default function TaskListCreation(props: TaskListProps) {
                         >
                           <Accordion.Item
                             style={{ paddingLeft: "1px" }}
-                            label={s.name}
-                            id={s.id}
+                            label={tempIntervention.name}
+                            id={tempIntervention.id}
                           >
-                            <Text>Hello World</Text>
+                            <Text>{tempIntervention.id}</Text>
                           </Accordion.Item>
                         </Accordion>
                       );
@@ -225,7 +283,7 @@ export default function TaskListCreation(props: TaskListProps) {
             );
             // Check if the first Element is valid. Strange work around, but currently the script puts empty values in the Array if the Storey is wrong
             if (IfcElements[0]) {
-              console.log(p);
+              //console.log(p);
               return (
                 <Accordion
                   onChange={(e: AccordionState) => {
@@ -235,13 +293,14 @@ export default function TaskListCreation(props: TaskListProps) {
                 >
                   <Accordion.Item
                     style={{ paddingLeft: "5px" }}
-                    label={p.name}
-                    id={p.id + "_Item"}
+                    label={ParentIntervention.name}
+                    id={ParentIntervention.id}
                   >
                     <Text>Assigned To:</Text>
                     <Form.Select
                       aria-label="Default select example"
-                      id={d.id + "_Document"}
+                      id={ParentIntervention.id}
+                      onChange={(event) => AssigneeSelected(event)}
                     >
                       <option>Select a person/organization</option>
                       {CreatePeopleDropdown()}
@@ -298,7 +357,7 @@ export default function TaskListCreation(props: TaskListProps) {
         <Text>Assign to Document:</Text>
         <Form.Select
           aria-label="Default select example"
-          id={d.id + "_Document"}
+          id={d.id}
           onChange={(event) => DocumentSelected(event)}
         >
           <option>Select corresponding (2D) Document</option>
@@ -318,9 +377,13 @@ export default function TaskListCreation(props: TaskListProps) {
       </Accordion>
       <p />
       <div className={"caia-center"}>
-        <button className="btn-caia" onClick={(e: any) => CreateTaskGraph(e)}>
+        <Button
+          onClick={() => {
+            console.log(UpdatedTasks);
+          }}
+        >
           <Text>Create Tasks</Text>
-        </button>
+        </Button>
       </div>
       <p />
     </div>
