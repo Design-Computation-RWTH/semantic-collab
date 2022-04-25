@@ -20,7 +20,7 @@ export interface ViewPointFile {
 }
 
 export interface VisualizationInfo {
-  Components?: Components;
+  Components: Components;
   OrthogonalCamera?: OrthogonalCamera;
   PerspectiveCamera?: PerspectiveCamera;
   Lines?: Lines;
@@ -73,10 +73,9 @@ export interface ViewPoint {
 }
 
 export interface Components {
-  ViewSetupHints: ViewSetupHints;
-  Selection: ComponentSelection;
+  Selection: ComponentSelection[];
   Visibility: ComponentVisibility;
-  Coloring: ComponentColoring;
+  Coloring: ComponentColoring[];
 }
 
 export interface OrthogonalCamera {
@@ -154,8 +153,9 @@ export interface ComponentSelection {
 }
 
 export interface ComponentVisibility {
-  Exceptions: Exceptions;
-  DefaultVisibility: boolean;
+  Exceptions?: Exceptions;
+  DefaultVisibility?: boolean;
+  ViewSetupHints?: ViewSetupHints;
 }
 
 export interface ComponentColoring {

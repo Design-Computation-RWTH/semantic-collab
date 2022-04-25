@@ -207,7 +207,14 @@ export default function CAIA_Gallery_Tab() {
         value.forEach((viewpoint: any) => {
           // One Viewpoint:
 
-          let vp: VisualizationInfo = { Guid: viewpoint.guid };
+          let vp: VisualizationInfo = {
+            Guid: viewpoint.guid,
+            Components: {
+              Visibility: {},
+              Selection: [],
+              Coloring: [],
+            },
+          };
           let cameraViewPoint: Point = {
             X: viewpoint.perspective_camera.camera_view_point.x,
             Y: viewpoint.perspective_camera.camera_view_point.y,
@@ -232,7 +239,10 @@ export default function CAIA_Gallery_Tab() {
           vp.PerspectiveCamera = perspectiveCamera;
           let vpf: ViewPointFile = { VisualizationInfo: vp };
           let content = xml_convert.json2xml(vpf, options);
-          zip.file(viewpoint.guid + "/viewpoint.txt", content);
+          zip.file(
+            viewpoint.guid + "/viewpoint.txt",
+            '<?xml version="1.0" encoding="UTF-8"?>\n' + content
+          );
         });
         zip
           .generateAsync({ type: "uint8array" })
