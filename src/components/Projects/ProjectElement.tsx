@@ -30,50 +30,39 @@ export default function ProjectElement(props: ProjectElementProps) {
     navigate(props.project.projectName + "/");
   }
   return (
-    <Container
-      style={{
-        width: 340,
-        margin: "auto",
-        alignItems: "center",
-      }}
-      sx={(theme) => ({
-        backgroundColor: theme.colors.gray,
-      })}
-    >
-      <Center>
-        <Card
-          style={{ alignContent: "center" }}
-          withBorder={true}
-          color={"blue"}
-          p="md"
-        >
-          <Title order={2}>{props.project.projectName}</Title>
+    <Center>
+      <Card
+        style={{ alignContent: "center", width: "340px" }}
+        withBorder={true}
+        // color={"blue"}
+        p="md"
+      >
+        <Title order={2}>{props.project.projectName}</Title>
 
-          <RingProgress
-            label={
-              <Text size="xs" align="center">
-                Application data usage
-              </Text>
-            }
-            sections={[
-              { value: 40, color: "cyan" },
-              { value: 15, color: "orange" },
-              { value: 15, color: "grape" },
-            ]}
-          />
-          <Text size="sm" style={{ lineHeight: 1.5 }}>
-            lorem ipsum dolor sit
-          </Text>
-          <Button
-            value={props.project.projectId}
-            key={String(props.keyvalue)}
-            onClick={handleClick}
-          >
-            Open {props.project.projectName}
-          </Button>
-        </Card>
-      </Center>
-    </Container>
+        <RingProgress
+          label={
+            <Text size="xs" align="center">
+              Application data usage
+            </Text>
+          }
+          sections={[
+            { value: Math.floor(Math.random() * 100), color: "cyan" },
+            { value: Math.floor(Math.random() * 100), color: "orange" },
+            { value: Math.floor(Math.random() * 100), color: "grape" },
+          ]}
+        />
+        <Text size="sm" style={{ lineHeight: 1.5 }}>
+          lorem ipsum dolor sit
+        </Text>
+        <Button
+          value={props.project.projectId}
+          key={String(props.keyvalue)}
+          onClick={handleClick}
+        >
+          Open
+        </Button>
+      </Card>
+    </Center>
   );
 }
 
