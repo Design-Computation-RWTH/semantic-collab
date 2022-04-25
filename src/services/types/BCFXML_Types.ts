@@ -1,3 +1,7 @@
+export interface MarkupFile {
+  Markup: Markup;
+}
+
 export interface Markup {
   Header: Header;
   Topic: Topic;
@@ -39,11 +43,11 @@ export interface Topic {
   Priority?: string;
   Index?: number;
   Labels?: string[];
-  CreationDate: XMLGregorianCalendar;
+  CreationDate: string;
   CreationAuthor: string;
-  ModifiedDate?: XMLGregorianCalendar;
+  ModifiedDate?: string;
   ModifiedAuthor?: string;
-  DueDate?: XMLGregorianCalendar;
+  DueDate?: string;
   AssignedTo?: string;
   Stage?: string;
   Description?: string;
@@ -56,11 +60,11 @@ export interface Topic {
 }
 
 export interface Comment {
-  Date: XMLGregorianCalendar;
+  Date: string;
   Author: string;
   Comment: string;
   Viewpoint: Viewpoint;
-  ModifiedDate?: XMLGregorianCalendar;
+  ModifiedDate?: string;
   ModifiedAuthor?: string;
   Guid?: string;
 }
