@@ -15,8 +15,12 @@ export interface Version {
   VersionId: string;
 }
 
+export interface ViewPointFile {
+  VisualizationInfo?: VisualizationInfo;
+}
+
 export interface VisualizationInfo {
-  Components: Components;
+  Components?: Components;
   OrthogonalCamera?: OrthogonalCamera;
   PerspectiveCamera?: PerspectiveCamera;
   Lines?: Lines;

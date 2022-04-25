@@ -15,7 +15,15 @@ import BCFAPI from "../../services/BCFAPI";
 import TopicTable from "./Gallery/TopicTable";
 import PubSub from "pubsub-js";
 import fileDownload from "js-file-download";
-import { Project } from "../../services/types/BCFXML_Types";
+import {
+  Project,
+  Viewpoint,
+  ViewPointFile,
+  PerspectiveCamera,
+  Point,
+  Direction,
+  VisualizationInfo,
+} from "../../services/types/BCFXML_Types";
 var xml_convert = require("xml-js");
 (window as any).global = window;
 
@@ -189,17 +197,51 @@ export default function CAIA_Gallery_Tab() {
   }
 
   function downloadBCF() {
-    var zip = new JSZip();
-    zip.file("hello.txt", "Hello[p my)6cxsw2q");
-    let p: Project = {};
-    p.Name = "jkajakjkas";
     let options = { compact: true, ignoreComment: true, spaces: 4 };
-    let value = xml_convert.json2xml(p, options);
-    console.log("val:" + value);
-    zip
-      .generateAsync({ type: "uint8array" })
-      .then((z: string | ArrayBuffer | ArrayBufferView | Blob) => {
-        fileDownload(z, "BCF.zip");
+
+    var zip = new JSZip();
+    let bcfapi = new BCFAPI();
+    bcfapi
+      .getAllViewPoints()
+      .then((value) => {
+        value.forEach((viewpoint: any) => {
+          // One Viewpoint:
+
+          let vp: VisualizationInfo = { Guid: viewpoint.guid };
+          let cameraViewPoint: Point = {
+            X: viewpoint.perspective_camera.camera_view_point.x,
+            Y: viewpoint.perspective_camera.camera_view_point.y,
+            Z: viewpoint.perspective_camera.camera_view_point.z,
+          };
+          let cameraDirection: Point = {
+            X: viewpoint.perspective_camera.camera_direction.x,
+            Y: viewpoint.perspective_camera.camera_direction.y,
+            Z: viewpoint.perspective_camera.camera_direction.z,
+          };
+          let cameraUpVector: Point = {
+            X: viewpoint.perspective_camera.camera_up_vector.x,
+            Y: viewpoint.perspective_camera.camera_up_vector.y,
+            Z: viewpoint.perspective_camera.camera_up_vector.z,
+          };
+          let perspectiveCamera: PerspectiveCamera = {
+            CameraViewPoint: cameraViewPoint,
+            CameraDirection: cameraDirection,
+            CameraUpVector: cameraUpVector,
+            FieldOfView: viewpoint.perspective_camera.field_of_view,
+          };
+          vp.PerspectiveCamera = perspectiveCamera;
+          let vpf: ViewPointFile = { VisualizationInfo: vp };
+          let content = xml_convert.json2xml(vpf, options);
+          zip.file(viewpoint.guid + "/viewpoint.txt", content);
+        });
+        zip
+          .generateAsync({ type: "uint8array" })
+          .then((z: string | ArrayBuffer | ArrayBufferView | Blob) => {
+            fileDownload(z, "BCF.zip");
+          });
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }
 
