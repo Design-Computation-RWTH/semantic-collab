@@ -240,7 +240,7 @@ export default function CAIA_Gallery_Tab() {
           let vpf: ViewPointFile = { VisualizationInfo: vp };
           let content = xml_convert.json2xml(vpf, options);
           zip.file(
-            viewpoint.guid + "/viewpoint.txt",
+            viewpoint.guid + "/viewpoint.bcfv",
             '<?xml version="1.0" encoding="UTF-8"?>\n' + content
           );
         });
