@@ -20,9 +20,13 @@ import {
   PerspectiveCamera,
   Point,
   VisualizationInfo,
+  MarkupFile,
+  Markup,
+  Topic,
 } from "../../services/types/BCFXML_Types";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
+import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
 var xml_convert = require("xml-js");
 (window as any).global = window;
 
@@ -51,6 +55,7 @@ export default function CAIA_Gallery_Tab() {
   const [active_topic, setActive_topic] = useState<any>(null);
   const [screen, setScreen] = useState<number>(0);
   const [opened, setOpened] = useState(false);
+  let bcfapi = new BCFAPI();
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
   const { projectID } = React.useContext(
@@ -212,52 +217,81 @@ export default function CAIA_Gallery_Tab() {
     );
   }
 
-  function downloadBCF() {
+  async function downloadBCF() {
     let options = { compact: true, ignoreComment: true, spaces: 4 };
 
     var zip = new JSZip();
-    let bcfapi = new BCFAPI();
-    bcfapi
-      .getAllViewPoints()
-      .then((value) => {
-        value.forEach((viewpoint: any) => {
-          // One Viewpoint:
 
-          let vp: VisualizationInfo = { Guid: viewpoint.guid };
-          let cameraViewPoint: Point = {
-            X: viewpoint.perspective_camera.camera_view_point.x,
-            Y: viewpoint.perspective_camera.camera_view_point.y,
-            Z: viewpoint.perspective_camera.camera_view_point.z,
-          };
-          let cameraDirection: Point = {
-            X: viewpoint.perspective_camera.camera_direction.x,
-            Y: viewpoint.perspective_camera.camera_direction.y,
-            Z: viewpoint.perspective_camera.camera_direction.z,
-          };
-          let cameraUpVector: Point = {
-            X: viewpoint.perspective_camera.camera_up_vector.x,
-            Y: viewpoint.perspective_camera.camera_up_vector.y,
-            Z: viewpoint.perspective_camera.camera_up_vector.z,
-          };
-          let perspectiveCamera: PerspectiveCamera = {
-            CameraViewPoint: cameraViewPoint,
-            CameraDirection: cameraDirection,
-            CameraUpVector: cameraUpVector,
-            FieldOfView: viewpoint.perspective_camera.field_of_view,
-          };
-          vp.PerspectiveCamera = perspectiveCamera;
-          let vpf: ViewPointFile = { VisualizationInfo: vp };
-          let content = xml_convert.json2xml(vpf, options);
-          zip.file(viewpoint.guid + "/viewpoint.txt", content);
-        });
-        zip
-          .generateAsync({ type: "uint8array" })
-          .then((z: string | ArrayBuffer | ArrayBufferView | Blob) => {
-            fileDownload(z, "BCF.zip");
-          });
-      })
-      .catch((err) => {
-        console.log(err);
+    let topics: any = await bcfapi.getTopics();
+    for (let bcfowl_topic of topics) {
+      console.log("Topic: " + JSON.stringify(bcfowl_topic));
+
+      let topic: Topic = {
+        Guid: bcfowl_topic.guid,
+        Title: "-",
+        CreationDate: bcfowl_topic.creation_date,
+        CreationAuthor: bcfowl_topic.creation_author,
+        documentReference: [],
+        relatedTopic: [],
+      };
+      let markup: Markup = {
+        Header: { File: [] },
+        Topic: topic,
+        Comment: [],
+        Viewpoints: [],
+      };
+      let markupFile: MarkupFile = { Markup: markup };
+
+      let markup_content = xml_convert.json2xml(markupFile, options);
+      zip.file(
+        bcfowl_topic.guid + "/markup.bc.bcfv",
+        '<?xml version="1.0" encoding="UTF-8"?>\n' + markup_content
+      );
+      let value: any[] = await bcfapi.getTopicViewPoints(bcfowl_topic.guid);
+
+      value.forEach((viewpoint: any) => {
+        let vp: VisualizationInfo = {
+          Guid: viewpoint.guid,
+          Components: {
+            Visibility: {},
+            Selection: [],
+            Coloring: [],
+          },
+        };
+        let cameraViewPoint: Point = {
+          X: viewpoint.perspective_camera.camera_view_point.x,
+          Y: viewpoint.perspective_camera.camera_view_point.y,
+          Z: viewpoint.perspective_camera.camera_view_point.z,
+        };
+        let cameraDirection: Point = {
+          X: viewpoint.perspective_camera.camera_direction.x,
+          Y: viewpoint.perspective_camera.camera_direction.y,
+          Z: viewpoint.perspective_camera.camera_direction.z,
+        };
+        let cameraUpVector: Point = {
+          X: viewpoint.perspective_camera.camera_up_vector.x,
+          Y: viewpoint.perspective_camera.camera_up_vector.y,
+          Z: viewpoint.perspective_camera.camera_up_vector.z,
+        };
+        let perspectiveCamera: PerspectiveCamera = {
+          CameraViewPoint: cameraViewPoint,
+          CameraDirection: cameraDirection,
+          CameraUpVector: cameraUpVector,
+          FieldOfView: viewpoint.perspective_camera.field_of_view,
+        };
+        vp.PerspectiveCamera = perspectiveCamera;
+        let vpf: ViewPointFile = { VisualizationInfo: vp };
+        let content = xml_convert.json2xml(vpf, options);
+        zip.file(
+          bcfowl_topic.guid + "/viewpoint.bcfv",
+          '<?xml version="1.0" encoding="UTF-8"?>\n' + content
+        );
+      });
+    }
+    zip
+      .generateAsync({ type: "uint8array" })
+      .then((z: string | ArrayBuffer | ArrayBufferView | Blob) => {
+        fileDownload(z, "BCF.zip");
       });
   }
 

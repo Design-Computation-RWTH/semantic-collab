@@ -1,3 +1,7 @@
+export interface MarkupFile {
+  Markup: Markup;
+}
+
 export interface Markup {
   Header: Header;
   Topic: Topic;
@@ -20,7 +24,7 @@ export interface ViewPointFile {
 }
 
 export interface VisualizationInfo {
-  Components?: Components;
+  Components: Components;
   OrthogonalCamera?: OrthogonalCamera;
   PerspectiveCamera?: PerspectiveCamera;
   Lines?: Lines;
@@ -39,11 +43,11 @@ export interface Topic {
   Priority?: string;
   Index?: number;
   Labels?: string[];
-  CreationDate: XMLGregorianCalendar;
+  CreationDate: string;
   CreationAuthor: string;
-  ModifiedDate?: XMLGregorianCalendar;
+  ModifiedDate?: string;
   ModifiedAuthor?: string;
-  DueDate?: XMLGregorianCalendar;
+  DueDate?: string;
   AssignedTo?: string;
   Stage?: string;
   Description?: string;
@@ -56,11 +60,11 @@ export interface Topic {
 }
 
 export interface Comment {
-  Date: XMLGregorianCalendar;
+  Date: string;
   Author: string;
   Comment: string;
   Viewpoint: Viewpoint;
-  ModifiedDate?: XMLGregorianCalendar;
+  ModifiedDate?: string;
   ModifiedAuthor?: string;
   Guid?: string;
 }
@@ -73,10 +77,9 @@ export interface ViewPoint {
 }
 
 export interface Components {
-  ViewSetupHints: ViewSetupHints;
-  Selection: ComponentSelection;
+  Selection: ComponentSelection[];
   Visibility: ComponentVisibility;
-  Coloring: ComponentColoring;
+  Coloring: ComponentColoring[];
 }
 
 export interface OrthogonalCamera {
@@ -154,8 +157,9 @@ export interface ComponentSelection {
 }
 
 export interface ComponentVisibility {
-  Exceptions: Exceptions;
-  DefaultVisibility: boolean;
+  Exceptions?: Exceptions;
+  DefaultVisibility?: boolean;
+  ViewSetupHints?: ViewSetupHints;
 }
 
 export interface ComponentColoring {
