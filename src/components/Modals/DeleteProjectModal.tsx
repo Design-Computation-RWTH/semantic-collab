@@ -2,11 +2,31 @@ import { useForm } from "@mantine/form";
 import { Box, Button, Group, Modal, Textarea, TextInput } from "@mantine/core";
 import React, { useState } from "react";
 import { useModals } from "@mantine/modals";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
+import PubSub from "pubsub-js";
+
+export const getAccessToken = () => Cookies.get("access_token");
+
+function parseJWT(token: string | undefined) {
+  // @ts-ignore
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
 
 type DeleteProps = {
   projectID: string;
-  userID?: string;
 };
 
 export default function DeleteProjectsModal(props: DeleteProps) {
@@ -15,6 +35,17 @@ export default function DeleteProjectsModal(props: DeleteProps) {
 
   function deleteProject() {
     console.log(props.projectID);
+    console.log(parseJWT(getAccessToken()).URI);
+
+    let bcfowl_setup = new BcfOWLProjectSetup();
+    bcfowl_setup
+      .deletetUserOutside(
+        parseJWT(getAccessToken()).URI.trim(),
+        props.projectID
+      )
+      .then(() => {
+        setOpened(false);
+      });
   }
 
   function cancelDelete() {
@@ -27,7 +58,7 @@ export default function DeleteProjectsModal(props: DeleteProps) {
         withCloseButton={false}
         opened={opened}
         onClose={() => setOpened(false)}
-        title="Are you sure you want to delete the project?"
+        title="Are you sure you want to remove yourself from the project?"
         id="ProjectDeleteModal"
         styles={{
           title: { color: "white" },
@@ -35,13 +66,13 @@ export default function DeleteProjectsModal(props: DeleteProps) {
       >
         <Box sx={{ maxWidth: 300 }} mx="auto">
           <Group>
-            <Button onClick={deleteProject}> Delete</Button>
+            <Button onClick={deleteProject}>Confirm</Button>
             <Button onClick={cancelDelete}>Cancel</Button>
           </Group>
         </Box>
       </Modal>
 
-      <Button onClick={() => setOpened(true)}>Delete</Button>
+      <Button onClick={() => setOpened(true)}>Remove</Button>
     </>
   );
 }
