@@ -35,7 +35,7 @@ type bcfOWL_DocumentType = {
   [key: string]: string;
 };
 
-export default function Representations(props: RepresentationsProps) {
+export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   //const [checked, setChecked] = useState(false);
   const [documents, setDocuments] = useState<bcfOWL_DocumentType[]>([]);
   const [selected_ids, setSelected_ids] = useState<string[]>([]);
@@ -352,7 +352,7 @@ export default function Representations(props: RepresentationsProps) {
           title="Refresh List"
           onClick={() => {
             init();
-            alert("Test alert. ");
+            //alert("Test alert. ");
           }}
         >
           <i className="icon bi-arrow-clockwise btn-caia-icon-size" />

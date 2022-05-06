@@ -256,6 +256,45 @@ class BcfOWLProjectSetup {
       });
   }
 
+  async deletetUserOutside(value: string, projectID: string) {
+    let value_uri = "<" + value + ">";
+
+    let headers = new Headers();
+    headers.append("Authorization", "Bearer " + getAccessToken());
+    headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+    let urlencoded = new URLSearchParams();
+    urlencoded.append(
+      "update",
+      "PREFIX bcfOWL:<http://lbd.arch.rwth-aachen.de/bcfOWL#>\n" +
+        "\n" +
+        "DELETE { ?project bcfOWL:hasUser " +
+        value_uri +
+        "}\n" +
+        "WHERE {\n" +
+        " ?project a bcfOWL:Project .\n" +
+        "}"
+    );
+
+    fetch(base_uri + "/graph/" + projectID + "/update", {
+      method: "POST",
+      headers: headers,
+      body: urlencoded,
+      redirect: this.follow,
+    })
+      .then((response) => response)
+      .then((result) => {
+        if (result.ok) {
+          console.log("Update Fine.");
+        } else {
+          console.log("Error happened");
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  }
+
   async addProject(project_name: string | null) {
     if (project_name == null) return;
     let myHeaders = new Headers();

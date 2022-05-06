@@ -5,18 +5,18 @@ const uuid = require("uuid");
 
 const N3 = require("n3");
 const { DataFactory } = N3;
-const { namedNode, literal, float } = DataFactory;
+const { namedNode, literal, number } = DataFactory;
 
-export function ConvertTasks(data: any) {
-  let inst_uri = "http://example.org/inst/";
+export async function ConvertTasks(data: any, projectURI: string) {
+  let inst_uri = projectURI;
   let bcdOWL_uri = "http://lbd.arch.rwth-aachen.de/bcfOWL#";
 
   const writer = new N3.Writer({
-    prefixes: {
+    /*    prefixes: {
       cto: "https://w3id.org/cto#",
       bcfowl: bcdOWL_uri,
-      inst: inst_uri,
-    },
+      project: inst_uri,
+    },*/
   });
   let interventions_map = new Map<number, string>(); // number -> uri
   let interventions_posts_map = new Map<number, string>(); // number -> uri
@@ -184,8 +184,12 @@ export function ConvertTasks(data: any) {
 
     //TODO: Check if Viewpoint needs to be created at all. e.g. no need for parent task!
     if (i.location && i.up_vector && i.forward_vector && i.document_uri) {
-      // Generate ID for the viewpoint
-      let viewpoint_guid = uuid.v4();
+      // Generate ID for the viewpoint. Take the element ID of the Task, so that Tasks that reside at the same location
+      // share the same Viewpoint and Perspective Camera.
+      let elementId: any = i.id.toString();
+      //elementId = elementId.split("_")[-1];
+      console.log(elementId.split("_")[0]);
+      let viewpoint_guid = elementId.split("_")[0]; // uuid.v4();
       // Create viewpoint and perspective camera URI from the GUID
       let viewpoint_uri = inst_uri + "viewpoint_" + viewpoint_guid;
       let pc_uri = inst_uri + "perspective_camera_" + viewpoint_guid;
@@ -201,81 +205,61 @@ export function ConvertTasks(data: any) {
       writer.addQuad(
         namedNode(pc_uri),
         namedNode(bcdOWL_uri + "hasAspectRatio"),
-        float(1.33)
+        literal("1.33", namedNode("http://www.w3.org/2001/XMLSchema#float"))
       );
 
       writer.addQuad(
         namedNode(pc_uri),
         namedNode(bcdOWL_uri + "hasFieldOfView"),
-        float(60)
+        literal("60", namedNode("http://www.w3.org/2001/XMLSchema#float"))
       );
 
       writer.addQuad(
         namedNode(pc_uri),
         namedNode(bcdOWL_uri + "hasCameraDirection"),
-        literal("Point Z(" + ")")
-      );
-
-      writer.addQuad(
-        namedNode(pc_uri),
-        namedNode(bcdOWL_uri + "hasCameraUpVector"),
-        literal("Point Z(" + ")")
-      );
-
-      if (i.location) {
-        let wkt_location = literal(
-          "Point Z(" +
-            i.location[0] +
-            " " +
-            i.location[1] +
-            " " +
-            i.location[2] +
-            ")",
-          namedNode("http://www.opengis.net/ont/geosparql##wktLiteral")
-        );
-
-        writer.addQuad(
-          namedNode(pc_uri),
-          namedNode(bcdOWL_uri + "hasCameraViewPoint"),
-          wkt_location
-        );
-      }
-
-      if (i.up_vector) {
-        let wkt_up = literal(
-          "Point Z(" +
-            i.up_vector[0] +
-            " " +
-            i.up_vector[1] +
-            " " +
-            i.up_vector[2] +
-            ")",
-          namedNode("http://www.opengis.net/ont/geosparql##wktLiteral")
-        );
-
-        writer.addQuad(
-          namedNode(pc_uri),
-          namedNode(bcdOWL_uri + "hasCameraViewPoint"),
-          wkt_up
-        );
-      }
-
-      if (i.forward_vector) {
-        let wkt_forward = literal(
-          "Point Z(" +
+        literal(
+          "POINT Z(" +
             i.forward_vector[0] +
             " " +
             i.forward_vector[1] +
             " " +
             i.forward_vector[2] +
             ")",
-          namedNode("http://www.opengis.net/ont/geosparql##wktLiteral")
+          namedNode("http://www.opengis.net/ont/geosparql#wktLiteral")
+        )
+      );
+
+      writer.addQuad(
+        namedNode(pc_uri),
+        namedNode(bcdOWL_uri + "hasCameraUpVector"),
+        literal(
+          "POINT Z(" +
+            i.up_vector[0] +
+            " " +
+            i.up_vector[1] +
+            " " +
+            i.up_vector[2] +
+            ")",
+          namedNode("http://www.opengis.net/ont/geosparql#wktLiteral")
+        )
+      );
+
+      if (i.location) {
+        let wkt_location = literal(
+          "POINT Z(" +
+            i.location[0] +
+            " " +
+            i.location[1] +
+            " " +
+            i.location[2] +
+            ")",
+          namedNode("http://www.opengis.net/ont/geosparql#wktLiteral")
         );
 
         writer.addQuad(
           namedNode(pc_uri),
           namedNode(bcdOWL_uri + "hasCameraViewPoint"),
-          wkt_forward
+          wkt_location
         );
       }
 
@@ -319,11 +303,12 @@ export function ConvertTasks(data: any) {
   //const quadStream = store.match(null, null, null);
   //quadStream.pipe(new N3.StreamWriter())
   //    .pipe(process.stdout);
-  let result_string: string;
+  let result_string: any;
   writer.end((error: any, rdf_result: any) => {
-    console.log(rdf_result);
-    return rdf_result;
+    result_string = rdf_result;
   });
+
+  return await result_string;
 }
 
 // convert(gantt_data);

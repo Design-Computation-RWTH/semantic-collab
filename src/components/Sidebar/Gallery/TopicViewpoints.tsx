@@ -49,7 +49,7 @@ function TopicViewpointsList(props: TopicViewpointsListProps) {
   function listItems() {
     return snapshots.map((s: any) => (
       <Figure key={"topic-image:" + s.guid}>
-        <Figure.Image width={171} height={180} alt="171x180" src={s} />
+        <Figure.Image width={180} height={180} alt="171x180" src={s} />
       </Figure>
     ));
   }

@@ -1,9 +1,9 @@
 import React from "react";
 import { BsCalendarCheck, BsCardImage, BsLayers } from "react-icons/bs";
 import { Tabs } from "@mantine/core";
-import Representations from "./Representations";
-import Gallery from "./Gallery";
-import Tasks from "./Tasks";
+import CAIA_Representations_Tab from "./CAIA_Representations_Tab";
+import CAIA_Gallery_Tab from "./CAIA_Gallery_Tab";
+import CAIA_Tasks_Tab from "./CAIA_Tasks_Tab";
 
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
@@ -12,7 +12,7 @@ type SidebarProps = {
   viewer: Viewer;
 };
 
-export default function Sidebar(props: SidebarProps) {
+export default function CAIA_Sidebar(props: SidebarProps) {
   return (
     <Tabs
       style={{
@@ -33,13 +33,13 @@ export default function Sidebar(props: SidebarProps) {
       grow
     >
       <Tabs.Tab title="Representations" icon={<BsLayers />}>
-        <Representations />
+        <CAIA_Representations_Tab />
       </Tabs.Tab>
       <Tabs.Tab title="Gallery" icon={<BsCardImage />}>
-        <Gallery />
+        <CAIA_Gallery_Tab />
       </Tabs.Tab>
       <Tabs.Tab title="Tasks" icon={<BsCalendarCheck />}>
-        <Tasks />
+        <CAIA_Tasks_Tab />
       </Tabs.Tab>
     </Tabs>
   );

@@ -26,6 +26,7 @@ async function doLogin(
     .then((response) => response.json())
     .then((result) => {
       if (result.token) {
+        console.log(result.token);
         Cookies.set("access_token", result.token);
         Cookies.set("refresh_token", result.token);
         callback();
