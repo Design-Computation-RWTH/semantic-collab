@@ -16,6 +16,7 @@ import {
   NavCubePlugin,
   Texture,
   buildPlaneGeometry,
+  buildSphereGeometry,
   ReadableGeometry,
   Mesh,
   PhongMaterial,
@@ -168,6 +169,18 @@ export default function CAIA_XeoKitView() {
       ),
       position: [0, -1.6, 0],
       collidable: false,
+    });
+
+    new Mesh(viewer.scene, {
+      geometry: new ReadableGeometry(
+        viewer.scene,
+        buildSphereGeometry({
+          radius: 1.5,
+          heightSegments: 60,
+          widthSegments: 60,
+          color: [1, 1, 1],
+        })
+      ),
     });
 
     cameraControl = viewer.cameraControl;
@@ -562,6 +575,7 @@ export default function CAIA_XeoKitView() {
     bcfowl
       .getViepointCameras4Document(document_uri)
       .then((perspactivecameras) => {
+        console.log(perspactivecameras);
         if (perspactivecameras["@graph"])
           perspactivecameras = perspactivecameras["@graph"];
         if (!Array.isArray(perspactivecameras))
@@ -589,6 +603,8 @@ export default function CAIA_XeoKitView() {
           if (x < 0 && y < 0) tz -= 180;
 
           let guid = camera["@id"];
+          console.log(camera);
+          // The ID is not set. Look for the Parent in Xeokit to find the right ID
           let image3D = gltfLoader.load({
             id: guid,
             src: "../../Image3D.gltf",
@@ -602,6 +618,10 @@ export default function CAIA_XeoKitView() {
             performance: false,
           });
           node.addChild(image3D);
+          // Hide images initially
+          image3D.visible = true;
+          console.log(image3D);
+          console.log(image3D.id);
         });
       })
       .catch((err) => {

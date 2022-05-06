@@ -4,15 +4,15 @@ import {
   Card,
   Text,
   Button,
-  Group,
   RingProgress,
   Center,
-  Container,
   Title,
+  Group,
 } from "@mantine/core";
 import PubSub from "pubsub-js";
 import { ReactSession } from "react-client-session";
 import { useNavigate } from "react-router-dom";
+import DeleteProjectsModal from "../Modals/DeleteProjectModal";
 
 type ProjectElementProps = {
   project: { projectName: string; projectId: string };
@@ -29,6 +29,11 @@ export default function ProjectElement(props: ProjectElementProps) {
     PubSub.publish("SidebarName", { name: props.project.projectName });
     navigate(props.project.projectName + "/");
   }
+
+  function handleDelete() {
+    console.log("Delete");
+  }
+
   return (
     <Center>
       <Card
@@ -54,13 +59,16 @@ export default function ProjectElement(props: ProjectElementProps) {
         <Text size="sm" style={{ lineHeight: 1.5 }}>
           lorem ipsum dolor sit
         </Text>
-        <Button
-          value={props.project.projectId}
-          key={String(props.keyvalue)}
-          onClick={handleClick}
-        >
-          Open
-        </Button>
+        <Group>
+          <Button
+            value={props.project.projectId}
+            key={String(props.keyvalue)}
+            onClick={handleClick}
+          >
+            Open
+          </Button>
+          <DeleteProjectsModal projectID={props.project.projectId} />
+        </Group>
       </Card>
     </Center>
   );

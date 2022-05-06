@@ -63,7 +63,7 @@ function parseJWT(token: string | undefined) {
       })
       .join("")
   );
-
+  console.log(JSON.parse(jsonPayload).URI);
   return JSON.parse(jsonPayload);
 }
 

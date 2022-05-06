@@ -352,7 +352,7 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
           title="Refresh List"
           onClick={() => {
             init();
-            alert("Test alert. ");
+            //alert("Test alert. ");
           }}
         >
           <i className="icon bi-arrow-clockwise btn-caia-icon-size" />

@@ -16,14 +16,13 @@ import TopicTable from "./Gallery/TopicTable";
 import PubSub from "pubsub-js";
 import fileDownload from "js-file-download";
 import {
-  Project,
-  Viewpoint,
   ViewPointFile,
   PerspectiveCamera,
   Point,
-  Direction,
   VisualizationInfo,
 } from "../../services/types/BCFXML_Types";
+import { ViewerContext } from "../../context/dcwebviewerContext";
+import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 var xml_convert = require("xml-js");
 (window as any).global = window;
 
@@ -52,6 +51,11 @@ export default function CAIA_Gallery_Tab() {
   const [active_topic, setActive_topic] = useState<any>(null);
   const [screen, setScreen] = useState<number>(0);
   const [opened, setOpened] = useState(false);
+
+  const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
+  const { projectID } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
 
   function gallery() {
     let gallery_content;
@@ -180,6 +184,18 @@ export default function CAIA_Gallery_Tab() {
           src={s.uri}
           onClick={() => {
             setScreen(1);
+
+            //TODO: Select Camera in Viewer
+
+            for (const model in viewer.scene.models) {
+              if (model.includes(s.guid)) {
+                console.log(viewer.scene.models[model]);
+                viewer.scene.models[model].selected = true;
+                viewer.cameraFlight.flyTo(model);
+              } else {
+                viewer.scene.models[model].selected = false;
+              }
+            }
 
             let image = imageservice.getImageData4GUID(s.guid);
             setActive_topic(s.topic_guid);

@@ -9,6 +9,7 @@ import { ConvertTasks } from "../../../services/ConvertTasks2RDF";
 import { Viewer } from "@xeokit/xeokit-sdk";
 import BcfOWLProjectSetup from "../../../services/BcfOWLProjectSetup";
 import { InterventionPost } from "../../../services/types/ConvertTasks2RDF_types";
+const wkt = require("terraformer-wkt-parser");
 
 type TaskListProps = {
   TaskJson: any;
@@ -26,6 +27,7 @@ let viewer_instance: Viewer;
 
 let FilteredIfcElements: any = {};
 let UpdatedTasks: any = {};
+let ProjectURI: string = "";
 
 export default function TaskListCreation(props: TaskListProps) {
   const [tasks, setTasks] = useState<any>(null);
@@ -52,6 +54,7 @@ export default function TaskListCreation(props: TaskListProps) {
         if (!Array.isArray(value)) value = [value];
         if (!documents) {
           setDocuments(value);
+          console.log(value);
         }
       })
       .catch((err: any) => {
@@ -59,6 +62,7 @@ export default function TaskListCreation(props: TaskListProps) {
       });
 
     bcfowl_setup.getCurrentProject().then((value) => {
+      ProjectURI = value["@id"];
       try {
         if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
         let list: string[] = [];
@@ -74,21 +78,16 @@ export default function TaskListCreation(props: TaskListProps) {
     });
   }
 
-  // Convert the tasks to RDF and upload them to fuseki
-  function CreateTaskGraph(event: React.MouseEvent<HTMLButtonElement>) {
-    //console.log(props.TaskJson);
-    //setTasks(props.TaskJson);
-    //ConvertTasks(props.TaskJson);
-  }
-
   function AssigneeSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     for (const [key, value] of Object.entries(UpdatedTasks)) {
       let Task: any = value;
-      if (
-        key.includes(event.target.id) ||
-        Task.parent_intervention.includes(event.target.id)
-      ) {
+      if (key.includes(event.target.id)) {
         Task["assigned_to"] = event.target.selectedOptions[0].id;
+      } else if (Task.parent_intervention) {
+        if (Task.parent_intervention.includes(event.target.id)) {
+          Task["assigned_to"] = event.target.selectedOptions[0].id;
+        }
+      } else {
       }
     }
   }
@@ -96,11 +95,15 @@ export default function TaskListCreation(props: TaskListProps) {
   function DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     for (const [key, value] of Object.entries(UpdatedTasks)) {
       let Task: any = value;
-      if (
-        key.includes(event.target.id) ||
-        Task.parent_intervention.includes(event.target.id)
-      ) {
+      console.log("Task1: ");
+      console.log(Task);
+      if (key.includes(event.target.id)) {
         Task["document_uri"] = event.target.selectedOptions[0].id;
+      } else if (Task.parent_intervention) {
+        if (Task.parent_intervention.includes(event.target.id)) {
+          Task["document_uri"] = event.target.selectedOptions[0].id;
+        }
+      } else {
       }
     }
 
@@ -110,6 +113,30 @@ export default function TaskListCreation(props: TaskListProps) {
         bcfowl
           .describe(documents[doc].hasSpatialRepresentation)
           .then((spatial_representation) => {
+            //Find the spatial Representation
+            let spatialLocationConv: any = wkt.parse(
+              spatial_representation.hasLocation
+            );
+            let spatialLocation: number[] = spatialLocationConv.coordinates;
+
+            for (const [key, value] of Object.entries(UpdatedTasks)) {
+              let Task: any = value;
+              console.log("Task2: ");
+              console.log(value);
+              if (Task["document_uri"] === event.target.selectedOptions[0].id) {
+                if (Task.location) {
+                  Task.location = [
+                    Task.location[0] - spatialLocation[0] / 10,
+
+                    (Task.location[1] - spatialLocation[1] / 10) * -1,
+
+                    Task.location[2] - spatialLocation[2] / 10,
+                  ];
+                }
+              } else {
+              }
+            }
+
             PubSub.publish("DocumentSelected", {
               id: documents[doc]["@id"],
               url: documents[doc].hasDocumentURL,
@@ -158,7 +185,6 @@ export default function TaskListCreation(props: TaskListProps) {
 
   function HighlightObjects(ObjectIDs: any[], highlight: boolean) {
     let viewerScene = viewer_instance.scene.objects;
-    //console.log(ObjectIDs);
     for (const Element in viewerScene) {
       let elementID = viewerScene[Element].id;
       if (ObjectIDs.includes(elementID)) {
@@ -229,11 +255,13 @@ export default function TaskListCreation(props: TaskListProps) {
                       }
                       let aabb = viewer_instance.scene.objects[e[0]]._aabb;
 
+                      // Calculate location. Keep in mind to later make this location relative to its document!
                       tempIntervention.location = [
                         (aabb[0] + aabb[3]) / 2,
-                        (aabb[1] + aabb[4]) / 2,
                         (aabb[2] + aabb[5]) / 2,
+                        (aabb[1] + aabb[4]) / 2,
                       ];
+
                       tempIntervention.up_vector = [0, 0, 1];
                       tempIntervention.forward_vector = [1, 0, 0];
 
@@ -379,7 +407,37 @@ export default function TaskListCreation(props: TaskListProps) {
       <div className={"caia-center"}>
         <Button
           onClick={() => {
-            console.log(UpdatedTasks);
+            let tasks2Convert: any = props.TaskJson;
+            let UpdatedTasksArr: any = [];
+            for (const [key, value] of Object.entries(UpdatedTasks)) {
+              UpdatedTasksArr.push(value);
+
+              let task: any = value;
+              if (task.id === "1ZwJH$85D3YQG5AK5ER1gZ_45623") {
+                console.log(task);
+              }
+            }
+
+            tasks2Convert.interventions = UpdatedTasksArr;
+
+            let bcfowl = new BcfOWL_Endpoint();
+
+            //let rdfTasks = ConvertTasks(tasks2Convert, ProjectURI);
+
+            let rdfTasks;
+
+            ConvertTasks(tasks2Convert, ProjectURI).then((e) => {
+              rdfTasks = e;
+
+              bcfowl
+                .postRDF(rdfTasks)
+                .then((r) => {
+                  console.log(r);
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
+            });
           }}
         >
           <Text>Create Tasks</Text>

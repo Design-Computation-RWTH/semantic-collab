@@ -14,6 +14,7 @@ export const bcfOWLPrefixes =
 export const geoPrefix =
   "PREFIX geo: <http://www.opengis.net/ont/geosparql#>\n\n";
 export const xsdPrefix = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>";
+export const ctoPrefix = "PREFIX cto: <https://w3id.org/cto#>";
 
 class BcfOWL_Endpoint {
   private readonly myHeaders: Headers;
@@ -490,6 +491,39 @@ class BcfOWL_Endpoint {
       const message = `Create Document with Spatial Representation: An error has occured: ${response.status}`;
       NotificationManager.warning(message, "Error", 3000);
       throw new Error(message);
+    }
+    return await response.json();
+  }
+
+  async postRDF(data: any) {
+    let project_uri = base_uri + "/graph/" + this.project_id;
+    let query =
+      bcfOWLPrefixes +
+      geoPrefix +
+      xsdPrefix +
+      ctoPrefix +
+      `\nPREFIX project: <${project_uri}>` +
+      `
+            INSERT DATA {${data}}
+            `;
+    console.log(query);
+
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+    urlencoded.append("update", query);
+
+    const response = await fetch(project_uri + "/update", {
+      method: "POST",
+      headers: this.myHeaders,
+      body: urlencoded,
+      redirect: this.follow,
+    });
+    if (!response.ok) {
+      const message = `SPARQL Update failed: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    } else {
+      console.log(response);
     }
     return await response.json();
   }

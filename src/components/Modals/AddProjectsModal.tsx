@@ -36,6 +36,7 @@ export default function AddProjectsModal() {
                   txt: "Project created. Name: " + values.Name,
                 });
                 modals.closeModal("ProjectAddModal");
+                setOpened(false);
               });
             })}
           >
