@@ -19,6 +19,7 @@ export type Intervention = {
   up_vector?: number[];
   forward_vector?: number[];
   document_uri?: string;
+  buildingElement?: string;
 };
 
 export type InterventionPost = {

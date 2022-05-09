@@ -280,6 +280,12 @@ export async function ConvertTasks(data: any, projectURI: string) {
 
       writer.addQuad(
         namedNode(viewpoint_uri),
+        namedNode(bcdOWL_uri + "hasSelection"),
+        literal(i.buildingElement)
+      );
+
+      writer.addQuad(
+        namedNode(viewpoint_uri),
         namedNode(bcdOWL_uri + "hasTopic"),
         namedNode(intervention_uri)
       );

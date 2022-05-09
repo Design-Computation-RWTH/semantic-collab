@@ -265,6 +265,8 @@ export default function TaskListCreation(props: TaskListProps) {
                       tempIntervention.up_vector = [0, 0, 1];
                       tempIntervention.forward_vector = [1, 0, 0];
 
+                      tempIntervention.buildingElement = e[0];
+
                       UpdatedTasks[tempIntervention.id] = tempIntervention;
                       // Check if the parent is the correct one
                       //TODO: Add Task Data here!

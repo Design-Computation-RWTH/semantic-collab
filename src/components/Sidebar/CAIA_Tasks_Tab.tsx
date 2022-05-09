@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container } from "@mantine/core";
-import { TaskListPreview } from "./Tasks/TaskListPreview";
+import TaskListPreview from "./Tasks/TaskListPreview";
 import TaskListCreation from "./Tasks/TaskListCreation";
 // @ts-ignore
 import { ViewerContext } from "../../context/dcwebviewerContext";
@@ -26,11 +26,11 @@ export default function CAIA_Tasks_Tab() {
       storeyTemp.push(ifc_storey);
     }
   }
-
+  console.log(storeyTemp);
   let ViewState = null;
 
   if (viewState === "Preview") {
-    ViewState = <TaskListPreview TaskJson={testJSON} />;
+    ViewState = <TaskListPreview IfcStoreys={storeyTemp} viewer={viewer} />;
   } else if (viewState === "Creation") {
     ViewState = (
       <TaskListCreation

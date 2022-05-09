@@ -315,6 +315,50 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
+  async getTasks() {
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+    urlencoded.append(
+      "query",
+      `
+      CONSTRUCT {
+        ?ts ?tp ?to.
+        ?vs ?vp ?vo.
+        ?ps ?pp ?po
+      }
+      WHERE {
+        {?ts a <https://w3id.org/cto#Task> ;
+            ?tp ?to .
+      
+        ?vs a <http://lbd.arch.rwth-aachen.de/bcfOWL#Viewpoint>;
+           <http://lbd.arch.rwth-aachen.de/bcfOWL#hasTopic> ?ts;
+           <http://lbd.arch.rwth-aachen.de/bcfOWL#hasPerspectiveCamera> ?ps;
+           ?vp ?vo .
+        
+        ?ps a <http://lbd.arch.rwth-aachen.de/bcfOWL#PerspectiveCamera>;
+            ?pp ?po .
+      } UNION { ?ts a <https://w3id.org/cto#Task> ;
+            ?tp ?to . }}
+      `
+    );
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/query",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+    );
+    if (!response.ok) {
+      const message = `getAll: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
   async getViepointCameras4Document(doc_uri: string) {
     var guid = doc_uri.substring(doc_uri.lastIndexOf("/") + 1);
     if (!this.project_id) alert("Project not selected. ");

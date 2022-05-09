@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
-import { Table } from "react-bootstrap";
 import { ReactSession } from "react-client-session";
 import CloseButton from "react-bootstrap/CloseButton";
 import RepresentationDetails from "./Representations/RepresentationDetails";
