@@ -1,5 +1,6 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
+import { Tooltip, ScrollArea } from "@mantine/core";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import Card from "react-bootstrap/Card";
@@ -37,6 +38,8 @@ type SetupViewState = {
   genericDeleteScreen_documentationPhase: boolean;
   genericDeleteScreen_topicStatus: boolean;
   genericDeleteScreen_topicType: boolean;
+
+  extensionsMap: any;
 
   currentItem: string;
   projectName: string;
@@ -77,6 +80,8 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
     genericDeleteScreen_documentationPhase: false,
     genericDeleteScreen_topicStatus: false,
     genericDeleteScreen_topicType: false,
+
+    extensionsMap: {},
 
     currentItem: "",
     projectName: "",
@@ -179,7 +184,18 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
         <ListGroup.Item>
           <Container>
             <Row>
-              <Col xs={11}>{topictype}</Col>
+              <Col xs={11}>
+                <Tooltip
+                  wrapLines
+                  width={220}
+                  withArrow
+                  transition="fade"
+                  transitionDuration={200}
+                  label={this.state.extensionsMap[topictype].comment}
+                >
+                  {this.state.extensionsMap[topictype].label}
+                </Tooltip>
+              </Col>
               <Col xs={1}>
                 <Button
                   variant="light"
@@ -213,7 +229,18 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
         <ListGroup.Item>
           <Container>
             <Row>
-              <Col xs={11}>{topicstatus}</Col>
+              <Col xs={11}>
+                <Tooltip
+                  wrapLines
+                  width={220}
+                  withArrow
+                  transition="fade"
+                  transitionDuration={200}
+                  label={this.state.extensionsMap[topicstatus].comment}
+                >
+                  {this.state.extensionsMap[topicstatus].label}
+                </Tooltip>
+              </Col>
               <Col xs={1}>
                 <Button
                   variant="light"
@@ -248,7 +275,18 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
           <ListGroup.Item>
             <Container>
               <Row>
-                <Col xs={11}>{documentationPhase}</Col>
+                <Col xs={11}>
+                  <Tooltip
+                    wrapLines
+                    width={220}
+                    withArrow
+                    transition="fade"
+                    transitionDuration={200}
+                    label={this.state.extensionsMap[documentationPhase].comment}
+                  >
+                    {this.state.extensionsMap[documentationPhase].label}
+                  </Tooltip>
+                </Col>
                 <Col xs={1}>
                   <Button
                     variant="light"
@@ -290,7 +328,18 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
         <ListGroup.Item>
           <Container>
             <Row>
-              <Col xs={11}>{priority}</Col>
+              <Col xs={11}>
+                <Tooltip
+                  wrapLines
+                  width={220}
+                  withArrow
+                  transition="fade"
+                  transitionDuration={200}
+                  label={this.state.extensionsMap[priority].comment}
+                >
+                  {this.state.extensionsMap[priority].label}
+                </Tooltip>
+              </Col>
               <Col xs={1}>
                 <Button
                   variant="light"
@@ -324,7 +373,18 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
         <ListGroup.Item>
           <Container>
             <Row>
-              <Col xs={11}>{label}</Col>
+              <Col xs={11}>
+                <Tooltip
+                  wrapLines
+                  width={220}
+                  withArrow
+                  transition="fade"
+                  transitionDuration={200}
+                  label={this.state.extensionsMap[label].comment}
+                >
+                  {this.state.extensionsMap[label].label}
+                </Tooltip>
+              </Col>
               <Col xs={1}>
                 <Button
                   variant="light"
@@ -352,214 +412,238 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
     });
 
     return (
-      <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-        <AddUserForm
-          show={this.state.addUserScreen}
-          onHide={() => this.setState({ addUserScreen: false })}
-        />
-        <DeleteUserForm
-          show={this.state.deleteUserScreen}
-          item={this.state.currentItem}
-          deleteValue={this.state.selectedDeleteValue}
-          onHide={() => this.setState({ deleteUserScreen: false })}
-        />
+      <ScrollArea
+        type="auto"
+        scrollbarSize={10}
+        style={{
+          display: "flex",
+          alignContent: "stretch",
+          justifyContent: "space-evenly",
+          alignItems: "stretch",
+          flexDirection: "column",
+        }}
+        styles={{
+          root: { color: "red" },
+          corner: { color: "red" },
+          viewport: { color: "red" },
+          scrollbar: { color: "red" },
+          thumb: { color: "red" },
+        }}
+      >
+        <div>
+          <AddUserForm
+            show={this.state.addUserScreen}
+            onHide={() => this.setState({ addUserScreen: false })}
+          />
+          <DeleteUserForm
+            show={this.state.deleteUserScreen}
+            item={this.state.currentItem}
+            deleteValue={this.state.selectedDeleteValue}
+            onHide={() => this.setState({ deleteUserScreen: false })}
+          />
 
-        <Container>
-          <Row>
-            <Col>
-              <Card
-                className="caia_card mx-auto my-2"
-                text="dark"
-                style={{ width: "30rem" }}
-              >
-                <Card.Body>
-                  <Card.Title>General Settings</Card.Title>
-                  <Form onSubmit={this.submitted}>
-                    <Form.Group className="mb-3" controlId="formProjectName">
-                      <Form.Label>Project Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter the project name"
-                        defaultValue={this.state.projectName}
-                        onChange={this.handleName}
-                      />
-                      <Form.Text className="text-muted">
-                        The name of the BCF project.
-                      </Form.Text>
-                    </Form.Group>
-                    <Button variant="outline-dark" type="submit">
-                      Save name
+          <Container>
+            <Row>
+              <Col>
+                <Card
+                  className="caia_card mx-auto my-2"
+                  text="dark"
+                  style={{ width: "30rem" }}
+                >
+                  <Card.Body>
+                    <Card.Title>General Settings</Card.Title>
+                    <Form onSubmit={this.submitted}>
+                      <Form.Group className="mb-3" controlId="formProjectName">
+                        <Form.Label>Project Name</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter the project name"
+                          defaultValue={this.state.projectName}
+                          onChange={this.handleName}
+                        />
+                        <Form.Text className="text-muted">
+                          The name of the BCF project.
+                        </Form.Text>
+                      </Form.Group>
+                      <Button variant="outline-dark" type="submit">
+                        Save name
+                      </Button>
+                    </Form>
+                  </Card.Body>
+                </Card>
+              </Col>{" "}
+              <Col>
+                <Card
+                  className="caia_card mx-auto my-2"
+                  text="dark"
+                  style={{ width: "30rem" }}
+                >
+                  <Card.Body>
+                    <Card.Title>Project Users</Card.Title>
+                    <ListGroup as="ol">{users_list}</ListGroup>
+
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => this.setState({ addUserScreen: true })}
+                    >
+                      <FaPlus />
                     </Button>
-                  </Form>
-                </Card.Body>
-              </Card>
-            </Col>{" "}
-            <Col>
-              <Card
-                className="caia_card mx-auto my-2"
-                text="dark"
-                style={{ width: "30rem" }}
-              >
-                <Card.Body>
-                  <Card.Title>Project Users</Card.Title>
-                  <ListGroup as="ol">{users_list}</ListGroup>
-
-                  <Button
-                    variant="outline-dark"
-                    onClick={() => this.setState({ addUserScreen: true })}
-                  >
-                    <FaPlus />
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>{" "}
-            <Col>
-              <Card
-                className="caia_card mx-auto my-2"
-                text="dark"
-                style={{ width: "30rem" }}
-              >
-                <Card.Body>
-                  <Card.Title>Topic Types</Card.Title>
-                  <ListGroup as="ol">{topictype_list}</ListGroup>
-                  <Button
-                    variant="outline-dark"
-                    onClick={() => {
-                      this.setState({ genericAddScreen_topicType: true });
-                    }}
-                  >
-                    <FaPlus />
-                  </Button>
-                  <GenericAddForm
-                    show={this.state.genericAddScreen_topicType}
-                    item="topic type"
-                    bcfOWLProperty="hasTopicType"
-                    onHide={() =>
-                      this.setState({ genericAddScreen_topicType: false })
-                    }
-                  />
-                </Card.Body>
-              </Card>
-            </Col>{" "}
-            <Col>
-              <Card
-                className="caia_card mx-auto my-2"
-                text="dark"
-                style={{ width: "30rem" }}
-              >
-                <Card.Body>
-                  <Card.Title>Topic Statuses</Card.Title>
-                  <ListGroup as="ol">{topicstatus_list}</ListGroup>
-                  <Button
-                    variant="outline-dark"
-                    onClick={() => {
-                      this.setState({ genericAddScreen_topicStatus: true });
-                    }}
-                  >
-                    <FaPlus />
-                  </Button>
-                  <GenericAddForm
-                    show={this.state.genericAddScreen_topicStatus}
-                    item="topic status"
-                    bcfOWLProperty="hasTopicStatus"
-                    onHide={() =>
-                      this.setState({ genericAddScreen_topicStatus: false })
-                    }
-                  />
-                </Card.Body>
-              </Card>
-            </Col>{" "}
-            <Col>
-              <Card
-                className="caia_card mx-auto my-2"
-                text="dark"
-                style={{ width: "30rem" }}
-              >
-                <Card.Body>
-                  <Card.Title>Documentation phases</Card.Title>
-                  <ListGroup as="ol">{documentationphase_list}</ListGroup>
-                  <Button
-                    variant="outline-dark"
-                    onClick={() => {
-                      this.setState({
-                        genericAddScreen_documentationPhase: true,
-                      });
-                    }}
-                  >
-                    <FaPlus />
-                  </Button>
-                  <GenericAddForm
-                    show={this.state.genericAddScreen_documentationPhase}
-                    item="documentation phase"
-                    bcfOWLProperty="hasStage"
-                    onHide={() =>
-                      this.setState({
-                        genericAddScreen_documentationPhase: false,
-                      })
-                    }
-                  />
-                </Card.Body>
-              </Card>
-            </Col>{" "}
-            <Col>
-              <Card
-                className="caia_card mx-auto my-2"
-                text="dark"
-                style={{ width: "30rem" }}
-              >
-                <Card.Body>
-                  <Card.Title>Priorities</Card.Title>
-                  <ListGroup as="ol">{priorities_list}</ListGroup>
-                  <Button
-                    variant="outline-dark"
-                    onClick={() => {
-                      this.setState({ genericAddScreen_priorities: true });
-                    }}
-                  >
-                    <FaPlus />
-                  </Button>
-                  <GenericAddForm
-                    show={this.state.genericAddScreen_priorities}
-                    item="priority"
-                    bcfOWLProperty="hasPriority"
-                    onHide={() =>
-                      this.setState({ genericAddScreen_priorities: false })
-                    }
-                  />
-                </Card.Body>
-              </Card>
-            </Col>{" "}
-            <Col>
-              <Card
-                className="caia_card mx-auto my-2"
-                text="dark"
-                style={{ width: "30rem" }}
-              >
-                <Card.Body>
-                  <Card.Title>Labels</Card.Title>
-                  <ListGroup as="ol">{labels_list}</ListGroup>
-                  <Button
-                    variant="outline-dark"
-                    onClick={() => {
-                      this.setState({ genericAddScreen_labels: true });
-                    }}
-                  >
-                    <FaPlus />
-                  </Button>
-                  <GenericAddForm
-                    show={this.state.genericAddScreen_labels}
-                    item="label"
-                    bcfOWLProperty="hasLabels"
-                    onHide={() =>
-                      this.setState({ genericAddScreen_labels: false })
-                    }
-                  />
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+                  </Card.Body>
+                </Card>
+              </Col>{" "}
+              <Col>
+                <Card
+                  className="caia_card mx-auto my-2"
+                  text="dark"
+                  style={{ width: "30rem" }}
+                >
+                  <Card.Body>
+                    <Card.Title>Topic Types</Card.Title>
+                    <ListGroup as="ol">{topictype_list}</ListGroup>
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => {
+                        this.setState({ genericAddScreen_topicType: true });
+                      }}
+                    >
+                      <FaPlus />
+                    </Button>
+                    <GenericAddForm
+                      show={this.state.genericAddScreen_topicType}
+                      item="topic type"
+                      bcfOWLProperty="hasTopicType"
+                      bcfOWLSubject="TopicType"
+                      onHide={() =>
+                        this.setState({ genericAddScreen_topicType: false })
+                      }
+                    />
+                  </Card.Body>
+                </Card>
+              </Col>{" "}
+              <Col>
+                <Card
+                  className="caia_card mx-auto my-2"
+                  text="dark"
+                  style={{ width: "30rem" }}
+                >
+                  <Card.Body>
+                    <Card.Title>Topic Statuses</Card.Title>
+                    <ListGroup as="ol">{topicstatus_list}</ListGroup>
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => {
+                        this.setState({ genericAddScreen_topicStatus: true });
+                      }}
+                    >
+                      <FaPlus />
+                    </Button>
+                    <GenericAddForm
+                      show={this.state.genericAddScreen_topicStatus}
+                      item="topic status"
+                      bcfOWLProperty="hasTopicStatus"
+                      bcfOWLSubject="TopicStatus"
+                      onHide={() =>
+                        this.setState({ genericAddScreen_topicStatus: false })
+                      }
+                    />
+                  </Card.Body>
+                </Card>
+              </Col>{" "}
+              <Col>
+                <Card
+                  className="caia_card mx-auto my-2"
+                  text="dark"
+                  style={{ width: "30rem" }}
+                >
+                  <Card.Body>
+                    <Card.Title>Documentation phases</Card.Title>
+                    <ListGroup as="ol">{documentationphase_list}</ListGroup>
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => {
+                        this.setState({
+                          genericAddScreen_documentationPhase: true,
+                        });
+                      }}
+                    >
+                      <FaPlus />
+                    </Button>
+                    <GenericAddForm
+                      show={this.state.genericAddScreen_documentationPhase}
+                      item="documentation phase"
+                      bcfOWLProperty="hasStage"
+                      bcfOWLSubject="Stage"
+                      onHide={() =>
+                        this.setState({
+                          genericAddScreen_documentationPhase: false,
+                        })
+                      }
+                    />
+                  </Card.Body>
+                </Card>
+              </Col>{" "}
+              <Col>
+                <Card
+                  className="caia_card mx-auto my-2"
+                  text="dark"
+                  style={{ width: "30rem" }}
+                >
+                  <Card.Body>
+                    <Card.Title>Priorities</Card.Title>
+                    <ListGroup as="ol">{priorities_list}</ListGroup>
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => {
+                        this.setState({ genericAddScreen_priorities: true });
+                      }}
+                    >
+                      <FaPlus />
+                    </Button>
+                    <GenericAddForm
+                      show={this.state.genericAddScreen_priorities}
+                      item="priority"
+                      bcfOWLProperty="hasPriority"
+                      bcfOWLSubject="Priority"
+                      onHide={() =>
+                        this.setState({ genericAddScreen_priorities: false })
+                      }
+                    />
+                  </Card.Body>
+                </Card>
+              </Col>{" "}
+              <Col>
+                <Card
+                  className="caia_card mx-auto my-2"
+                  text="dark"
+                  style={{ width: "30rem" }}
+                >
+                  <Card.Body>
+                    <Card.Title>Labels</Card.Title>
+                    <ListGroup as="ol">{labels_list}</ListGroup>
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => {
+                        this.setState({ genericAddScreen_labels: true });
+                      }}
+                    >
+                      <FaPlus />
+                    </Button>
+                    <GenericAddForm
+                      show={this.state.genericAddScreen_labels}
+                      item="label"
+                      bcfOWLProperty="hasLabels"
+                      bcfOWLSubject="Labels"
+                      onHide={() =>
+                        this.setState({ genericAddScreen_labels: false })
+                      }
+                    />
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </ScrollArea>
     );
   }
 
@@ -570,74 +654,84 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
   update() {
     this.bcfowl_setup.getCurrentProject().then((value) => {
       this.setState({ projectName: value.hasName });
+      this.bcfowl_setup.getCurrentProjectExtensions().then((extensions) => {
+        let extensionList: any[] = extensions["@graph"];
+        let tempExtensions = this.state.extensionsMap;
 
-      if (value.hasTopicType) {
-        if (!Array.isArray(value.hasTopicType))
-          value.hasTopicType = [value.hasTopicType];
-        let list: string[] = [];
-        value.hasTopicType.forEach((tturl: string) => {
-          let typename = tturl.substring(tturl.lastIndexOf("/") + 1);
-          list = list.concat(typename);
+        extensionList.forEach((extension) => {
+          tempExtensions[extension["@id"]] = extension;
         });
-        this.setState({ topicTypes: list });
-      }
 
-      if (value.hasTopicStatus) {
-        if (!Array.isArray(value.hasTopicStatus))
-          value.hasTopicStatus = [value.hasTopicStatus];
-        let list: string[] = [];
-        value.hasTopicStatus.forEach((tsurl: string) => {
-          let typestatus = tsurl.substring(tsurl.lastIndexOf("/") + 1);
-          list = list.concat(typestatus);
-        });
-        this.setState({ topicStatuses: list });
-      }
+        this.setState({ extensionsMap: tempExtensions });
 
-      if (value.hasStage) {
-        if (!Array.isArray(value.hasStage)) value.hasStage = [value.hasStage];
-        let list: string[] = [];
-        value.hasStage.forEach((dsurl: string) => {
-          let stage = dsurl.substring(dsurl.lastIndexOf("/") + 1);
-          list = list.concat(stage);
-        });
-        this.setState({ documentationPhases: list });
-      }
-
-      if (value.hasPriority) {
-        if (!Array.isArray(value.hasPriority))
-          value.hasPriority = [value.hasPriority];
-        let list: string[] = [];
-        value.hasPriority.forEach((purl: string) => {
-          let priority = purl.substring(purl.lastIndexOf("/") + 1);
-          list = list.concat(priority);
-        });
-        this.setState({ priorities: list });
-      }
-
-      if (value.hasLabels) {
-        if (!Array.isArray(value.hasLabels))
-          value.hasLabels = [value.hasLabels];
-        let list: string[] = [];
-        value.hasLabels.forEach((lurl: string) => {
-          let label = lurl.substring(lurl.lastIndexOf("/") + 1);
-          list = list.concat(label);
-        });
-        this.setState({ labels: list });
-      }
-
-      try {
-        if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
-        let list: string[] = [];
-        value.hasUser.forEach((user: string) => {
-          console.log("userid: " + user);
-          this.bcfowl.describeUser(user).then((u) => {
-            list = list.concat(u);
-            this.setState({ projectUsers: list });
+        if (value.hasTopicType) {
+          if (!Array.isArray(value.hasTopicType))
+            value.hasTopicType = [value.hasTopicType];
+          let list: string[] = [];
+          value.hasTopicType.forEach((tturl: string) => {
+            let typename = tturl.substring(tturl.lastIndexOf("/") + 1);
+            list = list.concat(tturl);
           });
-        });
-      } catch (e) {
-        console.log("No users");
-      }
+          this.setState({ topicTypes: list });
+        }
+
+        if (value.hasTopicStatus) {
+          if (!Array.isArray(value.hasTopicStatus))
+            value.hasTopicStatus = [value.hasTopicStatus];
+          let list: string[] = [];
+          value.hasTopicStatus.forEach((tsurl: string) => {
+            let typestatus = tsurl.substring(tsurl.lastIndexOf("/") + 1);
+            list = list.concat(tsurl);
+          });
+          this.setState({ topicStatuses: list });
+        }
+
+        if (value.hasStage) {
+          if (!Array.isArray(value.hasStage)) value.hasStage = [value.hasStage];
+          let list: string[] = [];
+          value.hasStage.forEach((dsurl: string) => {
+            let stage = dsurl.substring(dsurl.lastIndexOf("/") + 1);
+            list = list.concat(dsurl);
+          });
+          this.setState({ documentationPhases: list });
+        }
+
+        if (value.hasPriority) {
+          if (!Array.isArray(value.hasPriority))
+            value.hasPriority = [value.hasPriority];
+          let list: string[] = [];
+          value.hasPriority.forEach((purl: string) => {
+            let priority = purl.substring(purl.lastIndexOf("/") + 1);
+            list = list.concat(purl);
+          });
+          this.setState({ priorities: list });
+        }
+
+        if (value.hasLabels) {
+          if (!Array.isArray(value.hasLabels))
+            value.hasLabels = [value.hasLabels];
+          let list: string[] = [];
+          value.hasLabels.forEach((lurl: string) => {
+            let label = lurl.substring(lurl.lastIndexOf("/") + 1);
+            list = list.concat(lurl);
+          });
+          this.setState({ labels: list });
+        }
+
+        try {
+          if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
+          let list: string[] = [];
+          value.hasUser.forEach((user: string) => {
+            console.log("userid: " + user);
+            this.bcfowl.describeUser(user).then((u) => {
+              list = list.concat(u);
+              this.setState({ projectUsers: list });
+            });
+          });
+        } catch (e) {
+          console.log("No users");
+        }
+      });
     });
   }
 }
