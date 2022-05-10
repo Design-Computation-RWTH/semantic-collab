@@ -8,7 +8,6 @@ import { ConvertTasks } from "../../../services/ConvertTasks2RDF";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 import BcfOWLProjectSetup from "../../../services/BcfOWLProjectSetup";
-import { InterventionPost } from "../../../services/types/ConvertTasks2RDF_types";
 const wkt = require("terraformer-wkt-parser");
 
 type TaskListProps = {
@@ -421,6 +420,10 @@ export default function TaskListCreation(props: TaskListProps) {
             }
 
             tasks2Convert.interventions = UpdatedTasksArr;
+            tasks2Convert.intervention_posts =
+              props.TaskJson.intervention_posts;
+            tasks2Convert.intervention_priorities =
+              props.TaskJson.intervention_priorities;
 
             let bcfowl = new BcfOWL_Endpoint();
 

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Text,
@@ -8,11 +8,14 @@ import {
   Center,
   Title,
   Group,
+  Spoiler,
 } from "@mantine/core";
 import PubSub from "pubsub-js";
 import { ReactSession } from "react-client-session";
 import { useNavigate } from "react-router-dom";
 import DeleteProjectsModal from "../Modals/DeleteProjectModal";
+import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
+import * as bcfOWL_API from "../../services/types/bcfOWL_API_types";
 
 type ProjectElementProps = {
   project: { projectName: string; projectId: string };
@@ -22,6 +25,28 @@ type ProjectElementProps = {
 
 export default function ProjectElement(props: ProjectElementProps) {
   const navigate = useNavigate();
+  const [description, setDescription] = useState<string>("");
+
+  useEffect(() => {
+    init();
+  });
+
+  function init() {
+    console.log(props.project.projectId);
+    let bcfowl = new BcfOWL_Endpoint();
+    bcfowl
+      .describeNoProject(
+        "https://caia.herokuapp.com/graph/" + props.project.projectId + "/",
+        props.project.projectId
+      )
+      .then((r) => {
+        console.log(props.project.projectId);
+        console.log(r);
+        if (r.comment) {
+          setDescription(r.comment);
+        }
+      });
+  }
 
   function handleClick() {
     ReactSession.set("projectid", props.project.projectId);
@@ -30,21 +55,17 @@ export default function ProjectElement(props: ProjectElementProps) {
     navigate(props.project.projectName + "/");
   }
 
-  function handleDelete() {
-    console.log("Delete");
-  }
-
   return (
     <Center>
       <Card
-        style={{ alignContent: "center", width: "340px" }}
+        style={{ alignContent: "center", width: "340px", minHeight: "200px" }}
         withBorder={true}
         // color={"blue"}
         p="md"
       >
         <Title order={2}>{props.project.projectName}</Title>
 
-        <RingProgress
+        {/*        <RingProgress
           label={
             <Text size="xs" align="center">
               Application data usage
@@ -55,10 +76,10 @@ export default function ProjectElement(props: ProjectElementProps) {
             { value: Math.floor(Math.random() * 100), color: "orange" },
             { value: Math.floor(Math.random() * 100), color: "grape" },
           ]}
-        />
-        <Text size="sm" style={{ lineHeight: 1.5 }}>
-          lorem ipsum dolor sit
-        </Text>
+        />*/}
+        <Spoiler maxHeight={50} showLabel="Show more" hideLabel="Hide">
+          {description}
+        </Spoiler>
         <Group>
           <Button
             value={props.project.projectId}

@@ -295,7 +295,10 @@ class BcfOWLProjectSetup {
       });
   }
 
-  async addProject(project_name: string | null) {
+  async addProject(
+    project_name: string | null,
+    project_description: string | null
+  ) {
     if (project_name == null) return;
     let myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + getAccessToken());
@@ -303,6 +306,7 @@ class BcfOWLProjectSetup {
 
     let raw = JSON.stringify({
       name: project_name,
+      description: project_description,
     });
 
     fetch("https://caia.herokuapp.com/bcf/sparql/projects", {

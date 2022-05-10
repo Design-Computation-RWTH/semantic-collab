@@ -7,6 +7,7 @@ import ProjectElement from "../components/Projects/ProjectElement";
 import { useNavigate } from "react-router-dom";
 import AddProjectsModal from "../components/Modals/AddProjectsModal";
 import * as bcfOWL_API from "../services/types/bcfOWL_API_types";
+import BcfOWL_Endpoint from "../services/BcfOWL_Endpoint";
 
 export const withRouter = (Component: any) => {
   return (props: any) => {
@@ -34,6 +35,7 @@ function ProjectListView(props: ProjectListViewProps) {
 
   function update() {
     let bcfapi = new BCFAPI();
+
     bcfapi
       .getProjects()
       .then((value) => {

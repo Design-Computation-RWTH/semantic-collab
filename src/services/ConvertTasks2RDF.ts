@@ -22,6 +22,29 @@ export async function ConvertTasks(data: any, projectURI: string) {
   let interventions_posts_map = new Map<number, string>(); // number -> uri
   let interventions_taskmethods_map = new Map<string, string>(); // number -> uri
   let taskmethods: number = 1;
+
+  writer.addQuad(
+    namedNode(inst_uri + "TaskRMContext"),
+    namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+    namedNode(bcdOWL_uri + "Context")
+  );
+  writer.addQuad(
+    namedNode(inst_uri + "TaskRMContext"),
+    namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+    literal("Renovation Manager Tasks")
+  );
+  writer.addQuad(
+    namedNode(inst_uri + "TaskRMContext"),
+    namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+    literal("Tasks created by the Renovation Manager workflow")
+  );
+
+  writer.addQuad(
+    namedNode(inst_uri),
+    namedNode(bcdOWL_uri + "hasContexts"),
+    namedNode(inst_uri + "TaskRMContext")
+  );
+
   data.interventions.forEach((i: ConvertTasks2RDF_types.Intervention) => {
     let intervention_uri =
       inst_uri +
@@ -86,6 +109,60 @@ export async function ConvertTasks(data: any, projectURI: string) {
         namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
         literal(i.description)
       );
+      writer.addQuad(
+        namedNode(interventionpost_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
+      );
+
+      writer.addQuad(
+        namedNode(inst_uri),
+        namedNode(bcdOWL_uri + "hasTopicType"),
+        namedNode(interventionpost_uri)
+      );
+    }
+  );
+
+  data.intervention_priorities.forEach(
+    (i: ConvertTasks2RDF_types.InterventionPost) => {
+      let interventionpriority_uri =
+        inst_uri +
+        "InterventionPriority_" +
+        i.name.replace(/ /g, "_").replace(/ç/g, "c") +
+        "_" +
+        i.id;
+      interventions_posts_map.set(i.id, interventionpriority_uri);
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+        namedNode(bcdOWL_uri + "Priority")
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://purl.org/dc/terms/identifier"),
+        literal(i.id)
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+        literal(i.name)
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+        literal(i.description)
+      );
+
+      writer.addQuad(
+        namedNode(inst_uri),
+        namedNode(bcdOWL_uri + "hasPriority"),
+        namedNode(interventionpriority_uri)
+      );
     }
   );
 
@@ -101,6 +178,11 @@ export async function ConvertTasks(data: any, projectURI: string) {
       namedNode(intervention_uri),
       namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
       namedNode("https://w3id.org/cto#" + "Task")
+    );
+    writer.addQuad(
+      namedNode(intervention_uri),
+      namedNode(bcdOWL_uri + "hasContext"),
+      namedNode(inst_uri + "TaskRMContext")
     );
     writer.addQuad(
       namedNode(intervention_uri),
@@ -204,6 +286,12 @@ export async function ConvertTasks(data: any, projectURI: string) {
 
       writer.addQuad(
         namedNode(pc_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
+      );
+
+      writer.addQuad(
+        namedNode(pc_uri),
         namedNode(bcdOWL_uri + "hasAspectRatio"),
         literal("1.33", namedNode("http://www.w3.org/2001/XMLSchema#float"))
       );
@@ -270,6 +358,12 @@ export async function ConvertTasks(data: any, projectURI: string) {
         namedNode(viewpoint_uri),
         namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
         namedNode(bcdOWL_uri + "Viewpoint")
+      );
+
+      writer.addQuad(
+        namedNode(viewpoint_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
       );
 
       writer.addQuad(

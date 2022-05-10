@@ -89,6 +89,24 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
+  async describeNoProject(uri: string, projectID: string) {
+    let urlencoded = new URLSearchParams();
+    urlencoded.append("query", bcfOWLPrefixes + "DESCRIBE <" + uri + ">\n");
+
+    const response = await fetch(base_uri + "/graph/" + projectID + "/query", {
+      method: "POST",
+      headers: this.myHeaders,
+      body: urlencoded,
+      redirect: this.follow,
+    });
+    if (!response.ok) {
+      const message = `describe: An error has occurred: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
   async describeUser(uri: string) {
     let urlencoded = new URLSearchParams();
     urlencoded.append("query", bcfOWLPrefixes + "DESCRIBE <" + uri + ">\n");

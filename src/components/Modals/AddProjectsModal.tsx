@@ -13,7 +13,7 @@ export default function AddProjectsModal() {
   const form = useForm({
     initialValues: {
       Name: "",
-      Description: "",
+      Description: " ",
     },
   });
 
@@ -30,14 +30,16 @@ export default function AddProjectsModal() {
             onSubmit={form.onSubmit((values) => {
               let bcfowl_setup = new BcfOWLProjectSetup();
 
-              bcfowl_setup.addProject(values.Name).then(() => {
-                //Target location:
-                PubSub.publish("Update", {
-                  txt: "Project created. Name: " + values.Name,
+              bcfowl_setup
+                .addProject(values.Name, values.Description)
+                .then(() => {
+                  //Target location:
+                  PubSub.publish("Update", {
+                    txt: "Project created. Name: " + values.Name,
+                  });
+                  modals.closeModal("ProjectAddModal");
+                  setOpened(false);
                 });
-                modals.closeModal("ProjectAddModal");
-                setOpened(false);
-              });
             })}
           >
             <TextInput
