@@ -7,6 +7,7 @@ import {
   ScrollArea,
   Button,
   Modal,
+  Drawer,
 } from "@mantine/core";
 
 import ImageService from "../../services/ImageService";
@@ -53,6 +54,7 @@ export default function CAIA_Gallery_Tab() {
   const [imageslist, setImageslist] = useState<any[]>([]);
   const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
   const [active_topic, setActive_topic] = useState<any>(null);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [screen, setScreen] = useState<number>(0);
   const [opened, setOpened] = useState(false);
   let bcfapi = new BCFAPI();
@@ -305,6 +307,16 @@ export default function CAIA_Gallery_Tab() {
       >
         {gallery()}
       </ScrollArea>
+      <Drawer
+        opened={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        title="BCF Filter"
+        position="right"
+        padding="xl"
+        size="xl"
+      >
+        myGenericDrawer
+      </Drawer>
       <Container
         style={{
           height: "5%",
@@ -314,7 +326,12 @@ export default function CAIA_Gallery_Tab() {
         }}
         sx={(theme) => ({ backgroundColor: theme.colors.dark })}
       >
-        <button className="btn-caia-icon">
+        <button
+          className="btn-caia-icon"
+          onClick={() => {
+            setOpenDrawer(true);
+          }}
+        >
           <i className="icon bi-funnel btn-caia-icon-size" />
         </button>
         <button className="btn-caia-icon">
@@ -331,7 +348,7 @@ export default function CAIA_Gallery_Tab() {
               downloadBCF();
             }}
             className="bcficon"
-          ></span>
+          />
         </button>
       </Container>
     </div>

@@ -200,6 +200,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
           console.log(err);
         });
       PubSub.publish("DocumentsViewStateChange", {});
+      PubSub.publish("CancelNewDocument", {});
     }
   }
 

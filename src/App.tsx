@@ -270,6 +270,11 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
           }
           styles={(theme) => ({
             main: {
+              display: "flex",
+              alignContent: "stretch",
+              justifyContent: "space-evenly",
+              alignItems: "stretch",
+              flexDirection: "column",
               backgroundColor:
                 theme.colorScheme === "light"
                   ? theme.colors.dark[8]
@@ -285,7 +290,7 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
               path="/projects/:id/"
               element={
                 <RequireAuth>
-                  <div className="caia-fill">
+                  <div style={{ height: "100%" }} className="caia-fill">
                     <XeoKitView />
                   </div>
                 </RequireAuth>

@@ -42,7 +42,13 @@ export default function CAIA_Tasks_Tab() {
   }
 
   return (
-    <div className=" caia-fill">
+    <div
+      style={{
+        height: "100%",
+        flexDirection: "column",
+        display: "flex",
+      }}
+    >
       <div className={"yscroll"} style={{ height: "100%" }}>
         {ViewState}
       </div>

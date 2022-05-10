@@ -413,7 +413,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
 
     return (
       <ScrollArea
-        type="auto"
+        type="always"
         scrollbarSize={10}
         style={{
           display: "flex",
