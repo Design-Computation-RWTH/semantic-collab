@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import CloseButton from "react-bootstrap/CloseButton";
 import {
   Container,
@@ -8,7 +8,14 @@ import {
   Button,
   Modal,
   Drawer,
+  Stack,
+  Select,
+  MultiSelect,
 } from "@mantine/core";
+
+import dayjs from "dayjs";
+
+import { DatePicker, DateRangePicker } from "@mantine/dates";
 
 import ImageService from "../../services/ImageService";
 import BCFAPI from "../../services/BCFAPI";
@@ -27,7 +34,8 @@ import {
 } from "../../services/types/BCFXML_Types";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
-import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
+import { set } from "js-cookie";
+import bcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 var xml_convert = require("xml-js");
 (window as any).global = window;
 
@@ -57,9 +65,30 @@ export default function CAIA_Gallery_Tab() {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [screen, setScreen] = useState<number>(0);
   const [opened, setOpened] = useState(false);
+
+  const [viewpoints, setViewpoints] = useState<any[]>([]);
+
+  // Filter
+
+  const [topicType, setTopicType] = useState<string>("None");
+  const [topicStatus, setTopicStatus] = useState<string>("None");
+  const [topicStage, setTopicStage] = useState<string>("None");
+  const [topicPriority, setTopicPriority] = useState<string>("None");
+  const [topicAssigned, setTopicAssigned] = useState<string>("None");
+  const [topicAuthor, setTopicAuthor] = useState<string>("None");
+  const [topicModAuthor, setTopicModAuthor] = useState<string>("None");
+
+  let now = new Date();
+  let then = dayjs(new Date()).add(1, "days").toDate();
+  const [dateValue, setDateValue] = useState<[Date | null, Date | null]>([
+    now,
+    then,
+  ]);
   let bcfapi = new BCFAPI();
 
-  const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
+  const { viewer, extensions, users } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
   const { projectID } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
@@ -85,12 +114,16 @@ export default function CAIA_Gallery_Tab() {
     if (screen === 1) {
       gallery_content = (
         <div
-          style={{
-            justifyContent: "center",
-            display: "flex",
-          }}
+          className={"GalleryContent"}
+          style={
+            {
+              //width: "100%",
+              //justifyContent: "center",
+              //display: "flex",
+            }
+          }
         >
-          <Container>
+          <Container style={{ width: "100%" }}>
             <div>
               {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
@@ -121,7 +154,6 @@ export default function CAIA_Gallery_Tab() {
               }}
               onClick={() => {
                 setOpened(true);
-                console.log("Hello World");
               }}
             >
               <Image
@@ -141,7 +173,6 @@ export default function CAIA_Gallery_Tab() {
   }
 
   useEffect(() => {
-    console.log("Test");
     init();
     return () => {
       setImageslist([]);
@@ -151,30 +182,49 @@ export default function CAIA_Gallery_Tab() {
     };
   }, []);
 
-  let viewpoints: any[] = [];
+  // let viewpoints: any[] = [];
   function init() {
-    let bcfapi = new BCFAPI();
-    let imageservice: ImageService = new ImageService();
-    bcfapi
-      .getAllViewPoints()
-      .then((value) => {
-        value.forEach((viewpoint: { guid: string; topic_guid: string }) => {
-          let snapshot = imageservice.getThumbnailData(viewpoint.guid);
-          snapshot.then((img: any) => {
-            if (img.size > 0) {
-              let url = URL.createObjectURL(img);
-              let joined = viewpoints.concat(
-                new SnapShotThumbnail(url, viewpoint.guid, viewpoint.topic_guid)
-              );
-              viewpoints = joined;
-              fetchImagesList(joined);
-            }
-          });
-        });
+    let bcfOWL = new bcfOWL_Endpoint();
+    //TODO: Make filter "state" for this file
+    let filter: string[] = [];
+
+    console.log(users);
+
+    bcfOWL
+      .getFilteredViepoints(filter)
+      .then((graph) => {
+        ViewpointsResponse(graph);
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  function ViewpointsResponse(Response: any) {
+    //TODO: If the graph returns just one object, we cannot check for @graph
+    let value;
+    if (Response["@graph"]) {
+      value = Response["@graph"];
+    } else {
+      value = [Response];
+    }
+    let imageservice: ImageService = new ImageService();
+    let joined: any[] = [];
+
+    value.forEach((viewpoint: any) => {
+      let snapshot = imageservice.getThumbnailData(viewpoint.hasGuid);
+      snapshot.then((img: any) => {
+        if (img.size > 0) {
+          let url = URL.createObjectURL(img);
+          joined.push(
+            new SnapShotThumbnail(url, viewpoint.hasGuid, viewpoint.hasTopic)
+          );
+          fetchImagesList(joined);
+        }
+      });
+    });
+
+    setViewpoints(joined);
   }
 
   // Async operation is much quicker that sync even though it updates the screen many times
@@ -192,11 +242,8 @@ export default function CAIA_Gallery_Tab() {
           onClick={() => {
             setScreen(1);
 
-            //TODO: Select Camera in Viewer
-
             for (const model in viewer.scene.models) {
               if (model.includes(s.guid)) {
-                console.log(viewer.scene.models[model]);
                 viewer.scene.models[model].selected = true;
                 viewer.cameraFlight.flyTo(model);
               } else {
@@ -226,8 +273,6 @@ export default function CAIA_Gallery_Tab() {
 
     let topics: any = await bcfapi.getTopics();
     for (let bcfowl_topic of topics) {
-      console.log("Topic: " + JSON.stringify(bcfowl_topic));
-
       let topic: Topic = {
         Guid: bcfowl_topic.guid,
         Title: "-",
@@ -297,25 +342,235 @@ export default function CAIA_Gallery_Tab() {
       });
   }
 
-  return (
-    <div style={{ height: "100%" }} className="caia-fill">
-      <ScrollArea
-        style={{
-          position: "relative",
-          height: "95%",
+  function applyFilter() {
+    let bcfOWL = new bcfOWL_Endpoint();
+    let filter: string[] = [];
+    if (topicType != "None") {
+      filter.push("bcfOWL:hasTopicType <" + topicType + "> ;");
+    }
+    if (topicStatus != "None") {
+      filter.push("bcfOWL:hasTopicStatus <" + topicStatus + "> ;");
+    }
+    if (topicPriority != "None") {
+      filter.push("bcfOWL:hasPriority <" + topicPriority + "> ;");
+    }
+    if (topicStage != "None") {
+      filter.push("bcfOWL:hasStage <" + topicStage + "> ;");
+    }
+
+    bcfOWL.getFilteredViepoints(filter).then((graph) => {
+      ViewpointsResponse(graph);
+    });
+  }
+
+  let topicTypeData = [];
+  if (extensions.has("bcfOWL:TopicType")) {
+    topicTypeData = extensions.get("bcfOWL:TopicType").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicTypeData.push({ value: "None", label: "None" });
+
+  let topicLabelData = [];
+  if (extensions.has("bcfOWL:Label")) {
+    topicLabelData = extensions.get("bcfOWL:Label").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicLabelData.push({ value: "None", label: "None" });
+
+  let topicStatusData = [];
+  if (extensions.has("bcfOWL:TopicStatus")) {
+    topicStatusData = extensions.get("bcfOWL:TopicStatus").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicStatusData.push({ value: "None", label: "None" });
+
+  let topicPriorityData = [];
+  if (extensions.has("bcfOWL:Priority")) {
+    topicPriorityData = extensions.get("bcfOWL:Priority").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicPriorityData.push({ value: "None", label: "None" });
+
+  let topicStageData = [];
+  if (extensions.has("bcfOWL:Stage")) {
+    topicStageData = extensions.get("bcfOWL:Stage").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicStageData.push({ value: "None", label: "None" });
+
+  let authorData = [];
+  authorData = users.map((e: any) => {
+    let tempValue: string = "";
+    let tempLabel: string = "";
+    Object.keys(e).forEach((key: any) => {
+      tempValue = key;
+      tempLabel = e[key];
+    });
+    return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
+  });
+
+  let assignedData = authorData;
+  assignedData.push({ value: "None", label: "None" });
+
+  let drawer = (
+    <Stack
+      justify="flex-start"
+      sx={(theme) => ({
+        backgroundColor:
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[8]
+            : theme.colors.gray[0],
+        height: "100%",
+      })}
+    >
+      <Select
+        styles={{ label: { color: "white" } }}
+        label="Select Topic Type"
+        data={topicTypeData}
+        onChange={(e: string) => {
+          setTopicType(e);
         }}
-      >
+        value={topicType}
+      />
+      <Select
+        styles={{ label: { color: "white" } }}
+        label="Select Topic Status"
+        data={topicStatusData}
+        value={topicStatus}
+        onChange={(e: string) => {
+          setTopicStatus(e);
+        }}
+      />
+      <Select
+        styles={{ label: { color: "white" } }}
+        label="Select Stage"
+        data={topicStageData}
+        value={topicStage}
+        onChange={(e: string) => {
+          setTopicStage(e);
+        }}
+      />
+      <Select
+        styles={{ label: { color: "white" } }}
+        label="Select Priority"
+        data={topicPriorityData}
+        value={topicPriority}
+        onChange={(e: string) => {
+          setTopicPriority(e);
+        }}
+      />
+      <Select
+        styles={{ label: { color: "white" } }}
+        label="Select Author"
+        data={authorData}
+        value={topicAuthor}
+        onChange={(e: string) => {
+          setTopicAuthor(e);
+        }}
+      />
+      <Select
+        styles={{ label: { color: "white" } }}
+        label="Select Modification Author"
+        data={authorData}
+        value={topicModAuthor}
+        onChange={(e: string) => {
+          setTopicModAuthor(e);
+        }}
+      />
+      <Select
+        styles={{ label: { color: "white" } }}
+        label="Select Assigned To"
+        data={assignedData}
+        value={topicAssigned}
+        onChange={(e: string) => {
+          setTopicAssigned(e);
+        }}
+      />
+      <MultiSelect
+        styles={{ label: { color: "white" } }}
+        label="Select Label"
+        data={topicLabelData}
+      />
+      <DateRangePicker
+        label="Creation Date"
+        styles={{
+          label: { color: "white" },
+          calendarBase: { color: "white" },
+          calendarHeader: { color: "red" },
+          calendarHeaderControl: { color: "red" },
+          calendarHeaderLevel: { color: "black" },
+          outside: { color: "white" },
+          wrapper: { color: "white" },
+          filledVariant: { color: "white" },
+          root: { color: "white" },
+          dropdown: { color: "white" },
+        }}
+        placeholder="Pick dates range"
+        onChange={(e: any) => {
+          setDateValue(e);
+        }}
+      />
+      <Button onClick={applyFilter}>Apply Filter</Button>
+    </Stack>
+  );
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <ScrollArea style={{ flex: 1 }} offsetScrollbars>
         {gallery()}
       </ScrollArea>
       <Drawer
         opened={openDrawer}
         onClose={() => setOpenDrawer(false)}
-        title="BCF Filter"
+        title="Apply Image Filter"
         position="right"
         padding="xl"
         size="xl"
+        styles={{ title: { color: "white" } }}
       >
-        myGenericDrawer
+        {drawer}
       </Drawer>
       <Container
         style={{

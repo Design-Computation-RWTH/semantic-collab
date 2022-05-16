@@ -345,7 +345,6 @@ function useAuth() {
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  let auth = useAuth();
   let location = useLocation();
 
   if (!isAuthenticated()) {

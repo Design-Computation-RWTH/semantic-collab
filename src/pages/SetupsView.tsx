@@ -179,6 +179,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
         );
     });
 
+    //TODO: When creating tasks make sure that there are comments for the extensions!
     const topictype_list = this.state.topicTypes.map((topictype) => {
       return (
         <ListGroup.Item>
@@ -323,6 +324,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
       }
     );
 
+    console.log(this.state.extensionsMap);
     const priorities_list = this.state.priorities.map((priority) => {
       return (
         <ListGroup.Item>
@@ -368,6 +370,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
       );
     });
 
+    console.log(this.state.labels);
     const labels_list = this.state.labels.map((label) => {
       return (
         <ListGroup.Item>
@@ -632,7 +635,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                       show={this.state.genericAddScreen_labels}
                       item="label"
                       bcfOWLProperty="hasLabels"
-                      bcfOWLSubject="Labels"
+                      bcfOWLSubject="Label"
                       onHide={() =>
                         this.setState({ genericAddScreen_labels: false })
                       }
@@ -669,7 +672,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             value.hasTopicType = [value.hasTopicType];
           let list: string[] = [];
           value.hasTopicType.forEach((tturl: string) => {
-            let typename = tturl.substring(tturl.lastIndexOf("/") + 1);
+            //let typename = tturl.substring(tturl.lastIndexOf("/") + 1);
             list = list.concat(tturl);
           });
           this.setState({ topicTypes: list });
@@ -680,7 +683,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             value.hasTopicStatus = [value.hasTopicStatus];
           let list: string[] = [];
           value.hasTopicStatus.forEach((tsurl: string) => {
-            let typestatus = tsurl.substring(tsurl.lastIndexOf("/") + 1);
+            //let typestatus = tsurl.substring(tsurl.lastIndexOf("/") + 1);
             list = list.concat(tsurl);
           });
           this.setState({ topicStatuses: list });
@@ -690,7 +693,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
           if (!Array.isArray(value.hasStage)) value.hasStage = [value.hasStage];
           let list: string[] = [];
           value.hasStage.forEach((dsurl: string) => {
-            let stage = dsurl.substring(dsurl.lastIndexOf("/") + 1);
+            //let stage = dsurl.substring(dsurl.lastIndexOf("/") + 1);
             list = list.concat(dsurl);
           });
           this.setState({ documentationPhases: list });
@@ -701,18 +704,19 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             value.hasPriority = [value.hasPriority];
           let list: string[] = [];
           value.hasPriority.forEach((purl: string) => {
-            let priority = purl.substring(purl.lastIndexOf("/") + 1);
+            //let priority = purl.substring(purl.lastIndexOf("/") + 1);
             list = list.concat(purl);
           });
           this.setState({ priorities: list });
         }
 
         if (value.hasLabels) {
+          console.log(value.hasLabels);
           if (!Array.isArray(value.hasLabels))
             value.hasLabels = [value.hasLabels];
           let list: string[] = [];
           value.hasLabels.forEach((lurl: string) => {
-            let label = lurl.substring(lurl.lastIndexOf("/") + 1);
+            //let label = lurl.substring(lurl.lastIndexOf("/") + 1);
             list = list.concat(lurl);
           });
           this.setState({ labels: list });

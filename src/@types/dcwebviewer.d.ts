@@ -1,4 +1,5 @@
 import { Viewer } from "@xeokit/xeokit-sdk";
+import { SetStateAction } from "react";
 
 // @types.dcwebviewer.ts
 
@@ -33,5 +34,11 @@ export type DcWebViewerContextType = {
 
   visibleDocuments: VisibleDocument[];
   addVisibleDocument: (document: VisibleDocument) => void;
+
+  extensions: Map;
+  setExtensions: Dispatch<SetStateAction<Map>>;
+
+  users: Map;
+  setUsers: Dispatch<SetStateAction<Map>>;
   //addViewer: (viewer: Viewer) => void;
 };

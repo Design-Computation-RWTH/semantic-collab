@@ -417,6 +417,50 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
+  async getFilteredViepoints(filter: string[]) {
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+
+    let query =
+      bcfOWLPrefixes +
+      `
+        CONSTRUCT {?s ?p ?o}
+        
+        WHERE {
+          ?ts a bcfOWL:Topic ;
+            bcfOWL:hasCreationDate ?date ;
+            ${filter.join(" ")}
+            .
+          ?s a bcfOWL:Viewpoint ;
+            bcfOWL:hasTopic ?ts ;
+            bcfOWL:hasSnapshot ?snap ;
+            ?p ?o .
+        }
+        ORDER BY ?s DESC(?date)
+        `;
+
+    urlencoded.append("query", query);
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/query",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+    );
+    console.log(filter.join(" "));
+    console.log(query);
+
+    if (!response.ok) {
+      const message = `Get Filtered Viewpoints: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
   async getTopicGuids4Document(doc_uri: string) {
     if (!this.project_id) alert("Project not selected. ");
     let urlencoded = new URLSearchParams();

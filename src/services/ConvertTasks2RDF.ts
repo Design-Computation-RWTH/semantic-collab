@@ -1,11 +1,9 @@
 // @ts-ignore
-import * as gantt_data from "./assets/Gantt.json";
 import * as ConvertTasks2RDF_types from "./types/ConvertTasks2RDF_types";
-const uuid = require("uuid");
 
 const N3 = require("n3");
 const { DataFactory } = N3;
-const { namedNode, literal, number } = DataFactory;
+const { namedNode, literal } = DataFactory;
 
 export async function ConvertTasks(data: any, projectURI: string) {
   let inst_uri = projectURI;
@@ -62,7 +60,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
           taskmethods = taskmethods + 1;
           writer.addQuad(
             namedNode(intervention_uri),
-            namedNode("https://w3id.org/cto#" + "hasTaskMethod"),
+            namedNode("https://w3id.org/cto#hasTaskMethod"),
             namedNode(task_method_uri)
           );
           writer.addQuad(
@@ -177,7 +175,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-      namedNode("https://w3id.org/cto#" + "Task")
+      namedNode("https://w3id.org/cto#Task")
     );
     writer.addQuad(
       namedNode(intervention_uri),
@@ -239,7 +237,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
         let referred_intervention_uri = interventions_map.get(referred_id);
         writer.addQuad(
           namedNode(intervention_uri),
-          namedNode("https://w3id.org/cto#" + "afterFinishedTask"),
+          namedNode("https://w3id.org/cto#afterFinishedTask"),
           namedNode(referred_intervention_uri)
         );
       });
@@ -251,7 +249,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
       );
       writer.addQuad(
         namedNode(intervention_uri),
-        namedNode("https://w3id.org/cto#" + "hasTaskContext"),
+        namedNode("https://w3id.org/cto#hasTaskContext"),
         namedNode(referred_intervention_uri)
       );
     }

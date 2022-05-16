@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Accordion, Container, Table, Select } from "@mantine/core";
-import { DatePicker, DateRangePicker } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
-import { Form } from "react-bootstrap";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
 
 type TaskListProps = {
   IfcStoreys: any[];
   viewer: Viewer;
-};
-
-type TaskListState = {
-  tasks: any;
 };
 
 export default function TaskListPreview(props: TaskListProps) {
@@ -153,6 +148,8 @@ export default function TaskListPreview(props: TaskListProps) {
             </Table>
           </Accordion.Item>
         );
+      } else {
+        return <></>;
       }
     });
     return SubTasks;

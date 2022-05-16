@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, ScrollArea, SimpleGrid, Grid } from "@mantine/core";
+import { Button, Divider, ScrollArea, Grid } from "@mantine/core";
 import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
 import PubSub from "pubsub-js";
@@ -7,7 +7,6 @@ import ProjectElement from "../components/Projects/ProjectElement";
 import { useNavigate } from "react-router-dom";
 import AddProjectsModal from "../components/Modals/AddProjectsModal";
 import * as bcfOWL_API from "../services/types/bcfOWL_API_types";
-import BcfOWL_Endpoint from "../services/BcfOWL_Endpoint";
 
 export const withRouter = (Component: any) => {
   return (props: any) => {

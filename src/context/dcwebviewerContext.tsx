@@ -22,6 +22,9 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
 
   const [projectID, setProjectID] = React.useState("");
 
+  const [extensions, setExtensions] = React.useState(new Map());
+  const [users, setUsers] = React.useState(new Map());
+
   let InitialDocument: SelectedDocument = {
     id: "",
     url: "",
@@ -55,6 +58,10 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setSelectedDocument,
         visibleDocuments,
         addVisibleDocument,
+        extensions,
+        setExtensions,
+        users,
+        setUsers,
       }}
     >
       {children}

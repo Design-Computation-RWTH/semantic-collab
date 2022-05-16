@@ -183,6 +183,15 @@ export default function CAIA_XeoKitView() {
       ),
     });
 
+    viewer.scene.pointsMaterial.pointSize = 2;
+    viewer.scene.pointsMaterial.roundPoints = false;
+    viewer.scene.pointsMaterial.perspectivePoints = true;
+    viewer.scene.pointsMaterial.minPerspectivePointSize = 2;
+    viewer.scene.pointsMaterial.maxPerspectivePointSize = 4;
+    viewer.scene.pointsMaterial.filterIntensity = true;
+    viewer.scene.pointsMaterial.minIntensity = 0;
+    viewer.scene.pointsMaterial.maxIntensity = 1;
+
     cameraControl = viewer.cameraControl;
 
     cameraControl.navMode = "planView";
@@ -267,7 +276,7 @@ export default function CAIA_XeoKitView() {
       rightMargin: 10,
     });
 
-    viewer.scene.clearLights();
+    /*viewer.scene.clearLights();
 
     new AmbientLight(viewer.scene, {
       id: "myAmbientLight",
@@ -280,7 +289,7 @@ export default function CAIA_XeoKitView() {
       dir: [0, 0, -1],
       intensity: 0.5,
       space: "view",
-    });
+    });*/
   }
 
   function subSetClickMode(msg: any, data: any) {
