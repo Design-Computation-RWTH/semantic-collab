@@ -32,7 +32,6 @@ export default function ProjectElement(props: ProjectElementProps) {
   });
 
   function init() {
-    console.log(props.project.projectId);
     let bcfowl = new BcfOWL_Endpoint();
     bcfowl
       .describeNoProject(
@@ -40,8 +39,6 @@ export default function ProjectElement(props: ProjectElementProps) {
         props.project.projectId
       )
       .then((r) => {
-        console.log(props.project.projectId);
-        console.log(r);
         if (r.comment) {
           setDescription(r.comment);
         }

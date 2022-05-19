@@ -59,9 +59,12 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
     ViewerContext
   ) as DcWebViewerContextType;
 
-  const { selectedDocument, setSelectedDocument } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
+  const {
+    selectedDocument,
+    setSelectedDocument,
+    viewerDocuments,
+    setViewerDocuments,
+  } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   //
   let project_id: any = ReactSession.get("projectid");
@@ -73,7 +76,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   let un_UnSelectDocument: any;
 
   useEffect(() => {
-    console.log("Mount");
     init();
     return () => {
       setDocuments([]);
@@ -86,7 +88,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
 
   useEffect(() => {
     return () => {
-      console.log("Unmount");
       PubSub.unsubscribe(un_DocumentsViewStateChange);
       PubSub.unsubscribe(un_SetSelectedDocument);
       PubSub.unsubscribe(un_ShowDocument);
@@ -118,7 +119,18 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
       let value: bcfOWL_DocumentType[] = ReactSession.get(
         "project_documents_pid" + project_id
       );
+
       setDocuments(value);
+
+      documents.map((d: any) => {
+        if (d["@id"]) {
+          let tempDocs = viewerDocuments;
+          if (!tempDocs[d["@id"]]) {
+            tempDocs[d["@id"]] = false;
+          }
+          setViewerDocuments(tempDocs);
+        }
+      });
       return;
     }
     let bcfowl = new BcfOWL_Endpoint();
@@ -324,10 +336,11 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
     return documents.map((d: any) => {
       if (d["@id"]) {
         let selectedId = selected_ids.includes(d["@id"]);
+
         return (
           <RepresentationFile
             data={d}
-            key={d["@id"]}
+            key={d["@id"] + "_File"}
             document={{
               filename: d.hasFilename,
               id: d["@id"],

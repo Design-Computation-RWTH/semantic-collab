@@ -10,6 +10,7 @@ import {
   Drawer,
   Stack,
   Select,
+  Group,
   MultiSelect,
 } from "@mantine/core";
 
@@ -59,17 +60,13 @@ class SnapShotThumbnail {
 }
 
 export default function CAIA_Gallery_Tab() {
-  const [imageslist, setImageslist] = useState<any[]>([]);
-  const [large_image_uri, setLarge_image_uri] = useState<string>("Icon_v2.svg");
-  const [active_topic, setActive_topic] = useState<any>(null);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [screen, setScreen] = useState<number>(0);
+  //const [screen, setScreen] = useState<number>(0);
   const [opened, setOpened] = useState(false);
 
-  const [viewpoints, setViewpoints] = useState<any[]>([]);
+  //const [viewpoints, setViewpoints] = useState<any[]>([]);
 
-  // Filter
-
+  // Setting up filter as states
   const [topicType, setTopicType] = useState<string>("None");
   const [topicStatus, setTopicStatus] = useState<string>("None");
   const [topicStage, setTopicStage] = useState<string>("None");
@@ -77,57 +74,70 @@ export default function CAIA_Gallery_Tab() {
   const [topicAssigned, setTopicAssigned] = useState<string>("None");
   const [topicAuthor, setTopicAuthor] = useState<string>("None");
   const [topicModAuthor, setTopicModAuthor] = useState<string>("None");
-
-  let now = new Date();
-  let then = dayjs(new Date()).add(1, "days").toDate();
-  const [dateValue, setDateValue] = useState<[Date | null, Date | null]>([
-    now,
-    then,
+  const [topicLabels, setTopicLabels] = useState<string[]>(["None"]);
+  const [topicCreationDate, setTopicCreationDate] = useState<
+    [Date | null, Date | null]
+  >([null, null]);
+  const [topicModifiedDate, setTopicModifiedDate] = useState<
+    [Date | null, Date | null]
+  >([null, null]);
+  const [topicDueDate, setTopicDueDate] = useState<[Date | null, Date | null]>([
+    null,
+    null,
   ]);
+
   let bcfapi = new BCFAPI();
 
-  const { viewer, extensions, users } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
-  const { projectID } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
+  const {
+    viewer,
+    extensions,
+    users,
+    imageList,
+    setImageList,
+    galleryScreen,
+    setGalleryScreen,
+    activeGalleryTopic,
+    setActiveGalleryTopic,
+    largeGalleryImg,
+    setLargeGalleryImg,
+  } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   function gallery() {
     let gallery_content;
-    if (screen === 0) {
+    if (galleryScreen === 0) {
       gallery_content = (
-        <SimpleGrid
-          style={{ padding: 10 }}
-          cols={4}
-          spacing="xs"
-          breakpoints={[
-            { maxWidth: 1600, cols: 3, spacing: "xs" },
-            { maxWidth: 1200, cols: 2, spacing: "xs" },
-            { maxWidth: 800, cols: 1, spacing: "xs" },
-          ]}
-        >
-          {imageslist}
-        </SimpleGrid>
+        <div>
+          <SimpleGrid
+            style={{ padding: 10 }}
+            cols={4}
+            spacing="xs"
+            breakpoints={[
+              { maxWidth: 1600, cols: 3, spacing: "xs" },
+              { maxWidth: 1200, cols: 2, spacing: "xs" },
+              { maxWidth: 800, cols: 1, spacing: "xs" },
+            ]}
+          >
+            {imageList}
+          </SimpleGrid>
+        </div>
       );
     }
-    if (screen === 1) {
+    if (galleryScreen === 1) {
       gallery_content = (
         <div
           className={"GalleryContent"}
-          style={
-            {
-              //width: "100%",
-              //justifyContent: "center",
-              //display: "flex",
-            }
-          }
+          style={{
+            width: "100%",
+            maxWidth: "100%",
+            //justifyContent: "center",
+            //display: "flex",
+          }}
         >
-          <Container style={{ width: "100%" }}>
+          <Container style={{ width: "100%", maxWidth: "100%" }}>
             <div>
               {/*  //TODO variant="black" does not exist
                                                  // @ts-ignore */}
-              <CloseButton onClick={() => setScreen(0)} />
+              <CloseButton onClick={() => setGalleryScreen(0)} />
             </div>
 
             <Modal
@@ -139,7 +149,7 @@ export default function CAIA_Gallery_Tab() {
                 width={700}
                 height={700}
                 fit="contain"
-                src={large_image_uri}
+                src={largeGalleryImg}
                 withPlaceholder
               />
             </Modal>
@@ -160,11 +170,11 @@ export default function CAIA_Gallery_Tab() {
                 width={300}
                 height={300}
                 fit="contain"
-                src={large_image_uri}
+                src={largeGalleryImg}
                 withPlaceholder
               />
             </Button>
-            <TopicTable topic_guid={active_topic} />
+            <TopicTable topic_guid={activeGalleryTopic} />
           </Container>
         </div>
       );
@@ -175,10 +185,10 @@ export default function CAIA_Gallery_Tab() {
   useEffect(() => {
     init();
     return () => {
-      setImageslist([]);
-      setLarge_image_uri("Icon_v2.svg");
-      setActive_topic(null);
-      setScreen(0);
+      //setImageList([]);
+      //setLarge_image_uri("Icon_v2.svg");
+      //setActive_topic(null);
+      //setGalleryScreen(0);
     };
   }, []);
 
@@ -188,16 +198,16 @@ export default function CAIA_Gallery_Tab() {
     //TODO: Make filter "state" for this file
     let filter: string[] = [];
 
-    console.log(users);
-
-    bcfOWL
-      .getFilteredViepoints(filter)
-      .then((graph) => {
-        ViewpointsResponse(graph);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (imageList.length === 0) {
+      bcfOWL
+        .getFilteredViepoints(filter)
+        .then((graph) => {
+          ViewpointsResponse(graph);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
 
   function ViewpointsResponse(Response: any) {
@@ -212,58 +222,63 @@ export default function CAIA_Gallery_Tab() {
     let joined: any[] = [];
 
     value.forEach((viewpoint: any) => {
+      console.log("1");
       let snapshot = imageservice.getThumbnailData(viewpoint.hasGuid);
       snapshot.then((img: any) => {
         if (img.size > 0) {
+          console.log("2");
           let url = URL.createObjectURL(img);
           joined.push(
             new SnapShotThumbnail(url, viewpoint.hasGuid, viewpoint.hasTopic)
           );
           fetchImagesList(joined);
+        } else {
+          console.log("3");
+          fetchImagesList(joined);
         }
       });
     });
-
-    setViewpoints(joined);
   }
 
   // Async operation is much quicker that sync even though it updates the screen many times
 
   function fetchImagesList(viewpoints_list: any[]) {
     let imageservice: ImageService = new ImageService();
-    setImageslist(
-      viewpoints_list.map((s) => (
-        <Image
-          width={100}
-          height={100}
-          radius={5}
-          key={s.uri}
-          src={s.uri}
-          onClick={() => {
-            setScreen(1);
 
-            for (const model in viewer.scene.models) {
-              if (model.includes(s.guid)) {
-                viewer.scene.models[model].selected = true;
-                viewer.cameraFlight.flyTo(model);
-              } else {
-                viewer.scene.models[model].selected = false;
-              }
+    let tempImageList = viewpoints_list.map((s) => (
+      <Image
+        width={100}
+        height={100}
+        radius={5}
+        key={s.guid}
+        src={s.uri}
+        onClick={() => {
+          setGalleryScreen(1);
+
+          for (const model in viewer.scene.models) {
+            if (model.includes(s.guid)) {
+              viewer.scene.models[model].selected = true;
+              viewer.cameraFlight.flyTo(model);
+            } else {
+              viewer.scene.models[model].selected = false;
             }
-
-            let image = imageservice.getImageData4GUID(s.guid);
-            setActive_topic(s.topic_guid);
-            PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
-            image.then((img: any) => {
-              if (img.size > 0) {
-                let url = URL.createObjectURL(img);
-                setLarge_image_uri(url);
-              }
-            });
-          }}
-        />
-      ))
-    );
+          }
+          console.log(s);
+          console.log(s.topic_guid);
+          let image = imageservice.getImageData4GUID(s.guid);
+          setActiveGalleryTopic(s.topic_guid);
+          PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
+          image.then((img: any) => {
+            if (img.size > 0) {
+              let url = URL.createObjectURL(img);
+              setLargeGalleryImg(url);
+            }
+          });
+        }}
+      />
+    ));
+    console.log(tempImageList);
+    setImageList(tempImageList);
   }
 
   async function downloadBCF() {
@@ -342,9 +357,28 @@ export default function CAIA_Gallery_Tab() {
       });
   }
 
+  // Setting all filters to "None" | null
+  function resetFilter() {
+    setTopicType("None");
+    setTopicStatus("None");
+    setTopicPriority("None");
+    setTopicStage("None");
+    setTopicAssigned("None");
+    setTopicModAuthor("None");
+    setTopicAuthor("None");
+    setTopicCreationDate([null, null]);
+    setTopicModifiedDate([null, null]);
+    setTopicDueDate([null, null]);
+    setTopicLabels(["None"]);
+    //setTopicDate("None");
+  }
+
+  // Applying filter and building query for SPARQL
   function applyFilter() {
     let bcfOWL = new bcfOWL_Endpoint();
     let filter: string[] = [];
+    // If a property is "None"|null ignore it for SPARQL
+    /* Filter(?date >= "2022-05-11T00:00:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> &&  ?date <= "2022-05-11T23:59:59.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>) */
     if (topicType != "None") {
       filter.push("bcfOWL:hasTopicType <" + topicType + "> ;");
     }
@@ -356,6 +390,15 @@ export default function CAIA_Gallery_Tab() {
     }
     if (topicStage != "None") {
       filter.push("bcfOWL:hasStage <" + topicStage + "> ;");
+    }
+    if (topicAssigned != "None") {
+      filter.push("bcfOWL:hasAssignedTo <" + topicAssigned + "> ;");
+    }
+    if (topicModAuthor != "None") {
+      filter.push("bcfOWL:hasModifiedAuthor <" + topicModAuthor + "> ;");
+    }
+    if (topicAuthor != "None") {
+      filter.push("bcfOWL:hasModifiedAuthor <" + topicAuthor + "> ;");
     }
 
     bcfOWL.getFilteredViepoints(filter).then((graph) => {
@@ -448,105 +491,155 @@ export default function CAIA_Gallery_Tab() {
   assignedData.push({ value: "None", label: "None" });
 
   let drawer = (
-    <Stack
-      justify="flex-start"
-      sx={(theme) => ({
-        backgroundColor:
-          theme.colorScheme === "dark"
-            ? theme.colors.dark[8]
-            : theme.colors.gray[0],
-        height: "100%",
-      })}
+    <div
+      style={{
+        display: "flex",
+        height: "95%",
+        width: "100%",
+        maxWidth: "100%",
+        flexDirection: "column",
+      }}
     >
-      <Select
-        styles={{ label: { color: "white" } }}
-        label="Select Topic Type"
-        data={topicTypeData}
-        onChange={(e: string) => {
-          setTopicType(e);
-        }}
-        value={topicType}
-      />
-      <Select
-        styles={{ label: { color: "white" } }}
-        label="Select Topic Status"
-        data={topicStatusData}
-        value={topicStatus}
-        onChange={(e: string) => {
-          setTopicStatus(e);
-        }}
-      />
-      <Select
-        styles={{ label: { color: "white" } }}
-        label="Select Stage"
-        data={topicStageData}
-        value={topicStage}
-        onChange={(e: string) => {
-          setTopicStage(e);
-        }}
-      />
-      <Select
-        styles={{ label: { color: "white" } }}
-        label="Select Priority"
-        data={topicPriorityData}
-        value={topicPriority}
-        onChange={(e: string) => {
-          setTopicPriority(e);
-        }}
-      />
-      <Select
-        styles={{ label: { color: "white" } }}
-        label="Select Author"
-        data={authorData}
-        value={topicAuthor}
-        onChange={(e: string) => {
-          setTopicAuthor(e);
-        }}
-      />
-      <Select
-        styles={{ label: { color: "white" } }}
-        label="Select Modification Author"
-        data={authorData}
-        value={topicModAuthor}
-        onChange={(e: string) => {
-          setTopicModAuthor(e);
-        }}
-      />
-      <Select
-        styles={{ label: { color: "white" } }}
-        label="Select Assigned To"
-        data={assignedData}
-        value={topicAssigned}
-        onChange={(e: string) => {
-          setTopicAssigned(e);
-        }}
-      />
-      <MultiSelect
-        styles={{ label: { color: "white" } }}
-        label="Select Label"
-        data={topicLabelData}
-      />
-      <DateRangePicker
-        label="Creation Date"
-        styles={{
-          label: { color: "white" },
-          calendarBase: { color: "white" },
-          calendarHeader: { color: "red" },
-          calendarHeaderControl: { color: "red" },
-          calendarHeaderLevel: { color: "black" },
-          outside: { color: "white" },
-          wrapper: { color: "white" },
-          filledVariant: { color: "white" },
-          root: { color: "white" },
-          dropdown: { color: "white" },
-        }}
-        placeholder="Pick dates range"
-        onChange={(e: any) => {
-          setDateValue(e);
-        }}
-      />
+      <ScrollArea
+        style={{ height: "100%", width: "100%", maxWidth: "100%" }}
+        type={"always"}
+      >
+        <Stack
+          justify="flex-start"
+          style={{ width: "100%", maxWidth: "100%", minWidth: "400px" }}
+          sx={(theme) => ({
+            backgroundColor:
+              theme.colorScheme === "dark"
+                ? theme.colors.dark[8]
+                : theme.colors.gray[0],
+            height: "100%",
+          })}
+        >
+          <Group position="apart" spacing="xs">
+            <Select
+              styles={{ label: { color: "white" } }}
+              label="Select Topic Type"
+              data={topicTypeData}
+              onChange={(e: string) => {
+                setTopicType(e);
+              }}
+              value={topicType}
+            />
+            <Select
+              styles={{ label: { color: "white" } }}
+              label="Select Topic Status"
+              data={topicStatusData}
+              value={topicStatus}
+              onChange={(e: string) => {
+                setTopicStatus(e);
+              }}
+            />
+          </Group>
+          <Group position="apart" spacing="xs">
+            <Select
+              styles={{ label: { color: "white" } }}
+              label="Select Stage"
+              data={topicStageData}
+              value={topicStage}
+              onChange={(e: string) => {
+                setTopicStage(e);
+              }}
+            />
+            <Select
+              styles={{ label: { color: "white" } }}
+              label="Select Priority"
+              data={topicPriorityData}
+              value={topicPriority}
+              onChange={(e: string) => {
+                setTopicPriority(e);
+              }}
+            />
+          </Group>
+          <Group position="apart" spacing="xs">
+            <Select
+              styles={{ label: { color: "white" } }}
+              label="Select Author"
+              data={authorData}
+              value={topicAuthor}
+              onChange={(e: string) => {
+                setTopicAuthor(e);
+              }}
+            />
+            <Select
+              styles={{ label: { color: "white" } }}
+              label="Select Modification Author"
+              data={authorData}
+              value={topicModAuthor}
+              onChange={(e: string) => {
+                setTopicModAuthor(e);
+              }}
+            />
+          </Group>
+          <Group position="apart" spacing="xs">
+            <Select
+              styles={{ label: { color: "white" } }}
+              label="Select Assigned To"
+              data={assignedData}
+              value={topicAssigned}
+              onChange={(e: string) => {
+                setTopicAssigned(e);
+              }}
+            />
+            <DateRangePicker
+              label="Due Date"
+              allowSingleDateInRange={true}
+              value={topicDueDate}
+              styles={{
+                label: { color: "white" },
+              }}
+              placeholder="Pick dates range"
+              onChange={(e: any) => {
+                setTopicDueDate(e);
+              }}
+            />
+          </Group>
+          <Group position="apart" spacing="xs">
+            <MultiSelect
+              styles={{ label: { color: "white" } }}
+              label="Select Label"
+              data={topicLabelData}
+              value={topicLabels}
+              onChange={(e: string[]) => {
+                setTopicLabels(e);
+              }}
+            />
+            <DateRangePicker
+              label="Creation Date"
+              allowSingleDateInRange={true}
+              value={topicCreationDate}
+              styles={{
+                label: { color: "white" },
+              }}
+              placeholder="Pick dates range"
+              onChange={(e: any) => {
+                setTopicCreationDate(e);
+              }}
+            />
+          </Group>
+          <Group position="apart" spacing="xs">
+            <DateRangePicker
+              label="Modified Date"
+              allowSingleDateInRange={true}
+              value={topicModifiedDate}
+              styles={{
+                label: { color: "white" },
+              }}
+              placeholder="Pick dates range"
+              onChange={(e: any) => {
+                setTopicModifiedDate(e);
+              }}
+            />
+          </Group>
+        </Stack>
+      </ScrollArea>
       <Button onClick={applyFilter}>Apply Filter</Button>
-    </Stack>
+      <Button onClick={resetFilter}>Reset Filter</Button>
+    </div>
   );
 
   return (
@@ -558,7 +651,10 @@ export default function CAIA_Gallery_Tab() {
         flexDirection: "column",
       }}
     >
-      <ScrollArea style={{ flex: 1 }} offsetScrollbars>
+      <ScrollArea
+        style={{ flex: 1, width: "100%", maxWidth: "100%" }}
+        offsetScrollbars
+      >
         {gallery()}
       </ScrollArea>
       <Drawer
@@ -567,7 +663,7 @@ export default function CAIA_Gallery_Tab() {
         title="Apply Image Filter"
         position="right"
         padding="xl"
-        size="xl"
+        size="580px"
         styles={{ title: { color: "white" } }}
       >
         {drawer}

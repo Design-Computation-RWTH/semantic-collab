@@ -38,7 +38,6 @@ function ProjectListView(props: ProjectListViewProps) {
     bcfapi
       .getProjects()
       .then((value) => {
-        console.log(value);
         setProjects(value);
       })
       .catch((err) => {

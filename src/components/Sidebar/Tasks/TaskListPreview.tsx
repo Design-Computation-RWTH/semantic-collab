@@ -24,7 +24,6 @@ export default function TaskListPreview(props: TaskListProps) {
   }, []);
 
   function init() {
-    console.log(props.IfcStoreys);
     getTasks();
   }
 
@@ -37,7 +36,6 @@ export default function TaskListPreview(props: TaskListProps) {
   }
 
   function orderTasks(tasks: any) {
-    console.log(tasks);
     let tasksList = tasks["@graph"];
     // Init Task variables that handles all the tasks values
     let tempMainTasks: any = [];
@@ -84,8 +82,6 @@ export default function TaskListPreview(props: TaskListProps) {
 
   function relatedSubtasks(taskID: string, elementID: string) {
     const SubTasks = subTasks.map((st: any) => {
-      console.log(new Date());
-
       if (st["hasTaskContext"] === taskID && elementID === st.buildingElement) {
         return (
           <Accordion.Item
@@ -167,7 +163,6 @@ export default function TaskListPreview(props: TaskListProps) {
     const buildingElements = tempElements.map((st: any) => {
       let name: string;
       if (viewer.metaScene.metaObjects[st]) {
-        console.log();
         name = viewer.metaScene.metaObjects[st].name;
       } else {
         name = st;

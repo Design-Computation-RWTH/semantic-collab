@@ -60,28 +60,30 @@ function TopicTable(props: TopicTableProps) {
   }
 
   return (
-    <div className={"TopicTable"} style={{ display: "flex", width: "100%" }}>
+    <div className={"TopicTable"} style={{ width: "100%", maxWidth: "100%" }}>
       <Table
-        style={
-          {
-            /*width: "100%"*/
-          }
-        }
+        style={{
+          width: "100%",
+        }}
         striped={true}
       >
-        <tbody>
-          <tr key="TitleRow" style={{ display: "flex" }}>
+        <tbody
+          style={{
+            width: "100%",
+          }}
+        >
+          <tr key="TitleRow" style={{ display: "flex", width: "100%" }}>
             <td
               key={"TitleKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Title
             </td>
             <td
               key={"TitleValue"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >
@@ -91,15 +93,15 @@ function TopicTable(props: TopicTableProps) {
           <tr key="AuthorRow" style={{ display: "flex" }}>
             <td
               key={"AuthorKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Author
             </td>
             <td
               key={"AuthorValue"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >
@@ -109,15 +111,15 @@ function TopicTable(props: TopicTableProps) {
           <tr key="DateRow" style={{ display: "flex" }}>
             <td
               key={"DateKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Creation Date
             </td>
             <td
               key={"DateValue"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >
@@ -127,15 +129,15 @@ function TopicTable(props: TopicTableProps) {
           <tr key="ModAuthorRow" style={{ display: "flex" }}>
             <td
               key={"ModAuthorKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Modified By
             </td>
             <td
               key={"ModAuthorValue"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >
@@ -145,15 +147,15 @@ function TopicTable(props: TopicTableProps) {
           <tr key="StatusRow" style={{ display: "flex" }}>
             <td
               key={"StatusKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Status
             </td>
             <td
               key={"StatusValue"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >
@@ -163,15 +165,15 @@ function TopicTable(props: TopicTableProps) {
           <tr key="PriorityRow" style={{ display: "flex" }}>
             <td
               key={"PriorityKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Priority
             </td>
             <td
               key={"PriorityValueKey"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >
@@ -181,15 +183,15 @@ function TopicTable(props: TopicTableProps) {
           <tr key="TypeRow" style={{ display: "flex" }}>
             <td
               key={"TypeKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Type
             </td>
             <td
               key={"StatusValue"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >
@@ -199,15 +201,15 @@ function TopicTable(props: TopicTableProps) {
           <tr key="LabelRow" style={{ display: "flex" }}>
             <td
               key={"LabelKey"}
-              style={{ display: "flex", maxWidth: "150px", minWidth: "150px" }}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
             >
               Labels
             </td>
             <td
               key={"LabelValue"}
               style={{
-                maxWidth: "300px",
-                minWidth: "150px",
+                maxWidth: "200px",
+                minWidth: "100px",
                 overflowWrap: "break-word",
               }}
             >

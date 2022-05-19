@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BsCalendarCheck, BsCardImage, BsLayers } from "react-icons/bs";
 import { Tabs } from "@mantine/core";
 import CAIA_Representations_Tab from "./CAIA_Representations_Tab";
@@ -17,7 +17,7 @@ type SidebarProps = {
 };
 
 export default function CAIA_Sidebar(props: SidebarProps) {
-  const { setExtensions, setUsers } = React.useContext(
+  const { setExtensions, setUsers, activeTab, setActiveTab } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
 
@@ -26,8 +26,7 @@ export default function CAIA_Sidebar(props: SidebarProps) {
   }, []);
 
   function init() {
-    console.log("Init Project");
-
+    //TODO: Clear Project when init. a new one
     // Get Projects Extensions as soon as the Sidebar is initialized
 
     let bcfowl_project = new BcfOWLProjectSetup();
@@ -57,36 +56,34 @@ export default function CAIA_Sidebar(props: SidebarProps) {
     bcfowl_project.getCurrentProjectExtensions().then((r) => {
       let tempExtensionsMap: Map<any, any> = new Map();
 
-      console.log(r);
-
       for (let v in r["@graph"]) {
         let valueMap = r["@graph"][v];
         if (tempExtensionsMap.has(valueMap["@type"])) {
-          //console.log("Has!");
           let tempExt = tempExtensionsMap.get(valueMap["@type"]);
           let tempExtMap: any = {};
           tempExtMap[valueMap["@id"]] = valueMap["label"];
           tempExt.push(tempExtMap);
-          //console.log(tempExt);
+
           tempExtensionsMap.set(valueMap["@type"], tempExt);
         } else {
           let tempExtMap: any = {};
           tempExtMap[valueMap["@id"]] = valueMap["label"];
           tempExtensionsMap.set(valueMap["@type"], [tempExtMap]);
-          //console.log("Map");
-          //console.log(tempExtensionsMap);
         }
       }
-      console.log(tempExtensionsMap);
       setExtensions(tempExtensionsMap);
     });
   }
+  const [activeTab1, setActiveTab1] = useState(1);
 
   return (
     <Tabs
+      active={activeTab}
+      onTabChange={setActiveTab}
       style={{
         display: "flex",
         width: "30%",
+        minWidth: "400px",
         maxWidth: "30%",
         height: "100%",
         maxHeight: "100%",
@@ -96,10 +93,13 @@ export default function CAIA_Sidebar(props: SidebarProps) {
         flexDirection: "column",
       }}
       styles={{
-        body: { height: "100%" },
+        body: { height: "95%", width: "100%", maxWidth: "100%" },
+        root: { height: "100%", width: "100%" },
+        tabsListWrapper: { height: "5%" },
       }}
-      color="dark"
+      color="red"
       grow
+      tabPadding={0}
     >
       <Tabs.Tab title="Representations" icon={<BsLayers />}>
         <CAIA_Representations_Tab />

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 // @ts-ignore
 import PubSub from "pubsub-js";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
+import { Table, Switch } from "@mantine/core";
 import {
   DcWebViewerContextType,
   SelectedDocument,
@@ -24,9 +25,19 @@ type RepresentationFilePropsType = {
 };
 
 export default function RepresentationFile(props: RepresentationFilePropsType) {
-  const { selectedDocument, setSelectedDocument } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
+  const {
+    selectedDocument,
+    setSelectedDocument,
+    viewerDocuments,
+    setViewerDocuments,
+    viewer,
+  } = React.useContext(ViewerContext) as DcWebViewerContextType;
+
+  const [checked, setChecked] = useState<boolean>(
+    viewerDocuments[props.document.id]
+  );
+
+  useEffect(() => {}, []);
 
   //Opens the Document Details in the Sidebar
   function showDocumentDetails() {
@@ -75,47 +86,41 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
   }
 
   return (
-    <tr key={props.document.id}>
-      <td className="file-component">
-        <i className={determineEnding()} />
-        <Button
-          variant="outline-primary"
-          className="btn-caia-hidden"
-          onClick={showDocumentDetails}
-        >
-          {props.document.filename}
-        </Button>
-        <div className="toggle-switch">
-          <input
-            id={props.document.id}
-            defaultChecked={props.document.selected}
-            type="checkbox"
-            onClick={() => {
-              PubSub.publish("Alert", { type: "info" });
-            }}
-            onChange={(e) => {
-              if (props.document.selected) {
-                props.document.selected = !props.document.selected;
-              } else {
-                props.document.selected = true;
-              }
-              if (props.document.selected === true) {
-                showDocument();
-              }
-              //Target: XeoKitView.js
-              else
-                PubSub.publish("DocumentUnSelected", { id: props.document.id });
-            }}
-            className="toggle-switch-checkbox"
-            name="toggleSwitch"
-          />
-          <label className="toggle-switch-label" htmlFor={props.document.id}>
-            <span className="toggle-switch-inner" />
-            <span className="toggle-switch-switch" />
-          </label>
-        </div>
-      </td>
-    </tr>
+    <Table>
+      <tbody>
+        <tr key={props.document.id}>
+          <td className="file-component">
+            <i className={determineEnding()} />
+            <Button
+              variant="outline-primary"
+              className="btn-caia-hidden"
+              onClick={showDocumentDetails}
+            >
+              {props.document.filename}
+            </Button>
+            <Switch
+              id={props.document.id}
+              checked={viewerDocuments[props.document.id]}
+              size="xl"
+              onLabel={"On"}
+              offLabel={"Off"}
+              onChange={(e) => {
+                let tempDocs = viewerDocuments;
+                tempDocs[props.document.id] = e.currentTarget.checked;
+                setViewerDocuments(tempDocs);
+                setChecked(e.target.checked);
+                if (e.currentTarget.checked) {
+                  showDocument();
+                } else
+                  PubSub.publish("DocumentUnSelected", {
+                    id: props.document.id,
+                  });
+              }}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </Table>
   );
 }
 

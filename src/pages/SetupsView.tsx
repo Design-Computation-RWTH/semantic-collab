@@ -129,7 +129,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
     const users_list = this.state.projectUsers.map((user) => {
       if (user.mbox.length > 7)
         return (
-          <ListGroup.Item>
+          <ListGroup.Item key={user + "_user"}>
             <Container>
               <Row>
                 <Col xs={11}>
@@ -154,7 +154,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
         );
       else
         return (
-          <ListGroup.Item>
+          <ListGroup.Item key={user + "_user"}>
             <Container>
               <Row>
                 <Col xs={11}>
@@ -181,153 +181,183 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
 
     //TODO: When creating tasks make sure that there are comments for the extensions!
     const topictype_list = this.state.topicTypes.map((topictype) => {
-      return (
-        <ListGroup.Item>
-          <Container>
-            <Row>
-              <Col xs={11}>
-                <Tooltip
-                  wrapLines
-                  width={220}
-                  withArrow
-                  transition="fade"
-                  transitionDuration={200}
-                  label={this.state.extensionsMap[topictype].comment}
-                >
-                  {this.state.extensionsMap[topictype].label}
-                </Tooltip>
-              </Col>
-              <Col xs={1}>
-                <Button
-                  variant="light"
-                  onClick={() => {
-                    this.setState({ genericDeleteScreen_topicType: true });
-                    this.setState({
-                      genericDeleteScreen_topicType_item: topictype,
-                    });
-                  }}
-                >
-                  <FaMinus />
-                </Button>
-                <GenericDeleteForm
-                  show={this.state.genericDeleteScreen_topicType}
-                  item="topic type"
-                  deleteValue={this.state.genericDeleteScreen_topicType_item}
-                  bcfOWLProperty="hasTopicType"
-                  onHide={() =>
-                    this.setState({ genericDeleteScreen_topicType: false })
-                  }
-                />
-              </Col>
-            </Row>
-          </Container>
-        </ListGroup.Item>
-      );
+      if (this.state.extensionsMap[topictype] !== undefined) {
+        if (
+          this.state.extensionsMap[topictype].comment &&
+          this.state.extensionsMap[topictype].label
+        ) {
+          return (
+            <ListGroup.Item key={topictype + "_TopicType"}>
+              <Container>
+                <Row>
+                  <Col xs={11}>
+                    <Tooltip
+                      wrapLines
+                      width={220}
+                      withArrow
+                      transition="fade"
+                      transitionDuration={200}
+                      label={this.state.extensionsMap[topictype].comment}
+                    >
+                      {this.state.extensionsMap[topictype].label}
+                    </Tooltip>
+                  </Col>
+                  <Col xs={1}>
+                    <Button
+                      variant="light"
+                      onClick={() => {
+                        this.setState({ genericDeleteScreen_topicType: true });
+                        this.setState({
+                          genericDeleteScreen_topicType_item: topictype,
+                        });
+                      }}
+                    >
+                      <FaMinus />
+                    </Button>
+                    <GenericDeleteForm
+                      show={this.state.genericDeleteScreen_topicType}
+                      item="topic type"
+                      deleteValue={
+                        this.state.genericDeleteScreen_topicType_item
+                      }
+                      bcfOWLProperty="hasTopicType"
+                      onHide={() =>
+                        this.setState({ genericDeleteScreen_topicType: false })
+                      }
+                    />
+                  </Col>
+                </Row>
+              </Container>
+            </ListGroup.Item>
+          );
+        }
+      }
     });
 
     const topicstatus_list = this.state.topicStatuses.map((topicstatus) => {
-      return (
-        <ListGroup.Item>
-          <Container>
-            <Row>
-              <Col xs={11}>
-                <Tooltip
-                  wrapLines
-                  width={220}
-                  withArrow
-                  transition="fade"
-                  transitionDuration={200}
-                  label={this.state.extensionsMap[topicstatus].comment}
-                >
-                  {this.state.extensionsMap[topicstatus].label}
-                </Tooltip>
-              </Col>
-              <Col xs={1}>
-                <Button
-                  variant="light"
-                  onClick={() => {
-                    this.setState({ genericDeleteScreen_topicStatus: true });
-                    this.setState({
-                      genericDeleteScreen_topicStatus_item: topicstatus,
-                    });
-                  }}
-                >
-                  <FaMinus />
-                </Button>
-                <GenericDeleteForm
-                  show={this.state.genericDeleteScreen_topicStatus}
-                  item="topic status"
-                  deleteValue={this.state.genericDeleteScreen_topicStatus_item}
-                  bcfOWLProperty="hasTopicStatus"
-                  onHide={() =>
-                    this.setState({ genericDeleteScreen_topicStatus: false })
-                  }
-                />
-              </Col>
-            </Row>
-          </Container>
-        </ListGroup.Item>
-      );
+      if (this.state.extensionsMap[topicstatus] !== undefined) {
+        if (
+          this.state.extensionsMap[topicstatus].comment &&
+          this.state.extensionsMap[topicstatus].label
+        ) {
+          return (
+            <ListGroup.Item key={topicstatus + "_TopiStatus"}>
+              <Container>
+                <Row>
+                  <Col xs={11}>
+                    <Tooltip
+                      wrapLines
+                      width={220}
+                      withArrow
+                      transition="fade"
+                      transitionDuration={200}
+                      label={this.state.extensionsMap[topicstatus].comment}
+                    >
+                      {this.state.extensionsMap[topicstatus].label}
+                    </Tooltip>
+                  </Col>
+                  <Col xs={1}>
+                    <Button
+                      variant="light"
+                      onClick={() => {
+                        this.setState({
+                          genericDeleteScreen_topicStatus: true,
+                        });
+                        this.setState({
+                          genericDeleteScreen_topicStatus_item: topicstatus,
+                        });
+                      }}
+                    >
+                      <FaMinus />
+                    </Button>
+                    <GenericDeleteForm
+                      show={this.state.genericDeleteScreen_topicStatus}
+                      item="topic status"
+                      deleteValue={
+                        this.state.genericDeleteScreen_topicStatus_item
+                      }
+                      bcfOWLProperty="hasTopicStatus"
+                      onHide={() =>
+                        this.setState({
+                          genericDeleteScreen_topicStatus: false,
+                        })
+                      }
+                    />
+                  </Col>
+                </Row>
+              </Container>
+            </ListGroup.Item>
+          );
+        }
+      }
     });
 
     const documentationphase_list = this.state.documentationPhases.map(
       (documentationPhase) => {
-        return (
-          <ListGroup.Item>
-            <Container>
-              <Row>
-                <Col xs={11}>
-                  <Tooltip
-                    wrapLines
-                    width={220}
-                    withArrow
-                    transition="fade"
-                    transitionDuration={200}
-                    label={this.state.extensionsMap[documentationPhase].comment}
-                  >
-                    {this.state.extensionsMap[documentationPhase].label}
-                  </Tooltip>
-                </Col>
-                <Col xs={1}>
-                  <Button
-                    variant="light"
-                    onClick={() => {
-                      this.setState({
-                        genericDeleteScreen_documentationPhase: true,
-                      });
-                      this.setState({
-                        genericDeleteScreen_documentationPhase_item:
-                          documentationPhase,
-                      });
-                    }}
-                  >
-                    <FaMinus />
-                  </Button>
-                  <GenericDeleteForm
-                    show={this.state.genericDeleteScreen_documentationPhase}
-                    item="documentation phase"
-                    deleteValue={
-                      this.state.genericDeleteScreen_documentationPhase_item
-                    }
-                    bcfOWLProperty="hasStage"
-                    onHide={() =>
-                      this.setState({
-                        genericDeleteScreen_documentationPhase: false,
-                      })
-                    }
-                  />
-                </Col>
-              </Row>
-            </Container>
-          </ListGroup.Item>
-        );
+        if (this.state.extensionsMap[documentationPhase] !== undefined) {
+          if (
+            this.state.extensionsMap[documentationPhase].comment &&
+            this.state.extensionsMap[documentationPhase].label
+          ) {
+            return (
+              <ListGroup.Item key={documentationPhase + "_documentationPhase"}>
+                <Container>
+                  <Row>
+                    <Col xs={11}>
+                      <Tooltip
+                        wrapLines
+                        width={220}
+                        withArrow
+                        transition="fade"
+                        transitionDuration={200}
+                        label={
+                          this.state.extensionsMap[documentationPhase].comment
+                        }
+                      >
+                        {this.state.extensionsMap[documentationPhase].label}
+                      </Tooltip>
+                    </Col>
+                    <Col xs={1}>
+                      <Button
+                        variant="light"
+                        onClick={() => {
+                          this.setState({
+                            genericDeleteScreen_documentationPhase: true,
+                          });
+                          this.setState({
+                            genericDeleteScreen_documentationPhase_item:
+                              documentationPhase,
+                          });
+                        }}
+                      >
+                        <FaMinus />
+                      </Button>
+                      <GenericDeleteForm
+                        show={this.state.genericDeleteScreen_documentationPhase}
+                        item="documentation phase"
+                        deleteValue={
+                          this.state.genericDeleteScreen_documentationPhase_item
+                        }
+                        bcfOWLProperty="hasStage"
+                        onHide={() =>
+                          this.setState({
+                            genericDeleteScreen_documentationPhase: false,
+                          })
+                        }
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+              </ListGroup.Item>
+            );
+          }
+        }
       }
     );
 
-    console.log(this.state.extensionsMap);
     const priorities_list = this.state.priorities.map((priority) => {
       return (
-        <ListGroup.Item>
+        <ListGroup.Item key={priority + "_priority"}>
           <Container>
             <Row>
               <Col xs={11}>
@@ -370,10 +400,9 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
       );
     });
 
-    console.log(this.state.labels);
     const labels_list = this.state.labels.map((label) => {
       return (
-        <ListGroup.Item>
+        <ListGroup.Item key={label + "_label"}>
           <Container>
             <Row>
               <Col xs={11}>
@@ -711,7 +740,6 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
         }
 
         if (value.hasLabels) {
-          console.log(value.hasLabels);
           if (!Array.isArray(value.hasLabels))
             value.hasLabels = [value.hasLabels];
           let list: string[] = [];
@@ -726,7 +754,6 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
           if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
           let list: string[] = [];
           value.hasUser.forEach((user: string) => {
-            console.log("userid: " + user);
             this.bcfowl.describeUser(user).then((u) => {
               list = list.concat(u);
               this.setState({ projectUsers: list });
