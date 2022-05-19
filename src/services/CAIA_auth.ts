@@ -21,12 +21,10 @@ async function doLogin(
     body: raw,
     redirect: "follow",
   };
-  console.log("user is: " + loginname);
   await fetch(base_uri + "/bcf/3.0/auth/login", requestOptions)
     .then((response) => response.json())
     .then((result) => {
       if (result.token) {
-        console.log(result.token);
         Cookies.set("access_token", result.token);
         Cookies.set("refresh_token", result.token);
         callback();

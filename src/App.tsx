@@ -63,7 +63,6 @@ function parseJWT(token: string | undefined) {
       })
       .join("")
   );
-  console.log(JSON.parse(jsonPayload).URI);
   return JSON.parse(jsonPayload);
 }
 
@@ -185,7 +184,6 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
   }
 
   subProjects(msg: any, data: { name: any }) {
-    console.log("logout?");
     // @ts-ignore  Not null.. init at the constructor
     caia_app.setState({ projectName: data.name });
     ReactSession.set("projectname", data.name);
@@ -270,6 +268,11 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
           }
           styles={(theme) => ({
             main: {
+              display: "flex",
+              alignContent: "stretch",
+              justifyContent: "space-evenly",
+              alignItems: "stretch",
+              flexDirection: "column",
               backgroundColor:
                 theme.colorScheme === "light"
                   ? theme.colors.dark[8]
@@ -285,7 +288,7 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
               path="/projects/:id/"
               element={
                 <RequireAuth>
-                  <div className="caia-fill">
+                  <div style={{ height: "100%" }} className="caia-fill">
                     <XeoKitView />
                   </div>
                 </RequireAuth>
@@ -311,14 +314,12 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
 function AuthProvider({ children }: { children: React.ReactNode }) {
   let signin = (username: string, password: string, callback: VoidFunction) => {
     return CAIAAuthProvider.signin(username, password, () => {
-      console.log("set user: " + username);
       callback();
     });
   };
 
   let signout = (callback: VoidFunction) => {
     return CAIAAuthProvider.signout(() => {
-      console.log("set user: null");
       callback();
     });
   };
@@ -340,11 +341,9 @@ function useAuth() {
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  let auth = useAuth();
   let location = useLocation();
 
   if (!isAuthenticated()) {
-    console.log("No user");
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience
@@ -385,7 +384,6 @@ function Login() {
       // when they get to the protected page and click the back button, they
       // won't end up back on the login page, which is also really nice for the
       // user experience.
-      console.log("to: " + from);
       navigate(from, { replace: true });
     });
   }

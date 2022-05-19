@@ -4,26 +4,39 @@ import PubSub from "pubsub-js";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 
 type GenericAddFormProps = {
   onHide(): any;
   show: boolean;
   item: string;
   bcfOWLProperty: string;
+  bcfOWLSubject: string;
 };
 
 function GenericAddForm(props: GenericAddFormProps) {
   const [value, setValue] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleValue = (event: { target: { value: any } }) => {
     setValue(event.target.value);
   };
 
+  const handleDescription = (event: { target: { value: any } }) => {
+    setDescription(event.target.value);
+  };
+
   const submitted = (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    //TODO: Check if Value/URI already exists!
     let bcfowl_setup: BcfOWLProjectSetup = new BcfOWLProjectSetup();
-    bcfowl_setup.insertPropertyValue(props.bcfOWLProperty.trim(), value.trim());
+    bcfowl_setup
+      .insertPropertyValue(
+        props.bcfOWLProperty.trim(),
+        props.bcfOWLSubject,
+        value.trim(),
+        description
+      )
+      .then((r) => console.log(r));
     props.onHide();
     PubSub.publish("Update", {
       txt: "Inserted " + props.bcfOWLProperty.trim() + " - " + value.trim(),
@@ -44,7 +57,12 @@ function GenericAddForm(props: GenericAddFormProps) {
             <Form.Control
               type="text"
               onChange={handleValue}
-              placeholder={"Enter new " + props.item + " value "}
+              placeholder={"Enter new " + props.item + " name "}
+            />
+            <Form.Control
+              type="text"
+              onChange={handleDescription}
+              placeholder={"Enter new " + props.item + " description "}
             />
           </Form.Group>
           <Button variant="outline-dark" type="submit">

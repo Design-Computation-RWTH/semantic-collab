@@ -58,9 +58,15 @@ class MyDataSource {
 }
 
 export default function CAIA_XeoKitView() {
-  const { setViewer } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
+  const {
+    setViewer,
+    setGalleryScreen,
+    setActiveGalleryTopic,
+    imageList,
+    setLargeGalleryImg,
+    setActiveTab,
+    activeTab,
+  } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   let imageservice = new ImageService();
 
@@ -171,18 +177,6 @@ export default function CAIA_XeoKitView() {
       collidable: false,
     });
 
-    new Mesh(viewer.scene, {
-      geometry: new ReadableGeometry(
-        viewer.scene,
-        buildSphereGeometry({
-          radius: 1.5,
-          heightSegments: 60,
-          widthSegments: 60,
-          color: [1, 1, 1],
-        })
-      ),
-    });
-
     cameraControl = viewer.cameraControl;
 
     cameraControl.navMode = "planView";
@@ -213,19 +207,27 @@ export default function CAIA_XeoKitView() {
         const metaObj = viewer.metaScene.metaObjects[entity.id];
         //Don't delete this console.log
         console.log(metaObj);
-        // if id = SM_Image3D it means the object is a viewpoint
-        // store the "real" id in lastViewpointId var
-        if (entity.id === "SM_Image3D") {
-          //lastViewpoint = entity;
-          for (let entry in entity) {
-            if (entry === "meshes") {
-              let meshes = entity[entry];
-              let id = meshes[0].id;
-              lastViewpointId = id.split(".0")[0];
-              PubSub.publish("ViewpointSelected", { id: lastViewpointId });
-            }
+
+        let bcfOWL = new BcfOWL_Endpoint();
+
+        bcfOWL.describe(entity["_owner"].id).then((r) => {
+          if (r["@type"] === "bcfOWL:Viewpoint") {
+            let imageservice: ImageService = new ImageService();
+            let image = imageservice.getImageData4GUID(r["hasGuid"]);
+
+            setActiveTab(1);
+            setGalleryScreen(1);
+            setActiveGalleryTopic(r["hasTopic"]);
+
+            image.then((img: any) => {
+              if (img.size > 0) {
+                let url = URL.createObjectURL(img);
+
+                setLargeGalleryImg(url);
+              }
+            });
           }
-        }
+        });
       } else if (clickMode === "MeasureOnce") {
         e.selected = false;
 
@@ -265,21 +267,6 @@ export default function CAIA_XeoKitView() {
       alignment: "left",
       bottomMargin: 100,
       rightMargin: 10,
-    });
-
-    viewer.scene.clearLights();
-
-    new AmbientLight(viewer.scene, {
-      id: "myAmbientLight",
-      color: [1, 1, 1],
-      intensity: 0.8,
-    });
-
-    new DirLight(viewer.scene, {
-      id: "keyLight",
-      dir: [0, 0, -1],
-      intensity: 0.5,
-      space: "view",
     });
   }
 
@@ -365,9 +352,10 @@ export default function CAIA_XeoKitView() {
 
     documents.add(document_uri);
     if (viewer) {
-      if (documentNodes[document_uri])
+      if (documentNodes[document_uri]) {
         documentNodes[document_uri].visible = true;
-      else {
+        viewer.cameraFlight.flyTo(document_uri);
+      } else {
         if (file_uri.endsWith(".png") || file_uri.endsWith(".PNG")) {
           let image = imageservice.getImageData4URL(file_uri);
           image.then((imgblob: Blob) => {
@@ -540,6 +528,7 @@ export default function CAIA_XeoKitView() {
           ],
         });
         documentNodes[document_url] = node;
+        viewer.cameraFlight.flyTo(document_url);
         loadDocumentViewPointCameras(document_url);
       };
     }
@@ -561,7 +550,10 @@ export default function CAIA_XeoKitView() {
         edges: true,
         position: [0, 0, 0],
       });
-      model.on("loaded", () => {});
+      model.on("loaded", () => {
+        viewer.cameraFlight.flyTo(document_url);
+      });
+
       documentNodes[document_url] = model;
     });
   }
@@ -575,7 +567,6 @@ export default function CAIA_XeoKitView() {
     bcfowl
       .getViepointCameras4Document(document_uri)
       .then((perspactivecameras) => {
-        console.log(perspactivecameras);
         if (perspactivecameras["@graph"])
           perspactivecameras = perspactivecameras["@graph"];
         if (!Array.isArray(perspactivecameras))
@@ -603,8 +594,9 @@ export default function CAIA_XeoKitView() {
           if (x < 0 && y < 0) tz -= 180;
 
           let guid = camera["@id"];
-          console.log(camera);
-          // The ID is not set. Look for the Parent in Xeokit to find the right ID
+
+          //TODO: The ID is not set. Look for the Parent in Xeokit to find the right ID
+          //TODO: Import once and then reuse?
           let image3D = gltfLoader.load({
             id: guid,
             src: "../../Image3D.gltf",
@@ -620,8 +612,6 @@ export default function CAIA_XeoKitView() {
           node.addChild(image3D);
           // Hide images initially
           image3D.visible = true;
-          console.log(image3D);
-          console.log(image3D.id);
         });
       })
       .catch((err) => {

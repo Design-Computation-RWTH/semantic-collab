@@ -1,11 +1,8 @@
-import { useForm } from "@mantine/form";
-import { Box, Button, Group, Modal, Textarea, TextInput } from "@mantine/core";
+import { Box, Button, Group, Modal } from "@mantine/core";
 import React, { useState } from "react";
 import { useModals } from "@mantine/modals";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
-import PubSub from "pubsub-js";
 
 export const getAccessToken = () => Cookies.get("access_token");
 
@@ -31,7 +28,6 @@ type DeleteProps = {
 
 export default function DeleteProjectsModal(props: DeleteProps) {
   const [opened, setOpened] = useState(false);
-  const modals = useModals();
 
   function deleteProject() {
     console.log(props.projectID);

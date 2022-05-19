@@ -6,6 +6,7 @@ import {
 } from "../@types/dcwebviewer";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
+import { useState } from "react";
 
 export const ViewerContext = React.createContext<DcWebViewerContextType | null>(
   null
@@ -17,10 +18,26 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
   >([]);
   const [viewer, setViewer] = React.useState<Viewer>();
 
+  const [viewerDocuments, setViewerDocuments] = React.useState<{
+    [document_id: string]: boolean;
+  }>({});
+
   const [file, setFile] = React.useState<string>("");
   const [fileName, setFileName] = React.useState<string>("");
 
   const [projectID, setProjectID] = React.useState("");
+
+  const [imageList, setImageList] = React.useState<any[]>([]);
+
+  const [extensions, setExtensions] = React.useState(new Map());
+  const [users, setUsers] = React.useState(new Map());
+
+  const [galleryScreen, setGalleryScreen] = React.useState<number>(0);
+
+  const [activeTab, setActiveTab] = React.useState<number>(0);
+
+  const [largeGalleryImg, setLargeGalleryImg] =
+    React.useState<string>("/Icon_v2.svg");
 
   let InitialDocument: SelectedDocument = {
     id: "",
@@ -40,6 +57,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
     setVisibleDocuments([...visibleDocuments, newVisibleDocument]);
   };
 
+  const [activeGalleryTopic, setActiveGalleryTopic] = useState<any>(null);
+
   return (
     <ViewerContext.Provider
       value={{
@@ -55,6 +74,22 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setSelectedDocument,
         visibleDocuments,
         addVisibleDocument,
+        viewerDocuments,
+        setViewerDocuments,
+        extensions,
+        setExtensions,
+        users,
+        setUsers,
+        galleryScreen,
+        setGalleryScreen,
+        largeGalleryImg,
+        setLargeGalleryImg,
+        activeGalleryTopic,
+        setActiveGalleryTopic,
+        imageList,
+        setImageList,
+        activeTab,
+        setActiveTab,
       }}
     >
       {children}

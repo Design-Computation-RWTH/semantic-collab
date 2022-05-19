@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, ScrollArea, SimpleGrid, Grid } from "@mantine/core";
+import { Button, Divider, ScrollArea, Grid } from "@mantine/core";
 import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
 import PubSub from "pubsub-js";
@@ -34,10 +34,10 @@ function ProjectListView(props: ProjectListViewProps) {
 
   function update() {
     let bcfapi = new BCFAPI();
+
     bcfapi
       .getProjects()
       .then((value) => {
-        console.log(value);
         setProjects(value);
       })
       .catch((err) => {

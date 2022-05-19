@@ -1,7 +1,5 @@
 import * as React from "react";
-import { ProjectsContextType } from "../@types/projectscontext";
 import { BcfOWLServerContextType } from "../@types/bcfowlcontext";
-import { VisibleDocument } from "../@types/dcwebviewer";
 // @ts-ignore
 
 export const BcfOWLContext =

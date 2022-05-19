@@ -12,13 +12,21 @@ import {
   Input,
 } from "@mantine/core";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
-import { useNotifications } from "@mantine/notifications";
+import {
+  showNotification,
+  updateNotification,
+  useNotifications,
+} from "@mantine/notifications";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 import wkt from "terraformer-wkt-parser";
 import { useInputState } from "@mantine/hooks";
 import PubSub from "pubsub-js";
 import ImageService from "../../../services/ImageService";
+import {
+  BsFillCheckSquareFill,
+  BsFillExclamationSquareFill,
+} from "react-icons/bs";
 
 type PlanProps = {};
 
@@ -146,6 +154,14 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
   }
 
   function handleUpload() {
+    showNotification({
+      title: "Uploading file",
+      message: "File is being uploaded",
+      id: "UploadingNotification",
+      loading: true,
+      autoClose: false,
+      disallowClose: true,
+    });
     let spatial_json = {
       alignment: "center",
       location: {
@@ -190,16 +206,41 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
           bcfowl
             .createDocumentWithSpatialRepresentation(fileName, spatial_json)
             .then((message) => {
-              //TODO: Delete Current Plan
+              updateNotification({
+                id: "UploadingNotification",
+                color: "teal",
+                title: "Data was uploaded",
+                message:
+                  "Notification will close in 2 seconds, you can close this notification now",
+                icon: <BsFillCheckSquareFill />,
+                autoClose: 2000,
+              });
             })
             .catch((err) => {
+              updateNotification({
+                id: "UploadingNotification",
+                color: "teal",
+                title: "Error uploading the file",
+                message: err,
+                icon: <BsFillExclamationSquareFill />,
+                autoClose: 2000,
+              });
               console.log(err);
             });
         })
         .catch((err) => {
+          updateNotification({
+            id: "UploadingNotification",
+            color: "teal",
+            title: "Error uploading the file",
+            message: err,
+            icon: <BsFillExclamationSquareFill />,
+            autoClose: 2000,
+          });
           console.log(err);
         });
       PubSub.publish("DocumentsViewStateChange", {});
+      PubSub.publish("CancelNewDocument", {});
     }
   }
 

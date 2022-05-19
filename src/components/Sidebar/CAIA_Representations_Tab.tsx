@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
 import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
-import { Table } from "react-bootstrap";
 import { ReactSession } from "react-client-session";
 import CloseButton from "react-bootstrap/CloseButton";
 import RepresentationDetails from "./Representations/RepresentationDetails";
 import PubSub from "pubsub-js";
+import { showNotification, updateNotification } from "@mantine/notifications";
 import fileToArrayBuffer from "file-to-array-buffer";
+import {
+  BsFillCheckSquareFill,
+  BsFillExclamationSquareFill,
+} from "react-icons/bs";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
 import { Container, SimpleGrid } from "@mantine/core";
 // @ts-ignore
-import { Viewer } from "@xeokit/xeokit-sdk";
+import { Viewer, LASLoaderPlugin } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
+
+const laz = require("C:\\GitHub\\dc-web-viewer\\src\\Granusturm-2-3-1.laz");
 
 type RepresentationsProps = {};
 
@@ -53,9 +59,12 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
     ViewerContext
   ) as DcWebViewerContextType;
 
-  const { selectedDocument, setSelectedDocument } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
+  const {
+    selectedDocument,
+    setSelectedDocument,
+    viewerDocuments,
+    setViewerDocuments,
+  } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   //
   let project_id: any = ReactSession.get("projectid");
@@ -67,7 +76,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   let un_UnSelectDocument: any;
 
   useEffect(() => {
-    console.log("Mount");
     init();
     return () => {
       setDocuments([]);
@@ -80,7 +88,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
 
   useEffect(() => {
     return () => {
-      console.log("Unmount");
       PubSub.unsubscribe(un_DocumentsViewStateChange);
       PubSub.unsubscribe(un_SetSelectedDocument);
       PubSub.unsubscribe(un_ShowDocument);
@@ -112,7 +119,18 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
       let value: bcfOWL_DocumentType[] = ReactSession.get(
         "project_documents_pid" + project_id
       );
+
       setDocuments(value);
+
+      documents.map((d: any) => {
+        if (d["@id"]) {
+          let tempDocs = viewerDocuments;
+          if (!tempDocs[d["@id"]]) {
+            tempDocs[d["@id"]] = false;
+          }
+          setViewerDocuments(tempDocs);
+        }
+      });
       return;
     }
     let bcfowl = new BcfOWL_Endpoint();
@@ -196,6 +214,14 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
       let file_extension = file.name.split(".").pop().toLowerCase();
       switch (file_extension) {
         case "ifc":
+          showNotification({
+            title: "Uploading file",
+            message: "File is being uploaded",
+            id: "UploadingNotification",
+            loading: true,
+            autoClose: false,
+            disallowClose: true,
+          });
           console.log(data.byteLength);
           if (data.byteLength < 50000000) {
             setNew_file_name(file.name);
@@ -219,7 +245,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
                 z: 1,
               },
             };
-
             let imageService = new ImageService();
             let bcfowl = new BcfOWL_Endpoint();
 
@@ -233,24 +258,47 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
                     spatial_json
                   )
                   .then((message) => {
+                    updateNotification({
+                      id: "UploadingNotification",
+                      color: "teal",
+                      title: "Data was uploaded",
+                      message:
+                        "Notification will close in 2 seconds, you can close this notification now",
+                      icon: <BsFillCheckSquareFill />,
+                      autoClose: 2000,
+                    });
                     console.log(message);
                   })
                   .catch((err) => {
+                    updateNotification({
+                      id: "UploadingNotification",
+                      color: "teal",
+                      title: "Error uploading the file",
+                      message: err,
+                      icon: <BsFillExclamationSquareFill />,
+                      autoClose: 2000,
+                    });
                     console.log(err);
                   });
               })
               .catch((err) => {
+                updateNotification({
+                  id: "UploadingNotification",
+                  color: "teal",
+                  title: "Error uploading the file",
+                  message: err,
+                  icon: <BsFillExclamationSquareFill />,
+                  autoClose: 2000,
+                });
                 console.log(err);
               });
           } else {
             PubSub.publish("Alert", {
               type: "warning",
-              message: "Currently just files under 50mb are supported",
+              message: "Currently just files under 100mb are supported",
               title: "File size exceeded",
             });
           }
-          // console.log('picked ifc');
-          // // We send the raw data to the XeoKitView:
 
           break;
         // Important to keep case sensitivity in mind!
@@ -288,10 +336,11 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
     return documents.map((d: any) => {
       if (d["@id"]) {
         let selectedId = selected_ids.includes(d["@id"]);
+
         return (
           <RepresentationFile
             data={d}
-            key={d["@id"]}
+            key={d["@id"] + "_File"}
             document={{
               filename: d.hasFilename,
               id: d["@id"],
@@ -357,7 +406,29 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
         >
           <i className="icon bi-arrow-clockwise btn-caia-icon-size" />
         </button>
-        <button className="btn-caia-icon" disabled title="Add spatial node">
+        <button
+          className="btn-caia-icon"
+          onClick={(e) => {
+            console.log(__dirname);
+            const lasLoader = new LASLoaderPlugin(viewer, {
+              //skip: 1, // Default,
+              //fp64: false,
+              colorDepth: "16",
+            });
+
+            const modelEntity = lasLoader.load({
+              id: "myModel",
+              src: laz,
+            });
+
+            modelEntity.on("loaded", () => {
+              console.log("Loaded PC");
+              viewer.cameraFlight.flyTo("myModel");
+              //...
+            });
+          }}
+          title="Add spatial node"
+        >
           <i className="icon bi-folder-plus btn-caia-icon-size" />
         </button>
         <button

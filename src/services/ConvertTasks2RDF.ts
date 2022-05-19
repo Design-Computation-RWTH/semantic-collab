@@ -1,11 +1,9 @@
 // @ts-ignore
-import * as gantt_data from "./assets/Gantt.json";
 import * as ConvertTasks2RDF_types from "./types/ConvertTasks2RDF_types";
-const uuid = require("uuid");
 
 const N3 = require("n3");
 const { DataFactory } = N3;
-const { namedNode, literal, number } = DataFactory;
+const { namedNode, literal } = DataFactory;
 
 export async function ConvertTasks(data: any, projectURI: string) {
   let inst_uri = projectURI;
@@ -22,6 +20,29 @@ export async function ConvertTasks(data: any, projectURI: string) {
   let interventions_posts_map = new Map<number, string>(); // number -> uri
   let interventions_taskmethods_map = new Map<string, string>(); // number -> uri
   let taskmethods: number = 1;
+
+  writer.addQuad(
+    namedNode(inst_uri + "TaskRMContext"),
+    namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+    namedNode(bcdOWL_uri + "Context")
+  );
+  writer.addQuad(
+    namedNode(inst_uri + "TaskRMContext"),
+    namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+    literal("Renovation Manager Tasks")
+  );
+  writer.addQuad(
+    namedNode(inst_uri + "TaskRMContext"),
+    namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+    literal("Tasks created by the Renovation Manager workflow")
+  );
+
+  writer.addQuad(
+    namedNode(inst_uri),
+    namedNode(bcdOWL_uri + "hasContexts"),
+    namedNode(inst_uri + "TaskRMContext")
+  );
+
   data.interventions.forEach((i: ConvertTasks2RDF_types.Intervention) => {
     let intervention_uri =
       inst_uri +
@@ -39,7 +60,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
           taskmethods = taskmethods + 1;
           writer.addQuad(
             namedNode(intervention_uri),
-            namedNode("https://w3id.org/cto#" + "hasTaskMethod"),
+            namedNode("https://w3id.org/cto#hasTaskMethod"),
             namedNode(task_method_uri)
           );
           writer.addQuad(
@@ -86,6 +107,60 @@ export async function ConvertTasks(data: any, projectURI: string) {
         namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
         literal(i.description)
       );
+      writer.addQuad(
+        namedNode(interventionpost_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
+      );
+
+      writer.addQuad(
+        namedNode(inst_uri),
+        namedNode(bcdOWL_uri + "hasTopicType"),
+        namedNode(interventionpost_uri)
+      );
+    }
+  );
+
+  data.intervention_priorities.forEach(
+    (i: ConvertTasks2RDF_types.InterventionPost) => {
+      let interventionpriority_uri =
+        inst_uri +
+        "InterventionPriority_" +
+        i.name.replace(/ /g, "_").replace(/ç/g, "c") +
+        "_" +
+        i.id;
+      interventions_posts_map.set(i.id, interventionpriority_uri);
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+        namedNode(bcdOWL_uri + "Priority")
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://purl.org/dc/terms/identifier"),
+        literal(i.id)
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+        literal(i.name)
+      );
+      writer.addQuad(
+        namedNode(interventionpriority_uri),
+        namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+        literal(i.description)
+      );
+
+      writer.addQuad(
+        namedNode(inst_uri),
+        namedNode(bcdOWL_uri + "hasPriority"),
+        namedNode(interventionpriority_uri)
+      );
     }
   );
 
@@ -100,7 +175,12 @@ export async function ConvertTasks(data: any, projectURI: string) {
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-      namedNode("https://w3id.org/cto#" + "Task")
+      namedNode("https://w3id.org/cto#Task")
+    );
+    writer.addQuad(
+      namedNode(intervention_uri),
+      namedNode(bcdOWL_uri + "hasContext"),
+      namedNode(inst_uri + "TaskRMContext")
     );
     writer.addQuad(
       namedNode(intervention_uri),
@@ -157,7 +237,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
         let referred_intervention_uri = interventions_map.get(referred_id);
         writer.addQuad(
           namedNode(intervention_uri),
-          namedNode("https://w3id.org/cto#" + "afterFinishedTask"),
+          namedNode("https://w3id.org/cto#afterFinishedTask"),
           namedNode(referred_intervention_uri)
         );
       });
@@ -169,7 +249,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
       );
       writer.addQuad(
         namedNode(intervention_uri),
-        namedNode("https://w3id.org/cto#" + "hasTaskContext"),
+        namedNode("https://w3id.org/cto#hasTaskContext"),
         namedNode(referred_intervention_uri)
       );
     }
@@ -200,6 +280,12 @@ export async function ConvertTasks(data: any, projectURI: string) {
         namedNode(pc_uri),
         namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
         namedNode(bcdOWL_uri + "PerspectiveCamera")
+      );
+
+      writer.addQuad(
+        namedNode(pc_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
       );
 
       writer.addQuad(
@@ -274,8 +360,20 @@ export async function ConvertTasks(data: any, projectURI: string) {
 
       writer.addQuad(
         namedNode(viewpoint_uri),
+        namedNode(bcdOWL_uri + "hasContext"),
+        namedNode(inst_uri + "TaskRMContext")
+      );
+
+      writer.addQuad(
+        namedNode(viewpoint_uri),
         namedNode(bcdOWL_uri + "hasGuid"),
         literal(viewpoint_guid)
+      );
+
+      writer.addQuad(
+        namedNode(viewpoint_uri),
+        namedNode(bcdOWL_uri + "hasSelection"),
+        literal(i.buildingElement)
       );
 
       writer.addQuad(
