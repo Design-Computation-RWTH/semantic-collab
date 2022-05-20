@@ -29,6 +29,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
 
   const [imageList, setImageList] = React.useState<any[]>([]);
 
+  const [viewpoints, setViewpoints] = React.useState<string[]>([]);
+
   const [extensions, setExtensions] = React.useState(new Map());
   const [users, setUsers] = React.useState(new Map());
 
@@ -90,6 +92,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setImageList,
         activeTab,
         setActiveTab,
+        viewpoints,
+        setViewpoints,
       }}
     >
       {children}

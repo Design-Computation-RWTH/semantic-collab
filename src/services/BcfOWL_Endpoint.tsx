@@ -29,6 +29,21 @@ class BcfOWL_Endpoint {
     this.project_id = ReactSession.get("projectid");
   }
 
+  parseJWT(token: string | undefined) {
+    // @ts-ignore
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  }
+
   async getViepointOriginatigDocument(viewpointGUID: string) {
     let viewpoint_uri =
       "<" + base_uri + "/graph/" + this.project_id + "/" + viewpointGUID + "/>";
@@ -377,6 +392,52 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
+  async updateTopic(topicUri: string, predicate: string, object: string) {
+    if (!this.project_id) alert("Project not selected. ");
+
+    let timestamp = new Date(Date.now()).toISOString();
+    let author = this.parseJWT(getAccessToken()).URI;
+    let urlencoded = new URLSearchParams();
+
+    let query = `
+      PREFIX bcfOWL: <http://lbd.arch.rwth-aachen.de/bcfOWL#>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+      DELETE {
+          <${topicUri}> bcfOWL:hasModifiedAuthor ?o .
+          <${topicUri}>  bcfOWL:hasModifiedDate ?o .
+          <${topicUri}>  ${predicate} ?o
+      }
+      INSERT {
+          <${topicUri}>  bcfOWL:hasModifiedAuthor <${author}>;
+              bcfOWL:hasModifiedDate "${timestamp}"^^xsd:datetime;
+              ${predicate} ${object}
+      }
+      WHERE {
+          <${topicUri}> ?p ?o.
+      }
+    
+    `;
+    urlencoded.append("update", query);
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/update",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+    );
+
+    if (!response.ok) {
+      const message = `Get Filtered Viewpoints: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
   async getViepointCameras4Document(doc_uri: string) {
     var guid = doc_uri.substring(doc_uri.lastIndexOf("/") + 1);
     if (!this.project_id) alert("Project not selected. ");
@@ -417,7 +478,113 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
-  async getFilteredViepoints(filter: string[]) {
+  async getFilteredViewpointsGraph(viewpoints: string[]) {
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+
+    let filter1: string = "filter(";
+    let filter2: string = "filter(";
+
+    viewpoints.forEach((viewpoint) => {
+      filter1 = filter1 + " ?s = <" + viewpoint + "> ||";
+      filter2 = filter2 + " ?vs = <" + viewpoint + "> ||";
+    });
+
+    filter1 = filter1.slice(0, -2) + ")";
+    filter2 = filter2.slice(0, -2) + ")";
+
+    let query = `
+        PREFIX bcfOWL:<http://lbd.arch.rwth-aachen.de/bcfOWL#>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+        CONSTRUCT {?s ?p ?o}
+        
+        WHERE {
+          {
+            ?s a bcfOWL:Project;
+               ?p ?o.
+          } UNION
+          
+            {
+            ?s a bcfOWL:TopicType;
+               ?p ?o.
+          } UNION
+          
+              {
+            ?s a bcfOWL:TopicStatus;
+               ?p ?o.
+          } UNION
+          
+                {
+            ?s a bcfOWL:Priority;
+               ?p ?o.
+          } UNION
+                {
+            ?s a bcfOWL:Stage;
+               ?p ?o.
+          } UNION
+                {
+            ?s a bcfOWL:DueDate;
+               ?p ?o.
+          } UNION
+        
+                {
+            ?s a bcfOWL:AssignedTo;
+               ?p ?o.
+          } UNION
+                {
+            ?s a bcfOWL:User;
+               ?p ?o.
+          } UNION
+              {
+            ?s a bcfOWL:Labels;
+               ?p ?o.
+          } UNION
+        
+          {
+          ?s a bcfOWL:Viewpoint;
+             ?p ?o .
+            
+            ${filter1}
+         } UNION {
+          ?vs a bcfOWL:Viewpoint;
+              bcfOWL:hasTopic ?s .
+            
+            ?s a bcfOWL:Topic ;
+               ?p ?o .
+            ${filter2}
+          } UNION {
+            ?vs a bcfOWL:Viewpoint;
+              bcfOWL:hasPerspectiveCamera ?s .
+            
+            ?s a bcfOWL:PerspectiveCamera ;
+               ?p ?o .
+            ${filter2}
+          }
+        }
+        `;
+
+    urlencoded.append("query", query);
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/query",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+    );
+
+    if (!response.ok) {
+      const message = `Get Filtered Viewpoints: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
+  async getFilteredViewpoints(filter: string[]) {
     if (!this.project_id) alert("Project not selected. ");
     let urlencoded = new URLSearchParams();
 
@@ -450,8 +617,6 @@ class BcfOWL_Endpoint {
         redirect: this.follow,
       }
     );
-    console.log(filter.join(" "));
-    console.log(query);
 
     if (!response.ok) {
       const message = `Get Filtered Viewpoints: An error has occured: ${response.status}`;

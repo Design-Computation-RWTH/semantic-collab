@@ -47,6 +47,9 @@ export type DcWebViewerContextType = {
   activeTab: number;
   setActiveTab: Dispatch<SetStateAction<number>>;
 
+  viewpoints: string[];
+  setViewpoints: Dispatch<SetStateAction<string[]>>;
+
   galleryScreen: number;
   setGalleryScreen: Dispatch<SetStateAction<number>>;
 

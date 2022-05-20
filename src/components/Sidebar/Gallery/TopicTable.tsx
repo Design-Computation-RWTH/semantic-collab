@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
-import { Table } from "@mantine/core";
+import { Table, Select } from "@mantine/core";
+import { DatePicker } from "@mantine/dates";
 // @ts-ignore
 import { ReactSession } from "react-client-session";
 import PubSub from "pubsub-js";
@@ -12,13 +13,30 @@ type TopicTableProps = {
   topic_guid: string;
 };
 
+enum PropertyTypes {
+  Status = "StatusRow",
+  Type = "TopicTypeRow",
+}
+
 function TopicTable(props: TopicTableProps) {
   const [topic_guid, setTopic_guid] = useState<string>(props.topic_guid);
   const [data, setData] = useState<any>([]);
   const [topic, setTopic] = useState<any>({});
-  const { extensions } = React.useContext(
+  const { extensions, users } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
+
+  const [topicType, setTopicType] = useState<string>("None");
+  const [topicStatus, setTopicStatus] = useState<string>("None");
+  const [topicStage, setTopicStage] = useState<string>("None");
+  const [topicPriority, setTopicPriority] = useState<string>("None");
+  const [topicAssigned, setTopicAssigned] = useState<string>("None");
+  const [topicAuthor, setTopicAuthor] = useState<string>("None");
+  const [topicModAuthor, setTopicModAuthor] = useState<string>("None");
+  const [topicLabels, setTopicLabels] = useState<string[]>(["None"]);
+  const [topicCreationDate, setTopicCreationDate] = useState<Date>(new Date());
+  const [topicModifiedDate, setTopicModifiedDate] = useState<Date | null>(null);
+  const [topicDueDate, setTopicDueDate] = useState<Date | null>(null);
 
   useEffect(() => {
     init();
@@ -53,11 +71,135 @@ function TopicTable(props: TopicTableProps) {
           }
         }
         setData(tempData);
+
+        tempData.forEach((d) => {
+          if (d.i === "hasTopicType") {
+            setTopicType(d.value);
+          }
+          if (d.i === "hasTopicStatus") {
+            setTopicStatus(d.value);
+          }
+          if (d.i === "hasStage") {
+            setTopicStage(d.value);
+          }
+          if (d.i === "hasPriority") {
+            setTopicPriority(d.value);
+          }
+          if (d.i === "hasAssignedTo") {
+            setTopicAssigned(d.value);
+          }
+          if (d.i === "hasDueDate") {
+            setTopicDueDate(dayjs(d.value).toDate());
+          }
+          if (d.i === "hasCreationDate") {
+            setTopicCreationDate(dayjs(d.value).toDate());
+          }
+          if (d.i === "hasCreationAuthor") {
+            users.forEach((u: any) => {
+              if (u["@id"] === d.value) {
+                setTopicAuthor(u["name"]);
+              }
+            });
+          }
+          if (d.i === "hasModifiedAuthor") {
+            users.forEach((u: any) => {
+              if (u["@id"] === d.value) {
+                setTopicModAuthor(u["name"]);
+              }
+            });
+          }
+        });
       })
       .catch((err) => {
         console.log(err);
       });
   }
+
+  let bcfOWL = new BcfOWL_Endpoint();
+
+  let topicTypeData = [];
+  if (extensions.has("bcfOWL:TopicType")) {
+    topicTypeData = extensions.get("bcfOWL:TopicType").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicTypeData.push({ value: "None", label: "None" });
+
+  let topicLabelData = [];
+  if (extensions.has("bcfOWL:Label")) {
+    topicLabelData = extensions.get("bcfOWL:Label").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicLabelData.push({ value: "None", label: "None" });
+
+  let topicStatusData = [];
+  if (extensions.has("bcfOWL:TopicStatus")) {
+    topicStatusData = extensions.get("bcfOWL:TopicStatus").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicStatusData.push({ value: "None", label: "None" });
+
+  let topicPriorityData = [];
+  if (extensions.has("bcfOWL:Priority")) {
+    topicPriorityData = extensions.get("bcfOWL:Priority").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicPriorityData.push({ value: "None", label: "None" });
+
+  let topicStageData = [];
+  if (extensions.has("bcfOWL:Stage")) {
+    topicStageData = extensions.get("bcfOWL:Stage").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicStageData.push({ value: "None", label: "None" });
+
+  let authorData = [];
+  authorData = users.map((e: any) => {
+    let tempValue: string = "";
+    let tempLabel: string = "";
+    Object.keys(e).forEach((key: any) => {
+      tempValue = key;
+      tempLabel = e[key];
+    });
+    return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
+  });
+
+  let assignedData = authorData;
+  assignedData.push({ value: "None", label: "None" });
 
   return (
     <div className={"TopicTable"} style={{ width: "100%", maxWidth: "100%" }}>
@@ -105,7 +247,7 @@ function TopicTable(props: TopicTableProps) {
                 overflowWrap: "break-word",
               }}
             >
-              {topic["hasCreationAuthor"]}
+              {topicAuthor}
             </td>
           </tr>
           <tr key="DateRow" style={{ display: "flex" }}>
@@ -123,7 +265,7 @@ function TopicTable(props: TopicTableProps) {
                 overflowWrap: "break-word",
               }}
             >
-              {dayjs(topic["hasCreationDate"]).toString()}
+              {topicCreationDate.toLocaleString()}
             </td>
           </tr>
           <tr key="ModAuthorRow" style={{ display: "flex" }}>
@@ -141,7 +283,7 @@ function TopicTable(props: TopicTableProps) {
                 overflowWrap: "break-word",
               }}
             >
-              {topic["hasModifiedAuthor"]}
+              {topicModAuthor}
             </td>
           </tr>
           <tr key="StatusRow" style={{ display: "flex" }}>
@@ -159,7 +301,18 @@ function TopicTable(props: TopicTableProps) {
                 overflowWrap: "break-word",
               }}
             >
-              {getExtensionLabel("bcfOWL:TopicStatus", topic["hasTopicStatus"])}
+              <Select
+                data={topicStatusData}
+                value={topicStatus}
+                onChange={(e: string) => {
+                  setTopicStatus(e);
+                  bcfOWL.updateTopic(
+                    topic_guid,
+                    "bcfOWL:hasTopicStatus",
+                    "<" + e + ">"
+                  );
+                }}
+              />
             </td>
           </tr>
           <tr key="PriorityRow" style={{ display: "flex" }}>
@@ -177,7 +330,19 @@ function TopicTable(props: TopicTableProps) {
                 overflowWrap: "break-word",
               }}
             >
-              {getExtensionLabel("bcfOWL:Priority", topic["hasPriority"])}
+              <Select
+                data={topicPriorityData}
+                value={topicPriority}
+                onChange={(e: string) => {
+                  setTopicPriority(e);
+                  if (e !== "None")
+                    bcfOWL.updateTopic(
+                      topic_guid,
+                      "bcfOWL:hasPriority",
+                      "<" + e + ">"
+                    );
+                }}
+              />
             </td>
           </tr>
           <tr key="TypeRow" style={{ display: "flex" }}>
@@ -195,7 +360,52 @@ function TopicTable(props: TopicTableProps) {
                 overflowWrap: "break-word",
               }}
             >
-              {getExtensionLabel("bcfOWL:TopicType", topic["hasTopicType"])}
+              <Select
+                data={topicTypeData}
+                value={topicType}
+                onChange={(e: string) => {
+                  setTopicType(e);
+                  if (e !== "None")
+                    bcfOWL.updateTopic(
+                      topic_guid,
+                      "bcfOWL:hasTopicType",
+                      "<" + e + ">"
+                    );
+                }}
+              />
+            </td>
+          </tr>
+          <tr key="DueDateRow" style={{ display: "flex" }}>
+            <td
+              key={"DueDateKey"}
+              style={{ display: "flex", maxWidth: "125px", minWidth: "125px" }}
+            >
+              Due Date
+            </td>
+            <td
+              key={"DueDateValue"}
+              style={{
+                maxWidth: "200px",
+                minWidth: "100px",
+                overflowWrap: "break-word",
+              }}
+            >
+              <DatePicker
+                placeholder="Pick Due Date"
+                value={topicDueDate}
+                onChange={(e) => {
+                  setTopicDueDate(e);
+
+                  if (e !== null) {
+                    console.log('"' + e.toISOString() + '"^^xsd:datetime');
+                    bcfOWL.updateTopic(
+                      topic_guid,
+                      "bcfOWL:hasDueDate",
+                      '"' + e.toISOString() + '"^^xsd:datetime'
+                    );
+                  }
+                }}
+              />
             </td>
           </tr>
           <tr key="LabelRow" style={{ display: "flex" }}>
@@ -216,8 +426,6 @@ function TopicTable(props: TopicTableProps) {
               {topic["hasLabel"]}
             </td>
           </tr>
-
-          {/*listRows()*/}
         </tbody>
       </Table>
     </div>
