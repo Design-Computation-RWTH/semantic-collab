@@ -38,6 +38,9 @@ export type DcWebViewerContextType = {
   extensions: Map;
   setExtensions: Dispatch<SetStateAction<Map>>;
 
+  taskExtensions: Map;
+  setTaskExtensions: Dispatch<SetStateAction<Map>>;
+
   users: Map;
   setUsers: Dispatch<SetStateAction<Map>>;
 
@@ -46,6 +49,9 @@ export type DcWebViewerContextType = {
 
   activeTab: number;
   setActiveTab: Dispatch<SetStateAction<number>>;
+
+  viewpoints: string[];
+  setViewpoints: Dispatch<SetStateAction<string[]>>;
 
   galleryScreen: number;
   setGalleryScreen: Dispatch<SetStateAction<number>>;
