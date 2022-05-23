@@ -17,9 +17,13 @@ type SidebarProps = {
 };
 
 export default function CAIA_Sidebar(props: SidebarProps) {
-  const { setExtensions, setUsers, activeTab, setActiveTab } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
+  const {
+    setExtensions,
+    setUsers,
+    activeTab,
+    setActiveTab,
+    setTaskExtensions,
+  } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   useEffect(() => {
     init();
@@ -31,14 +35,6 @@ export default function CAIA_Sidebar(props: SidebarProps) {
 
     let bcfowl_project = new BcfOWLProjectSetup();
     let bcfowl = new BcfOWL_Endpoint();
-
-    /*      value.hasUser.forEach((user: string) => {
-          bcfowl.describeUser(user).then((u) => {
-              list = list.concat(u);
-              if (!users) {
-                  setUsers(list);
-              }
-          });*/
 
     bcfowl_project.getCurrentProject().then((value) => {
       try {
@@ -55,23 +51,42 @@ export default function CAIA_Sidebar(props: SidebarProps) {
 
     bcfowl_project.getCurrentProjectExtensions().then((r) => {
       let tempExtensionsMap: Map<any, any> = new Map();
+      let tempTaskExtensionsMap: Map<any, any> = new Map();
 
       for (let v in r["@graph"]) {
         let valueMap = r["@graph"][v];
-        if (tempExtensionsMap.has(valueMap["@type"])) {
-          let tempExt = tempExtensionsMap.get(valueMap["@type"]);
-          let tempExtMap: any = {};
-          tempExtMap[valueMap["@id"]] = valueMap["label"];
-          tempExt.push(tempExtMap);
+        console.log(valueMap);
+        if (valueMap["hasContext"].includes("TaskRMContext")) {
+          if (tempTaskExtensionsMap.has(valueMap["@type"])) {
+            let tempExt = tempTaskExtensionsMap.get(valueMap["@type"]);
+            let tempExtMap: any = {};
+            tempExtMap[valueMap["@id"]] = valueMap["label"];
+            tempExt.push(tempExtMap);
 
-          tempExtensionsMap.set(valueMap["@type"], tempExt);
+            tempTaskExtensionsMap.set(valueMap["@type"], tempExt);
+          } else {
+            let tempExtMap: any = {};
+            tempExtMap[valueMap["@id"]] = valueMap["label"];
+            tempTaskExtensionsMap.set(valueMap["@type"], [tempExtMap]);
+          }
         } else {
-          let tempExtMap: any = {};
-          tempExtMap[valueMap["@id"]] = valueMap["label"];
-          tempExtensionsMap.set(valueMap["@type"], [tempExtMap]);
+          if (tempExtensionsMap.has(valueMap["@type"])) {
+            let tempExt = tempExtensionsMap.get(valueMap["@type"]);
+            let tempExtMap: any = {};
+            tempExtMap[valueMap["@id"]] = valueMap["label"];
+            tempExt.push(tempExtMap);
+
+            tempExtensionsMap.set(valueMap["@type"], tempExt);
+          } else {
+            let tempExtMap: any = {};
+            tempExtMap[valueMap["@id"]] = valueMap["label"];
+            tempExtensionsMap.set(valueMap["@type"], [tempExtMap]);
+          }
         }
       }
       setExtensions(tempExtensionsMap);
+      setTaskExtensions(tempTaskExtensionsMap);
+      console.log(tempTaskExtensionsMap);
     });
   }
   const [activeTab1, setActiveTab1] = useState(1);

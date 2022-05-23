@@ -38,6 +38,9 @@ export type DcWebViewerContextType = {
   extensions: Map;
   setExtensions: Dispatch<SetStateAction<Map>>;
 
+  taskExtensions: Map;
+  setTaskExtensions: Dispatch<SetStateAction<Map>>;
+
   users: Map;
   setUsers: Dispatch<SetStateAction<Map>>;
 

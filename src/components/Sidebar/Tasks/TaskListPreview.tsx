@@ -17,7 +17,96 @@ export default function TaskListPreview(props: TaskListProps) {
   const [subTasks, setSubTasks] = useState<any>([]);
   const [viewpoints, setViewpoints] = useState<any>([]);
   const [perspectiveCameras, setPerspectiveCameras] = useState<any>([]);
-  const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
+  const [taskPage, setTaskPage] = useState<0 | 1>(0);
+  const { viewer, taskExtensions, users } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
+
+  let topicTypeData = [];
+  if (taskExtensions.has("bcfOWL:TopicType")) {
+    topicTypeData = taskExtensions.get("bcfOWL:TopicType").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicTypeData.push({ value: "None", label: "None" });
+
+  let topicLabelData = [];
+  if (taskExtensions.has("bcfOWL:Label")) {
+    topicLabelData = taskExtensions.get("bcfOWL:Label").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicLabelData.push({ value: "None", label: "None" });
+
+  let topicStatusData = [];
+  if (taskExtensions.has("bcfOWL:TopicStatus")) {
+    topicStatusData = taskExtensions.get("bcfOWL:TopicStatus").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicStatusData.push({ value: "None", label: "None" });
+
+  let topicPriorityData: any = [];
+  if (taskExtensions.has("bcfOWL:Priority")) {
+    topicPriorityData = taskExtensions.get("bcfOWL:Priority").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicPriorityData.push({ value: "None", label: "None" });
+  console.log(topicPriorityData);
+
+  let topicStageData = [];
+  if (taskExtensions.has("bcfOWL:Stage")) {
+    topicStageData = taskExtensions.get("bcfOWL:Stage").map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: tempValue, label: tempLabel };
+    });
+  }
+  topicStageData.push({ value: "None", label: "None" });
+
+  let authorData = [];
+  authorData = users.map((e: any) => {
+    let tempValue: string = "";
+    let tempLabel: string = "";
+    Object.keys(e).forEach((key: any) => {
+      tempValue = key;
+      tempLabel = e[key];
+    });
+    return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
+  });
+
+  function findMapping(data: any, uri: string) {
+    return;
+  }
 
   useEffect(() => {
     init();
@@ -91,12 +180,13 @@ export default function TaskListPreview(props: TaskListProps) {
               itemTitle: { color: "white" },
               contentInner: { padding: 0, margin: 0 },
               content: { padding: 0, margin: 0 },
+              item: { padding: 0, margin: 0 },
             }}
           >
             <Table striped highlightOnHover>
               <thead>
                 <tr>
-                  <th>Key</th>
+                  <th style={{ minWidth: "125px" }}>Key</th>
                   <th>Value</th>
                 </tr>
               </thead>
@@ -115,9 +205,12 @@ export default function TaskListPreview(props: TaskListProps) {
                     <DatePicker
                       dropdownType="modal"
                       placeholder="Pick date"
-                      label="Event date"
                       //TODO: Convert ISO String to Date!
                       defaultValue={new Date()}
+                      onChange={(e) => {
+                        console.log(e);
+                        console.log(st);
+                      }}
                     />
                   </td>
                 </tr>
@@ -126,13 +219,8 @@ export default function TaskListPreview(props: TaskListProps) {
                   <td>
                     <Select
                       //TODO: Save all Extensions in the Context, so they are accessible everywhere
-                      defaultValue={st.hasPriority}
-                      data={[
-                        { value: st.hasPriority, label: "Priority" },
-                        { value: "ng", label: "Angular" },
-                        { value: "svelte", label: "Svelte" },
-                        { value: "vue", label: "Vue" },
-                      ]}
+                      defaultValue={topicPriorityData[st.hasPriority]}
+                      data={topicPriorityData}
                     />
                   </td>
                 </tr>
@@ -174,13 +262,19 @@ export default function TaskListPreview(props: TaskListProps) {
           id={name + "_BuildingElement"}
           styles={{
             itemTitle: { color: "white" },
+            content: { padding: 0, margin: 0 },
+            item: { padding: 0, margin: 0 },
+            contentInner: { padding: 0, margin: 0 },
           }}
         >
           <Accordion
             styles={{
               contentInner: { padding: 0, margin: 0 },
               content: { padding: 0, margin: 0 },
+              item: { padding: 0, margin: 0 },
             }}
+            key={taskID + "Task"}
+            style={{ padding: 0, margin: 0 }}
             sx={(theme) => ({
               backgroundColor: theme.colors.gray[2],
             })}
@@ -201,7 +295,7 @@ export default function TaskListPreview(props: TaskListProps) {
         styles={{
           itemTitle: { color: "white" },
           contentInner: { padding: 0, margin: 0 },
-          content: { padding: 10, margin: 0 },
+          content: { padding: 2, margin: 0 },
         }}
       >
         <Accordion
@@ -219,7 +313,7 @@ export default function TaskListPreview(props: TaskListProps) {
     );
   });
 
-  return (
+  const TaskList = (
     <Container>
       <Accordion
         styles={{
@@ -234,4 +328,23 @@ export default function TaskListPreview(props: TaskListProps) {
       </Accordion>
     </Container>
   );
+
+  if (taskPage === 0) {
+    return TaskList;
+  } else {
+    return <div></div>;
+  }
+  /*<Container>
+      <Accordion
+        styles={{
+          contentInner: { padding: 0, margin: 0 },
+          content: { padding: 0, margin: 0 },
+        }}
+        sx={(theme) => ({
+          backgroundColor: theme.colors.gray[0],
+        })}
+      >
+        {MainTasks}
+      </Accordion>
+    </Container>*/
 }

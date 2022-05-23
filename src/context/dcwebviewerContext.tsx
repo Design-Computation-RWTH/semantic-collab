@@ -32,6 +32,7 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
   const [viewpoints, setViewpoints] = React.useState<string[]>([]);
 
   const [extensions, setExtensions] = React.useState(new Map());
+  const [taskExtensions, setTaskExtensions] = React.useState(new Map());
   const [users, setUsers] = React.useState(new Map());
 
   const [galleryScreen, setGalleryScreen] = React.useState<number>(0);
@@ -80,6 +81,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setViewerDocuments,
         extensions,
         setExtensions,
+        taskExtensions,
+        setTaskExtensions,
         users,
         setUsers,
         galleryScreen,
