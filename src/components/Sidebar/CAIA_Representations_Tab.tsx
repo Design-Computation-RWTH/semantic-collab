@@ -18,7 +18,7 @@ import { Viewer, LASLoaderPlugin } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 
-const laz = require("C:\\GitHub\\dc-web-viewer\\src\\Granusturm-2-3-1.laz");
+// const laz = require("C:\\GitHub\\dc-web-viewer\\src\\Granusturm-2-3-1.laz");
 
 type RepresentationsProps = {};
 
@@ -409,7 +409,7 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
         <button
           className="btn-caia-icon"
           onClick={(e) => {
-            console.log(__dirname);
+            /*console.log(__dirname);
             const lasLoader = new LASLoaderPlugin(viewer, {
               //skip: 1, // Default,
               //fp64: false,
@@ -423,9 +423,9 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
 
             modelEntity.on("loaded", () => {
               console.log("Loaded PC");
-              viewer.cameraFlight.flyTo("myModel");
-              //...
-            });
+              viewer.cameraFlight.flyTo("myModel");*/
+            //...
+            //});
           }}
           title="Add spatial node"
         >
