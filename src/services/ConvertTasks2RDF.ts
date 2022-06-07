@@ -1,5 +1,6 @@
 // @ts-ignore
 import * as ConvertTasks2RDF_types from "./types/ConvertTasks2RDF_types";
+import { getAccessToken } from "./BcfOWL_Endpoint";
 
 const N3 = require("n3");
 const { DataFactory } = N3;
@@ -20,6 +21,26 @@ export async function ConvertTasks(data: any, projectURI: string) {
   let interventions_posts_map = new Map<number, string>(); // number -> uri
   let interventions_taskmethods_map = new Map<string, string>(); // number -> uri
   let taskmethods: number = 1;
+
+  let priorities = new Map<number, string>(); // id -> priority_uri
+  let types = new Map<number, string>(); // id -> type_uri
+
+  function parseJWT(token: string | undefined) {
+    // @ts-ignore
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  }
+
+  let author_uri = parseJWT(getAccessToken()).URI;
 
   writer.addQuad(
     namedNode(inst_uri + "TaskRMContext"),
@@ -86,6 +107,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
         i.name.replace(/ /g, "_").replace(/ç/g, "c") +
         "_" +
         i.id;
+      types.set(i.id, interventionpost_uri);
       interventions_posts_map.set(i.id, interventionpost_uri);
       writer.addQuad(
         namedNode(interventionpost_uri),
@@ -129,6 +151,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
         i.name.replace(/ /g, "_").replace(/ç/g, "c") +
         "_" +
         i.id;
+      priorities.set(i.id, interventionpriority_uri);
       interventions_posts_map.set(i.id, interventionpriority_uri);
       writer.addQuad(
         namedNode(interventionpriority_uri),
@@ -189,6 +212,16 @@ export async function ConvertTasks(data: any, projectURI: string) {
     );
     writer.addQuad(
       namedNode(intervention_uri),
+      namedNode(bcdOWL_uri + "hasCreationAuthor"),
+      namedNode(author_uri)
+    );
+    writer.addQuad(
+      namedNode(intervention_uri),
+      namedNode(bcdOWL_uri + "hasModifiedAuthor"),
+      namedNode(author_uri)
+    );
+    writer.addQuad(
+      namedNode(intervention_uri),
       namedNode(bcdOWL_uri + "hasDescription"),
       literal(i.description)
     );
@@ -214,7 +247,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode(bcdOWL_uri + "hasPriority"),
-      namedNode(inst_uri + "priority_" + i.intervention_priority_id)
+      namedNode(priorities.get(i.intervention_priority_id))
     );
 
     let intervention_TopicType =
@@ -223,13 +256,13 @@ export async function ConvertTasks(data: any, projectURI: string) {
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode(bcdOWL_uri + "hasTopicType"),
-      namedNode(inst_uri + intervention_TopicType)
+      namedNode(types.get(i.intervention_post_id))
     );
 
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode(bcdOWL_uri + "hasTopicStatus"),
-      namedNode(inst_uri + "Active")
+      namedNode(inst_uri + "TopicStatus_Open")
     );
 
     if (i.required_previous) {

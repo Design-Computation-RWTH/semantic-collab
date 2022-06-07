@@ -55,7 +55,6 @@ export default function CAIA_Sidebar(props: SidebarProps) {
 
       for (let v in r["@graph"]) {
         let valueMap = r["@graph"][v];
-        console.log(valueMap);
         if (valueMap["hasContext"].includes("TaskRMContext")) {
           if (tempTaskExtensionsMap.has(valueMap["@type"])) {
             let tempExt = tempTaskExtensionsMap.get(valueMap["@type"]);
@@ -86,10 +85,8 @@ export default function CAIA_Sidebar(props: SidebarProps) {
       }
       setExtensions(tempExtensionsMap);
       setTaskExtensions(tempTaskExtensionsMap);
-      console.log(tempTaskExtensionsMap);
     });
   }
-  const [activeTab1, setActiveTab1] = useState(1);
 
   return (
     <Tabs

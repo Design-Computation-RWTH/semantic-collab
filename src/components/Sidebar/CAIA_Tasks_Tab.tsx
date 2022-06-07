@@ -26,7 +26,7 @@ export default function CAIA_Tasks_Tab() {
       storeyTemp.push(ifc_storey);
     }
   }
-  console.log(storeyTemp);
+
   let ViewState = null;
 
   if (viewState === "Preview") {

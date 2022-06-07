@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 // @ts-ignore
+import { StoreyViewsPlugin } from "@xeokit/xeokit-sdk";
+// @ts-ignore
 import PubSub from "pubsub-js";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
-import { Table, Switch } from "@mantine/core";
+import { Table, Switch, Stack, Group } from "@mantine/core";
 import {
   DcWebViewerContextType,
   SelectedDocument,
@@ -33,11 +35,14 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
     viewer,
   } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
+  const [storeys, setStoreys] = useState<any>([]);
   const [checked, setChecked] = useState<boolean>(
     viewerDocuments[props.document.id]
   );
 
   useEffect(() => {}, []);
+
+  let storeyViewsPlugin: any;
 
   //Opens the Document Details in the Sidebar
   function showDocumentDetails() {
@@ -64,6 +69,7 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
 
   // Activates / shows the document in the Xeokit environment
   function showDocument() {
+    storeyViewsPlugin = new StoreyViewsPlugin(viewer);
     props.document.selected = true;
     //Target: Representation.js, onShowDocument
     PubSub.publish("ShowDocument", {
@@ -73,6 +79,16 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
       data: props.data,
       name: props.document.filename,
     });
+    let allStoreys = storeyViewsPlugin.storeys;
+    let tempStoreys = [];
+    for (let storey in allStoreys) {
+      tempStoreys.push(allStoreys[storey]);
+    }
+    setStoreys(tempStoreys);
+  }
+
+  function hideDocument() {
+    setStoreys([]);
   }
 
   function determineEnding() {
@@ -83,6 +99,40 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
         return "icon bi-file-earmark-pdf btn-caia-icon-size";
       }
     }
+  }
+
+  function showStoreys() {
+    storeyViewsPlugin = new StoreyViewsPlugin(viewer);
+    let storeyRender;
+
+    if (storeys.length === 0) {
+      storeyRender = <></>;
+    } else {
+      storeyRender = storeys.map((s: any) => {
+        let storeyName = viewer.metaScene.metaObjects[s.storeyId].name;
+        return (
+          <Group>
+            {storeyName}
+            <Switch
+              defaultChecked={true}
+              onChange={(e) => {
+                let singleStorey = viewer.metaScene.metaObjects[s.storeyId];
+                let childs = singleStorey.children;
+                childs.forEach((child: any) => {
+                  if (viewer.scene.objects[child.id]) {
+                    viewer.scene.objects[child.id].visible =
+                      e.currentTarget.checked;
+                  } else {
+                    console.log(child);
+                  }
+                });
+              }}
+            />
+          </Group>
+        );
+      });
+    }
+    return storeyRender;
   }
 
   return (
@@ -111,14 +161,17 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
                 setChecked(e.target.checked);
                 if (e.currentTarget.checked) {
                   showDocument();
-                } else
+                } else {
+                  hideDocument();
                   PubSub.publish("DocumentUnSelected", {
                     id: props.document.id,
                   });
+                }
               }}
             />
           </td>
         </tr>
+        <tr>{/*<Stack>{showStoreys()}</Stack>*/}</tr>
       </tbody>
     </Table>
   );

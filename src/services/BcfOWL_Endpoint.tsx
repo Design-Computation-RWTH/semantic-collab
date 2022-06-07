@@ -24,6 +24,7 @@ class BcfOWL_Endpoint {
   constructor() {
     this.myHeaders = new Headers();
     this.myHeaders.append("Authorization", "Bearer " + getAccessToken());
+    //this.myHeaders.append("accept", "text/plain");
     this.myHeaders.append("Accept", "application/ld+json");
     this.myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
     this.project_id = ReactSession.get("projectid");

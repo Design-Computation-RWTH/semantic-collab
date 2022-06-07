@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Container, Table, Select } from "@mantine/core";
+import { Accordion, Container, Table, Select, Button } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
+import CloseButton from "react-bootstrap/CloseButton";
+import TaskDetails from "./TaskDetails";
 
 type TaskListProps = {
   IfcStoreys: any[];
@@ -18,6 +20,7 @@ export default function TaskListPreview(props: TaskListProps) {
   const [viewpoints, setViewpoints] = useState<any>([]);
   const [perspectiveCameras, setPerspectiveCameras] = useState<any>([]);
   const [taskPage, setTaskPage] = useState<0 | 1>(0);
+  const [activeTask, setActiveTask] = useState<string>("");
   const { viewer, taskExtensions, users } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
@@ -77,7 +80,6 @@ export default function TaskListPreview(props: TaskListProps) {
     });
   }
   topicPriorityData.push({ value: "None", label: "None" });
-  console.log(topicPriorityData);
 
   let topicStageData = [];
   if (taskExtensions.has("bcfOWL:Stage")) {
@@ -174,63 +176,27 @@ export default function TaskListPreview(props: TaskListProps) {
       if (st["hasTaskContext"] === taskID && elementID === st.buildingElement) {
         return (
           <Accordion.Item
+            icon={<></>}
             label={st.hasTitle}
             id={st["@id"] + "_MainTask"}
+            iconSize={0}
+            onMouseEnter={() => {
+              viewer.scene.objects[elementID].selected = true;
+            }}
+            onMouseLeave={() => {
+              viewer.scene.objects[elementID].selected = false;
+            }}
             styles={{
               itemTitle: { color: "white" },
               contentInner: { padding: 0, margin: 0 },
               content: { padding: 0, margin: 0 },
               item: { padding: 0, margin: 0 },
             }}
-          >
-            <Table striped highlightOnHover>
-              <thead>
-                <tr>
-                  <th style={{ minWidth: "125px" }}>Key</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Title</td>
-                  <td>{st.hasTitle}</td>
-                </tr>
-                <tr>
-                  <td>Date</td>
-                  <td>{st.hasCreationDate}</td>
-                </tr>
-                <tr>
-                  <td>Due Date</td>
-                  <td>
-                    <DatePicker
-                      dropdownType="modal"
-                      placeholder="Pick date"
-                      //TODO: Convert ISO String to Date!
-                      defaultValue={new Date()}
-                      onChange={(e) => {
-                        console.log(e);
-                        console.log(st);
-                      }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td>Priority</td>
-                  <td>
-                    <Select
-                      //TODO: Save all Extensions in the Context, so they are accessible everywhere
-                      defaultValue={topicPriorityData[st.hasPriority]}
-                      data={topicPriorityData}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td>Description</td>
-                  <td>{st.hasDescription}</td>
-                </tr>
-              </tbody>
-            </Table>
-          </Accordion.Item>
+            onClick={(e) => {
+              setTaskPage(1);
+              setActiveTask(st["@id"]);
+            }}
+          />
         );
       } else {
         return <></>;
@@ -260,6 +226,12 @@ export default function TaskListPreview(props: TaskListProps) {
         <Accordion.Item
           label={name}
           id={name + "_BuildingElement"}
+          onMouseEnter={() => {
+            viewer.scene.objects[st].selected = true;
+          }}
+          onMouseLeave={() => {
+            viewer.scene.objects[st].selected = false;
+          }}
           styles={{
             itemTitle: { color: "white" },
             content: { padding: 0, margin: 0 },
@@ -329,22 +301,26 @@ export default function TaskListPreview(props: TaskListProps) {
     </Container>
   );
 
+  const taskDetails = (
+    <div
+      className={"GalleryContent"}
+      style={{
+        width: "100%",
+        maxWidth: "100%",
+      }}
+    >
+      <Container style={{ width: "100%", maxWidth: "100%" }}>
+        <div>
+          <CloseButton onClick={() => setTaskPage(0)} />
+          <TaskDetails topic_guid={activeTask} />
+        </div>{" "}
+      </Container>
+    </div>
+  );
+
   if (taskPage === 0) {
     return TaskList;
   } else {
-    return <div></div>;
+    return taskDetails;
   }
-  /*<Container>
-      <Accordion
-        styles={{
-          contentInner: { padding: 0, margin: 0 },
-          content: { padding: 0, margin: 0 },
-        }}
-        sx={(theme) => ({
-          backgroundColor: theme.colors.gray[0],
-        })}
-      >
-        {MainTasks}
-      </Accordion>
-    </Container>*/
 }

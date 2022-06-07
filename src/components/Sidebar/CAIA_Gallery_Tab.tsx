@@ -264,7 +264,6 @@ export default function CAIA_Gallery_Tab() {
         }}
       />
     ));
-    console.log(tempImageList);
     setImageList(tempImageList);
   }
 
@@ -325,6 +324,8 @@ export default function CAIA_Gallery_Tab() {
   }
 
   let topicTypeData = [];
+
+  console.log(extensions);
   if (extensions.has("bcfOWL:TopicType")) {
     topicTypeData = extensions.get("bcfOWL:TopicType").map((e: any) => {
       let tempValue: string = "";
