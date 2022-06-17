@@ -29,6 +29,9 @@ export type DcWebViewerContextType = {
   projectID: string;
   setProjectID: Dispatch<SetStateAction<string>>;
 
+  currentViewpoint: string;
+  setCurrentViewpoint: Dispatch<SetStateAction<string>>;
+
   selectedDocument: SelectedDocument;
   setSelectedDocument: Dispatch<SetStateAction<SelectedDocument>>;
 

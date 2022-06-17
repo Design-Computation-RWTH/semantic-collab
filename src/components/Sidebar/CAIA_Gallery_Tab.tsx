@@ -40,11 +40,18 @@ class SnapShotThumbnail {
   private uri: string;
   private guid: any;
   private topic_guid: any;
+  private vp_uri: string;
 
-  constructor(thumbnail_uri: string, guid: any, topic_guid: any) {
+  constructor(
+    thumbnail_uri: string,
+    guid: any,
+    topic_guid: any,
+    vp_uri: string
+  ) {
     this.uri = thumbnail_uri;
     this.guid = guid;
     this.topic_guid = topic_guid;
+    this.vp_uri = vp_uri;
   }
 }
 
@@ -91,6 +98,7 @@ export default function CAIA_Gallery_Tab() {
     setLargeGalleryImg,
     viewpoints,
     setViewpoints,
+    setCurrentViewpoint,
   } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   function gallery() {
@@ -147,8 +155,8 @@ export default function CAIA_Gallery_Tab() {
 
             <Button
               style={{
-                height: 300,
-                width: 300,
+                height: 200,
+                width: 200,
                 justifyContent: "center",
                 display: "flex",
                 backgroundColor: "#00000000",
@@ -158,8 +166,8 @@ export default function CAIA_Gallery_Tab() {
               }}
             >
               <Image
-                width={300}
-                height={300}
+                width={200}
+                height={200}
                 fit="contain"
                 src={largeGalleryImg}
                 withPlaceholder
@@ -175,12 +183,7 @@ export default function CAIA_Gallery_Tab() {
 
   useEffect(() => {
     init();
-    return () => {
-      //setImageList([]);
-      //setLarge_image_uri("Icon_v2.svg");
-      //setActive_topic(null);
-      //setGalleryScreen(0);
-    };
+    return () => {};
   }, []);
 
   // let viewpoints: any[] = [];
@@ -215,11 +218,14 @@ export default function CAIA_Gallery_Tab() {
 
     value.forEach((vp: any) => {
       tempVps.push(vp["@id"]);
+
       let snapshot = imageservice.getThumbnailData(vp.hasGuid);
       snapshot.then((img: any) => {
         if (img.size > 0) {
           let url = URL.createObjectURL(img);
-          joined.push(new SnapShotThumbnail(url, vp.hasGuid, vp.hasTopic));
+          joined.push(
+            new SnapShotThumbnail(url, vp.hasGuid, vp.hasTopic, vp["@id"])
+          );
           fetchImagesList(joined);
         } else {
           fetchImagesList(joined);
@@ -243,6 +249,8 @@ export default function CAIA_Gallery_Tab() {
         src={s.uri}
         onClick={() => {
           setGalleryScreen(1);
+          console.log(s);
+          setCurrentViewpoint(s.vp_uri);
 
           for (const model in viewer.scene.models) {
             if (model.includes(s.guid)) {
@@ -325,7 +333,6 @@ export default function CAIA_Gallery_Tab() {
 
   let topicTypeData = [];
 
-  console.log(extensions);
   if (extensions.has("bcfOWL:TopicType")) {
     topicTypeData = extensions.get("bcfOWL:TopicType").map((e: any) => {
       let tempValue: string = "";

@@ -627,6 +627,86 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
+  async postComment(comment: string, viewpoint: string, topic: string) {
+    let projectUri = base_uri + "/graph/" + this.project_id;
+    let guid = uuidv4();
+    let author = this.parseJWT(getAccessToken()).URI;
+    let uri = projectUri + "/" + guid;
+    let creationDate = new Date().toISOString();
+
+    let query =
+      bcfOWLPrefixes +
+      geoPrefix +
+      xsdPrefix +
+      ctoPrefix +
+      `\nPREFIX project: <${projectUri}/>` +
+      `
+        INSERT DATA {
+        <${uri}>    a                           bcfOWL:Comment ;
+                      bcfOWL:hasAuthor          <${author}> ;
+                      bcfOWL:hasComment         "${comment}"^^xsd:string ;
+                      bcfOWL:hasCommentDate     "${creationDate}"^^xsd:dateTime ;
+                      bcfOWL:hasGuid            "${guid}"^^xsd:string ;
+                      bcfOWL:hasProject         project: ;
+                      bcfOWL:hasTopic           <${topic}> ;
+                      bcfOWL:hasViewpoint       <${viewpoint}> ;
+                      bcfOWL:hasContext         project:DocumentationContext .
+        }
+        `;
+
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+    urlencoded.append("update", query);
+
+    const response = await fetch(projectUri + "/update", {
+      method: "POST",
+      headers: this.myHeaders,
+      body: urlencoded,
+      redirect: this.follow,
+    });
+    if (!response.ok) {
+      const message = `SPARQL Update failed: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    } else {
+      console.log(response);
+    }
+    return await response.json();
+  }
+
+  async getCommentsByViewpoint(vp_uri: string) {
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+    urlencoded.append(
+      "query",
+      bcfOWLPrefixes +
+        `
+        CONSTRUCT { ?s ?p ?o }
+        WHERE {
+            ?s  a                       bcfOWL:Comment ;
+                bcfOWL:hasViewpoint     <${vp_uri}> ;
+                ?p                      ?o .
+        }
+        `
+    );
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/query",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+    );
+    if (!response.ok) {
+      const message = `getAll: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
   async getTopicGuids4Document(doc_uri: string) {
     if (!this.project_id) alert("Project not selected. ");
     let urlencoded = new URLSearchParams();

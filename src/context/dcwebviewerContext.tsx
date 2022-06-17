@@ -31,6 +31,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
 
   const [viewpoints, setViewpoints] = React.useState<string[]>([]);
 
+  const [currentViewpoint, setCurrentViewpoint] = React.useState<string>("");
+
   const [extensions, setExtensions] = React.useState(new Map());
   const [taskExtensions, setTaskExtensions] = React.useState(new Map());
   const [users, setUsers] = React.useState(new Map());
@@ -97,6 +99,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setActiveTab,
         viewpoints,
         setViewpoints,
+        currentViewpoint,
+        setCurrentViewpoint,
       }}
     >
       {children}

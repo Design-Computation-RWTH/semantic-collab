@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
-import { Table, Select } from "@mantine/core";
+import { Table, Select, Space } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 // @ts-ignore
 import { ReactSession } from "react-client-session";
@@ -8,6 +8,8 @@ import PubSub from "pubsub-js";
 import dayjs from "dayjs";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
+import TopicComments from "./Comments";
+import { VscWorkspaceUnknown } from "react-icons/all";
 
 type TopicTableProps = {
   topic_guid: string;
@@ -428,6 +430,8 @@ function TopicTable(props: TopicTableProps) {
           </tr>
         </tbody>
       </Table>
+      <Space h={"md"} />
+      <TopicComments />
     </div>
   );
 }
