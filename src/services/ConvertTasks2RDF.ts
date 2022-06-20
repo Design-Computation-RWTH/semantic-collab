@@ -60,7 +60,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
 
   writer.addQuad(
     namedNode(inst_uri),
-    namedNode(bcdOWL_uri + "hasContexts"),
+    namedNode(bcdOWL_uri + "hasContext"),
     namedNode(inst_uri + "TaskRMContext")
   );
 
@@ -141,7 +141,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
         namedNode(interventionpost_uri)
       );
       writer.addQuad(
-        namedNode(inst_uri),
+        namedNode(interventionpost_uri),
         namedNode(bcdOWL_uri + "hasGuid"),
         namedNode(interventionpost_uri)
       );

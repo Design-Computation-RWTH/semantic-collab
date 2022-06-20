@@ -222,14 +222,26 @@ export default function TaskListCreation(props: TaskListProps) {
         const ParentInterventions = d[1].map((p: any) => {
           // If there is no parent intervention it means it is a Parent itself!
           if (!p.parent_intervention) {
+            console.log("Incoming P");
+            console.log(p);
+
+            /* The Old Parent
             let ParentIntervention = { ...p };
             ParentIntervention.id = Storeys.id + "_" + p.id;
             UpdatedTasks[ParentIntervention.id] = ParentIntervention;
+            */
+
             // Create a Card for every IFC Element
             const IfcElements = Object.entries(FilteredIfcElements).map(
               (e: any) => {
                 //Check if the Element is on the right storey
                 if (e[1].parent.id === Storeys.id) {
+                  let ParentIntervention = { ...p };
+                  ParentIntervention.id = Storeys.id + "_" + p.id + e[0];
+                  ParentIntervention.name = p.name + "_" + e[1].name;
+                  UpdatedTasks[ParentIntervention.id] = ParentIntervention;
+                  console.log(e);
+                  console.log("^this is e");
                   // Generate SubTasks for every Element
                   const SubTasks = d[1].map((s: any) => {
                     // No Parent Tasks
@@ -267,6 +279,7 @@ export default function TaskListCreation(props: TaskListProps) {
                       tempIntervention.buildingElement = e[0];
 
                       UpdatedTasks[tempIntervention.id] = tempIntervention;
+                      console.log(UpdatedTasks);
                       // Check if the parent is the correct one
                       //TODO: Add Task Data here!
                       return (
@@ -296,7 +309,7 @@ export default function TaskListCreation(props: TaskListProps) {
                     >
                       <Accordion.Item
                         style={{ paddingLeft: "5px" }}
-                        label={e[1].name}
+                        label={p.name + "_" + e[1].name}
                         id={e[1].id}
                       >
                         {SubTasks}
@@ -322,13 +335,13 @@ export default function TaskListCreation(props: TaskListProps) {
                 >
                   <Accordion.Item
                     style={{ paddingLeft: "5px" }}
-                    label={ParentIntervention.name}
-                    id={ParentIntervention.id}
+                    label={p.name}
+                    id={p.id}
                   >
                     <Text>Assigned To:</Text>
                     <Form.Select
                       aria-label="Default select example"
-                      id={ParentIntervention.id}
+                      id={p.id}
                       onChange={(event) => AssigneeSelected(event)}
                     >
                       <option>Select a person/organization</option>
