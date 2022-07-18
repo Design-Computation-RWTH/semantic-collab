@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Container, Table, Select, Button } from "@mantine/core";
+import { CloseButton, Accordion, Container, Table, Select, Button } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
-import CloseButton from "react-bootstrap/CloseButton";
+//import CloseButton from "react-bootstrap/CloseButton";
 import TaskDetails from "./TaskDetails";
 
 type TaskListProps = {
@@ -247,9 +247,6 @@ export default function TaskListPreview(props: TaskListProps) {
             }}
             key={taskID + "Task"}
             style={{ padding: 0, margin: 0 }}
-            sx={(theme) => ({
-              backgroundColor: theme.colors.gray[2],
-            })}
           >
             {relatedSubtasks(taskID, st)}
           </Accordion>
@@ -275,9 +272,6 @@ export default function TaskListPreview(props: TaskListProps) {
             contentInner: { padding: 0, margin: 0 },
             content: { padding: 0, margin: 0 },
           }}
-          sx={(theme) => ({
-            backgroundColor: theme.colors.gray[1],
-          })}
         >
           {buildingElementList(t["@id"])}
         </Accordion>
@@ -292,9 +286,6 @@ export default function TaskListPreview(props: TaskListProps) {
           contentInner: { padding: 0, margin: 0 },
           content: { padding: 0, margin: 0 },
         }}
-        sx={(theme) => ({
-          backgroundColor: theme.colors.gray[0],
-        })}
       >
         {MainTasks}
       </Accordion>

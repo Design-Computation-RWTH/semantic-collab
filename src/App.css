@@ -16,6 +16,15 @@
   padding-top: 10px;
 }
 
+.darkmode-switch {
+  display: flex;
+  align-items: stretch;
+  align-content: stretch;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+
 .canvas {
   position: absolute;
   z-index: 0;
@@ -27,7 +36,7 @@
 }
 
 .submenu-header {
-  background-color: var(--caia-header);
+  /* background-color: var(--caia-header); */
   color: white;
   font-family: var(--caia-font);
   font-size: x-large;
@@ -251,6 +260,7 @@ a.disabled {
 }
 
 .viewport {
+  /* background-color: #292929; */
   height: 100%;
   max-height: 100%;
   width: 100%;
@@ -299,7 +309,7 @@ a.disabled {
 
 .left-minus-symbol {
   text-align: left;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
 }
 
 /*input[type="checkbox"] {
@@ -351,12 +361,12 @@ a.disabled {
 }
 
 .caia_card {
-  background-color: #f0f0f0;
+  /* background-color: #f0f0f0; */
   border-color: black;
 }
 
 .btn-caia {
-  background-color: var(--caia-accent);
+  /* background-color: var(--caia-accent); */
   color: white;
   padding-left: 20px;
   padding-right: 20px;
@@ -365,31 +375,31 @@ a.disabled {
   font-size: large;
 }
 .btn-caia:hover {
-  background-color: var(--caia-highlighted-2);
+  /* background-color: var(--caia-highlighted-2); */
   border-color: var(--caia-highlighted-2);
 }
 
 .btn-caia-hidden {
-  background-color: transparent;
+  /* background-color: #333333; */
   color: black;
   height: 100%;
   width: 70%;
   border-color: transparent;
 }
 .btn-caia-hidden:hover {
-  background-color: var(--caia-highlighted-2);
+  /* background-color: var(--caia-highlighted-2); */
   height: 100%;
   width: 70%;
   border-color: transparent;
 }
 
 .btn-caia-icon {
-  background-color: rgba(255, 255, 255, 0);
-  color: white;
+  /* background-color: rgba(255, 255, 255, 0); */
+
   border: 0;
 }
 .btn-caia-icon:hover {
-  background-color: var(--caia-highlighted-2);
+  /* background-color: var(--caia-highlighted-2); */
 }
 
 .btn-caia-icon-size {
@@ -397,12 +407,12 @@ a.disabled {
 }
 
 .btn-caia-icon-black {
-  background-color: rgba(255, 255, 255, 0);
+  /* background-color: rgba(255, 255, 255, 0); */
   color: black;
   border: 0;
 }
 .btn-caia-icon-black:hover {
-  background-color: var(--caia-highlighted-2);
+  /* background-color: var(--caia-highlighted-2); */
 }
 
 .btn-caia-icon-size-black {
@@ -473,22 +483,22 @@ a.disabled {
   content: "Yes";
   text-transform: uppercase;
   padding-left: 10px;
-  background-color: var(--caia-highlighted-2);
+  /* background-color: var(--caia-highlighted-2); */
   color: #fff;
 }
 .toggle-switch-disabled {
-  background-color: #ccc;
+  /* background-color: #ccc; */
   cursor: not-allowed;
 }
 .toggle-switch-disabled::before {
-  background-color: #ccc;
+  /* background-color: #ccc; */
   cursor: not-allowed;
 }
 .toggle-switch-inner::after {
   content: "No";
   text-transform: uppercase;
   padding-right: 10px;
-  background-color: #ccc;
+  /* background-color: #ccc; */
   color: #fff;
   text-align: right;
 }
@@ -496,7 +506,7 @@ a.disabled {
   display: block;
   width: 24px;
   margin: 5px;
-  background: #fff;
+  /* background: #fff; */
   position: absolute;
   top: 0;
   bottom: 0;
@@ -514,7 +524,7 @@ a.disabled {
 
 .btn-project {
   color: white;
-  background-color: var(--caia-accent);
+  /* background-color: var(--caia-accent); */
   font-family: var(--caia-font);
   font-size: larger;
   border: 0 solid;
@@ -522,7 +532,7 @@ a.disabled {
 }
 
 .btn-project:hover {
-  background-color: var(--caia-highlighted-2);
+  /* background-color: var(--caia-highlighted-2); */
 }
 
 .tree-style {
@@ -557,13 +567,13 @@ ul {
   text-align: center;
   /* height: 20%; */
   flex: 0 1 auto;
-  background-color: var(--caia-accent);
+  /* background-color: var(--caia-accent); */
 }
 
 .navbar-wrapper {
   font-family: var(--caia-font);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: var(--caia-main-header);
+  /* background-color: var(--caia-main-header); */
   height: 120px;
   padding: 15px 20px;
   display: flex;
@@ -615,7 +625,7 @@ ul {
 }
 
 .navbar-collapse {
-  background-color: var(--caia-main-header);
+  /* background-color: var(--caia-main-header); */
 }
 
 .navbar-toggle {
@@ -634,7 +644,7 @@ ul {
 }
 
 .footer {
-  background-color: var(--caia-main-header);
+  /* background-color: var(--caia-main-header); */
   color: white;
   text-align: center;
   padding: 0;
@@ -680,7 +690,7 @@ ul {
 /***************** Sidebar *****************/
 
 .sidebar-tab-nav {
-  background-color: var(--caia-header);
+  /* background-color: var(--caia-header); */
   padding: 20px;
   font-family: var(--caia-font);
 }
@@ -703,6 +713,7 @@ ul {
 }
 
 .yscroll {
+  /* background-color:#151515; */
   overflow-y: scroll;
   position: relative;
   height: 100%;

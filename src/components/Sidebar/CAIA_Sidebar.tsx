@@ -105,11 +105,10 @@ export default function CAIA_Sidebar(props: SidebarProps) {
         flexDirection: "column",
       }}
       styles={{
-        body: { height: "95%", width: "100%", maxWidth: "100%" },
+        body: { height: "95%", width: "100%", maxWidth: "100%", backgroundColor: "#00000", },
         root: { height: "100%", width: "100%" },
         tabsListWrapper: { height: "5%" },
       }}
-      color="red"
       grow
       tabPadding={0}
     >

@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Route,
   Routes,
@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { ReactSession } from "react-client-session";
 import PubSub from "pubsub-js";
-import { BsFillPuzzleFill, BsGearWideConnected, BsHouse } from "react-icons/bs";
+import { BsFillPuzzleFill, BsGearWideConnected, BsHouse, BsFillMoonStarsFill ,BsBrightnessHigh, BsSunFill} from "react-icons/bs";
 import logo from "./components/Branding/Icon_v2.svg";
 import ProjectListView from "./pages/ProjectsView";
 import SetupView from "./pages/SetupsView";
@@ -17,9 +17,12 @@ import XeoKitView from "./components/Viewport/CAIA_XeoKitView";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
 import {
+  ActionIcon,
   AppShell,
   Box,
   Button,
+  Checkbox,
+  CheckboxProps,
   Group,
   Header,
   Navbar,
@@ -27,6 +30,7 @@ import {
   Space,
   Text,
   TextInput,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { CAIAAuthProvider } from "./services/CAIA_auth";
 import { ViewerContext } from "./context/dcwebviewerContext";
@@ -36,7 +40,6 @@ import Cookies from "js-cookie";
 export const getAccessToken = () => Cookies.get("access_token");
 export const isAuthenticated = () => !!getAccessToken();
 
-let caia_app: CAIA | null = null;
 let caia_notifications: any[] = [];
 
 // To be able to load static files like web-ifc.wasm
@@ -77,94 +80,65 @@ type CAIAState = {
   projectSelected: any;
 };
 
-class CAIA extends React.Component<CAIAProps, CAIAState> {
-  private readonly un_subProjects_token: PubSubJS.Token;
-  private readonly un_subNotifications_token: PubSubJS.Token;
-  private readonly un_subSidebarName_token: PubSubJS.Token;
-  private readonly un_subAlert: PubSubJS.Token;
-  private name: any;
-  private useruri: any;
+export default function CAIA () {
+  let un_subProjects_token: PubSubJS.Token;
+  let un_subNotifications_token: PubSubJS.Token;
+  let un_subSidebarName_token: PubSubJS.Token;
+  let un_subAlert: PubSubJS.Token;
+  let name: any;
+  let useruri: any;
 
-  constructor(props: CAIAProps | Readonly<CAIAProps>) {
-    super(props);
-    caia_app = this;
+  let initial_pname:any = "";
+  let initial_menustate = false;
+
+  if (ReactSession.get("projectname")) {
+    initial_pname = (ReactSession.get("projectname"));
+    initial_menustate = true;
+  }
+
+  const [projectName, setProjectName] = useState<string>(initial_pname);
+  const [notifications, setNotifications] = useState<string[]|undefined>();
+  const [sidebarName, setSidebarName] = useState<string>("Overview");
+  const [projectSelected, setProjectSelected] = useState<boolean>(initial_menustate);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+  const dark = colorScheme === "light";
+
+
+  useEffect(() => {
+    document.body.style.overflow = "clip";
+    init();
+    return () => {};
+  }, []);
+
+  function init() {
+    //caia_app = this;
     ReactSession.setStoreType("sessionStorage");
 
-    this.un_subProjects_token = PubSub.subscribe(
+    un_subProjects_token = PubSub.subscribe(
       "ProjectName",
-      this.subProjects
+      subProjects
     );
-    this.un_subNotifications_token = PubSub.subscribe(
+    un_subNotifications_token = PubSub.subscribe(
       "Update",
-      this.subUpdates
+      subUpdates
     );
-    this.un_subSidebarName_token = PubSub.subscribe(
+    un_subSidebarName_token = PubSub.subscribe(
       "SidebarName",
-      this.subSidebar
+      subSidebar
     );
 
-    this.un_subAlert = PubSub.subscribe("Alert", this.subAlert.bind(this));
+    un_subAlert = PubSub.subscribe("Alert", subAlert);
 
-    let initial_pname = "";
-    let initial_sidbarname = "Overview";
-    let initial_menustate = false;
-    if (ReactSession.get("projectname")) {
-      initial_pname = ReactSession.get("projectname");
-      initial_menustate = true;
-    }
-    this.state = {
-      projectName: initial_pname,
-      notifications: [],
-      sidebarName: initial_sidbarname,
-      projectSelected: initial_menustate,
-    };
   }
 
-  componentWillUnmount() {
-    PubSub.unsubscribe(this.un_subProjects_token);
-    PubSub.unsubscribe(this.un_subNotifications_token);
-    PubSub.unsubscribe(this.un_subSidebarName_token);
-    PubSub.unsubscribe(this.un_subAlert);
-  }
-
-  componentDidMount() {
-    document.body.style.overflow = "clip";
-  }
-
-  closeToast(message: any) {
+  function closeToast(message: any) {
     caia_notifications = caia_notifications.filter((e) => e !== message);
     // @ts-ignore  Not null.. init at the constructor
-    caia_app.setState({ notifications: caia_notifications });
+    setNotifications(caia_notifications);
   }
 
-  createNotification = (type: any) => {
-    return () => {
-      switch (type) {
-        case "info":
-          NotificationManager.info("Info message");
-          break;
-        case "success":
-          NotificationManager.success("Success message", "Title here");
-          break;
-        case "warning":
-          NotificationManager.warning(
-            "Warning message",
-            "Close after 3000ms",
-            3000
-          );
-          break;
-        case "error":
-          NotificationManager.error("Error message", "Click me!", 5000, () => {
-            alert("callback");
-          });
-          break;
-        default:
-          break;
-      }
-    };
-  };
-
-  subAlert(msg: any, data: { type: any; message: any; title: any }) {
+  function subAlert(msg: any, data: { type: any; message: any; title: any }) {
     switch (data.type) {
       case "info":
         NotificationManager.info(data.message);
@@ -185,49 +159,46 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
     }
   }
 
-  subProjects(msg: any, data: { name: any }) {
+  function subProjects(msg: any, data: { name: any }) {
     // @ts-ignore  Not null.. init at the constructor
-    caia_app.setState({ projectName: data.name });
+    setProjectName(data.name);
     ReactSession.set("projectname", data.name);
     caia_notifications = caia_notifications.filter(
       (e) => e !== "Select a project"
     );
     // @ts-ignore  Not null.. init at the constructor
-    caia_app.setState({ notifications: caia_notifications });
+    setNotifications(caia_notifications);
     // @ts-ignore  Not null.. init at the constructor
-    caia_app.setState({ projectSelected: true });
+    setProjectSelected(true);
   }
 
-  subUpdates(msg: any, data: { txt: any }) {
+  function subUpdates(msg: any, data: { txt: any }) {
     if (caia_notifications.length > 2) caia_notifications = [];
     caia_notifications = caia_notifications.concat(data.txt);
     // @ts-ignore  Not null.. init at the constructor
-    caia_app.setState({ notifications: caia_notifications });
+    setNotifications(caia_notifications);
   }
 
-  subSidebar(msg: any, data: { name: any }) {
+  function subSidebar(msg: any, data: { name: any }) {
     // @ts-ignore  Not null.. init at the constructor
-    caia_app.setState({ sidebarName: data.name });
+    setSidebarName(data.name);
   }
 
-  render() {
     let projectsIconColor: string;
-    let overview = `/projects/${this.state.projectName}/`;
-    let setup = `/projects/${this.state.projectName}/setup`;
+    let overview = `/projects/${projectName}/`;
+    let setup = `/projects/${projectName}/setup`;
     let disabledIcons = "";
 
-    if (this.state.projectName) {
-      projectsIconColor = "white";
+    if (projectName) {
     } else {
-      projectsIconColor = "gray";
       disabledIcons = "disabled";
-      setup = `/projects/${this.state.projectName}/setup`;
+      setup = `/projects/${projectName}/setup`;
     }
     if (getAccessToken()) {
       let token = parseJWT(getAccessToken());
-      this.name = token.name;
-      this.useruri = token.URI;
-    } else this.name = "";
+      name = token.name;
+      useruri = token.URI;
+    } else name = "";
     return (
       <AuthProvider>
         <AppShell
@@ -236,19 +207,34 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
             <Navbar width={{ base: 100 }} p="xl">
               <Navbar.Section mt="xl">
                 <a className={"navbar-icons"} href={`/projects/`}>
-                  <BsHouse size="30" color="white" />
+                  <BsHouse size="30"/>
                 </a>
               </Navbar.Section>
               <Navbar.Section mt="xl">
                 <a className={`navbar-icons ${disabledIcons}`} href={overview}>
-                  <BsFillPuzzleFill size="30" color={projectsIconColor} />
+                  <BsFillPuzzleFill size="30" />
                 </a>
               </Navbar.Section>
               <Navbar.Section mt="xl">
                 <a className={`navbar-icons ${disabledIcons}`} href={setup}>
-                  <BsGearWideConnected size="30" color={projectsIconColor} />
+                  <BsGearWideConnected size="30"  />
                 </a>
               </Navbar.Section>
+              <div className={"darkmode-switch"}>
+                <ActionIcon
+                  variant="transparent"
+                  color={dark ? "blue" : "blue"}
+                  onClick={() => toggleColorScheme()}
+                  title="Toggle color scheme"
+                >
+                  {dark ? (
+                    <BsSunFill style={{ width: 18, height: 18 }} />
+                  ) : (
+                    <BsFillMoonStarsFill style={{ width: 18, height: 18 }} />
+                  )}
+                </ActionIcon>
+              </div>
+              
             </Navbar>
           }
           header={
@@ -262,8 +248,8 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
                   alt="CAIA Logo"
                 />
                 <Space w="xl" />
-                <Text size="xl" color="white">
-                  {this.state.projectName}
+                <Text size="xl" weight={700}>
+                  {projectName}
                 </Text>
               </div>
             </Header>
@@ -276,7 +262,7 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
               alignItems: "stretch",
               flexDirection: "column",
               backgroundColor:
-                theme.colorScheme === "light"
+                theme.colorScheme === "dark"
                   ? theme.colors.dark[8]
                   : theme.colors.gray[0],
             },
@@ -311,7 +297,6 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
       </AuthProvider>
     );
   }
-}
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
 
@@ -426,4 +411,4 @@ function Login() {
     </Box>
   );
 }
-export default withRouter(CAIA);
+//export default withRouter(CAIA);

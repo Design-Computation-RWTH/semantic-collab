@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
-import { Button, Accordion, AccordionState, Text } from "@mantine/core";
+import { Button, Accordion, AccordionState, Text, Container, CloseButton } from "@mantine/core";
 import { Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
@@ -413,55 +413,66 @@ export default function TaskListCreation(props: TaskListProps) {
   });
 
   return (
-    <div>
-      <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
-        {AccordionList}
-      </Accordion>
-      <p />
-      <div className={"caia-center"}>
-        <Button
-          onClick={() => {
-            let tasks2Convert: any = props.TaskJson;
-            let UpdatedTasksArr: any = [];
-            for (const [key, value] of Object.entries(UpdatedTasks)) {
-              UpdatedTasksArr.push(value);
+    <div
+    className={"GalleryContent"}
+    style={{
+      width: "100%",
+      maxWidth: "100%",
+    }}
+  >
+    <Container style={{ width: "100%", maxWidth: "100%" }}>
+      <div>
+        <CloseButton onClick={() => {}} />
+        <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
+          {AccordionList}
+        </Accordion>
+        <p />
+        <div className={"caia-center"}>
+          <Button
+            onClick={() => {
+              let tasks2Convert: any = props.TaskJson;
+              let UpdatedTasksArr: any = [];
+              for (const [key, value] of Object.entries(UpdatedTasks)) {
+                UpdatedTasksArr.push(value);
 
-              let task: any = value;
-              if (task.id === "1ZwJH$85D3YQG5AK5ER1gZ_45623") {
-                console.log(task);
+                let task: any = value;
+                if (task.id === "1ZwJH$85D3YQG5AK5ER1gZ_45623") {
+                  console.log(task);
+                }
               }
-            }
 
-            tasks2Convert.interventions = UpdatedTasksArr;
-            tasks2Convert.intervention_posts =
-              props.TaskJson.intervention_posts;
-            tasks2Convert.intervention_priorities =
-              props.TaskJson.intervention_priorities;
+              tasks2Convert.interventions = UpdatedTasksArr;
+              tasks2Convert.intervention_posts =
+                props.TaskJson.intervention_posts;
+              tasks2Convert.intervention_priorities =
+                props.TaskJson.intervention_priorities;
 
-            let bcfowl = new BcfOWL_Endpoint();
+              let bcfowl = new BcfOWL_Endpoint();
 
-            //let rdfTasks = ConvertTasks(tasks2Convert, ProjectURI);
+              //let rdfTasks = ConvertTasks(tasks2Convert, ProjectURI);
 
-            let rdfTasks;
+              let rdfTasks;
 
-            ConvertTasks(tasks2Convert, ProjectURI).then((e) => {
-              rdfTasks = e;
+              ConvertTasks(tasks2Convert, ProjectURI).then((e) => {
+                rdfTasks = e;
 
-              bcfowl
-                .postRDF(rdfTasks)
-                .then((r) => {
-                  console.log(r);
-                })
-                .catch((e) => {
-                  console.log(e);
-                });
-            });
-          }}
-        >
-          <Text>Create Tasks</Text>
-        </Button>
+                bcfowl
+                  .postRDF(rdfTasks)
+                  .then((r) => {
+                    console.log(r);
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
+              });
+            }}
+          >
+            <Text>Create Tasks</Text>
+          </Button>
+        </div>
+        <p />
       </div>
-      <p />
-    </div>
+    </Container>
+  </div>
   );
 }

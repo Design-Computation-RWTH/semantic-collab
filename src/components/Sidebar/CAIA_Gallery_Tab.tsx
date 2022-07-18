@@ -12,6 +12,7 @@ import {
   Select,
   Group,
   MultiSelect,
+  ActionIcon,
 } from "@mantine/core";
 
 import dayjs from "dayjs";
@@ -601,32 +602,25 @@ export default function CAIA_Gallery_Tab() {
           width: "100%",
           justifyContent: "center",
         }}
-        sx={(theme) => ({ backgroundColor: theme.colors.dark })}
       >
-        <button
-          className="btn-caia-icon"
+        <ActionIcon
           onClick={() => {
             setOpenDrawer(true);
           }}
         >
-          <i className="icon bi-funnel btn-caia-icon-size" />
-        </button>
-        <button className="btn-caia-icon">
-          <i className="icon bi-plus-square btn-caia-icon-size" />
-        </button>
-        <button
-          className="btn-caia-icon"
+          <i className="bi-funnel " />
+        </ActionIcon>
+        <ActionIcon>
+          <i className=" bi-plus-square" />
+        </ActionIcon>
+        <ActionIcon
+          
           onClick={() => {
             downloadBCF();
           }}
         >
-          <span
-            onClick={() => {
-              downloadBCF();
-            }}
-            className="bcficon"
-          />
-        </button>
+          <i className="bi-file-zip" />
+        </ActionIcon>
       </Container>
     </div>
   );

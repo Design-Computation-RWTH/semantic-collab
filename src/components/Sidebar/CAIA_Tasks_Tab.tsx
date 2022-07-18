@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container } from "@mantine/core";
+import { ActionIcon, Container } from "@mantine/core";
 import TaskListPreview from "./Tasks/TaskListPreview";
 import TaskListCreation from "./Tasks/TaskListCreation";
 // @ts-ignore
@@ -53,13 +53,14 @@ export default function CAIA_Tasks_Tab() {
         {ViewState}
       </div>
       <Container
-        style={{ display: "flex", width: "100%", justifyContent: "center" }}
-        sx={(theme) => ({
-          backgroundColor: theme.colors.dark,
-        })}
+                style={{
+                  height: "5%",
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
       >
-        <button
-          className="btn-caia-icon"
+        <ActionIcon
           title="Refresh Tasks"
           onClick={() => {
             if (viewer) {
@@ -69,8 +70,8 @@ export default function CAIA_Tasks_Tab() {
             }
           }}
         >
-          <i className="icon bi-plus-square btn-caia-icon-size" />
-        </button>
+          <i className=" bi-plus-square " />
+        </ActionIcon>
       </Container>
     </div>
   );

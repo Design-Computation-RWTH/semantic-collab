@@ -12,7 +12,7 @@ import {
 } from "react-icons/bs";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
-import { Container, SimpleGrid } from "@mantine/core";
+import { ActionIcon, Container, SimpleGrid } from "@mantine/core";
 // @ts-ignore
 import { Viewer, LASLoaderPlugin } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
@@ -388,15 +388,17 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   }
 
   return (
-    <div className="caia-fill caia-background">
+    <div className="caia-fill">
       <div className="yscroll">{leftPanel()}</div>
       <Container
-        style={{ display: "flex", width: "100%", justifyContent: "center" }}
-        sx={(theme) => ({
-          backgroundColor: theme.colors.dark,
-        })}
+                style={{
+                  height: "5%",
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
       >
-        <button
+        <ActionIcon
           className="btn-caia-icon"
           title="Refresh List"
           onClick={() => {
@@ -404,49 +406,28 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
             //alert("Test alert. ");
           }}
         >
-          <i className="icon bi-arrow-clockwise btn-caia-icon-size" />
-        </button>
-        <button
-          className="btn-caia-icon"
-          onClick={(e) => {
-            /*console.log(__dirname);
-            const lasLoader = new LASLoaderPlugin(viewer, {
-              //skip: 1, // Default,
-              //fp64: false,
-              colorDepth: "16",
-            });
-
-            const modelEntity = lasLoader.load({
-              id: "myModel",
-              src: laz,
-            });
-
-            modelEntity.on("loaded", () => {
-              console.log("Loaded PC");
-              viewer.cameraFlight.flyTo("myModel");*/
-            //...
-            //});
-          }}
+          <i className=" bi-arrow-clockwise" />
+        </ActionIcon>
+        <ActionIcon
           title="Add spatial node"
         >
-          <i className="icon bi-folder-plus btn-caia-icon-size" />
-        </button>
-        <button
-          className="btn-caia-icon"
+          <i className=" bi-folder-plus " />
+        </ActionIcon>
+        <ActionIcon
           title="Upload Spatial Representation"
           onClick={() => {
             UploadFileFieldRef.current.click();
           }}
         >
-          <i className="icon bi-box-arrow-up btn-caia-icon-size" />
-        </button>
-        <input
-          id="file-input"
-          type="file"
-          ref={UploadFileFieldRef}
-          className="invisible"
-          onChange={onFileSelectionChangeHandler}
-        />
+          <i className=" bi-box-arrow-up" />
+        </ActionIcon>
+          <input
+            id="file-input"
+            type="file"
+            ref={UploadFileFieldRef}
+            className="invisible"
+            onChange={onFileSelectionChangeHandler}
+          />
       </Container>
     </div>
   );

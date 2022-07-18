@@ -6,8 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import { NotificationManager } from "react-notifications";
 import * as BcfOWL_Endpoint_types from "./types/BcfOWL_Endpoint_types";
 
-// let base_uri = "https://caia.herokuapp.com";
-
 export const getAccessToken = () => Cookies.get("access_token");
 export const getServerUrl = () => Cookies.get("url");
 

@@ -9,6 +9,7 @@ import {
   ColorSchemeProvider,
   ColorScheme,
 } from "@mantine/core";
+import { useLocalStorage } from '@mantine/hooks';
 import { NotificationsProvider } from "@mantine/notifications";
 import ViewerProvider from "./context/dcwebviewerContext";
 import BcfOWLProvider from "./context/bcfOWLservercontext";
@@ -16,9 +17,14 @@ import { ModalsProvider } from "@mantine/modals";
 import CAIA from "./App";
 
 const Root = () => {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+
+    const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+      key: 'mantine-color-scheme',
+      defaultValue: 'dark',
+      getInitialValueInEffect: true,
+    });
 
   return (
     <ColorSchemeProvider
@@ -29,27 +35,7 @@ const Root = () => {
         <BcfOWLProvider>
           <ViewerProvider>
             <MantineProvider
-              theme={{
-                colorScheme,
-                colors: {
-                  // override dark colors to change them for all components
-                  dark: [
-                    "#000000",
-                    "#acaebf",
-                    "#212121",
-                    "#666980",
-                    "#4d4f66",
-                    "#e7effd",
-                    "#868686",
-                    "#363636",
-                    "#01c0d21",
-                    "#01010a",
-                  ],
-                },
-                primaryColor: colorScheme === "light" ? "dark" : "gray",
-                fontFamily: "Verdana, sans-serif",
-                spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
-              }}
+              theme={{colorScheme: colorScheme}} withGlobalStyles withNormalizeCSS
             >
               <ModalsProvider>
                 <React.StrictMode>
@@ -62,7 +48,7 @@ const Root = () => {
           </ViewerProvider>
         </BcfOWLProvider>
       </NotificationsProvider>
-    </ColorSchemeProvider>
+   </ColorSchemeProvider>
   );
 };
 

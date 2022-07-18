@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
 // @ts-ignore
 import { StoreyViewsPlugin } from "@xeokit/xeokit-sdk";
 // @ts-ignore
 import PubSub from "pubsub-js";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
-import { Table, Switch, Stack, Group } from "@mantine/core";
+import { Table, Switch, Stack, Group, Text, Button, ActionIcon } from "@mantine/core";
 import {
   DcWebViewerContextType,
   SelectedDocument,
@@ -140,13 +139,15 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
       <tbody>
         <tr key={props.document.id}>
           <td className="file-component">
-            <i className={determineEnding()} />
+            <ActionIcon size="xl">
+              <i className={determineEnding()} />
+            </ActionIcon>
             <Button
-              variant="outline-primary"
-              className="btn-caia-hidden"
+              size="md"
+              style={{ width: "70%"}}
               onClick={showDocumentDetails}
             >
-              {props.document.filename}
+              <Text size="sm">{props.document.filename}</Text>
             </Button>
             <Switch
               id={props.document.id}

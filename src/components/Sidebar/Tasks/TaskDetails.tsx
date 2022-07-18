@@ -10,10 +10,7 @@ type TopicTableProps = {
   topic_guid: string;
 };
 
-enum PropertyTypes {
-  Status = "StatusRow",
-  Type = "TopicTypeRow",
-}
+
 
 function TopicTable(props: TopicTableProps) {
   const [topic_guid, setTopic_guid] = useState<string>(props.topic_guid);

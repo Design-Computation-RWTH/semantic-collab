@@ -18,12 +18,15 @@ import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import * as bcfOWL_API from "../../services/types/bcfOWL_API_types";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
+import Cookies from "js-cookie";
 
 type ProjectElementProps = {
   project: { projectName: string; projectId: string };
   keyvalue: string;
   history: any;
 };
+
+export const getServerUrl = () => Cookies.get("url");
 
 export default function ProjectElement(props: ProjectElementProps) {
   const navigate = useNavigate();
@@ -38,12 +41,14 @@ export default function ProjectElement(props: ProjectElementProps) {
 
   function init() {
     let bcfowl = new BcfOWL_Endpoint();
+    console.log(serverUrl)
     bcfowl
       .describeNoProject(
-        serverUrl + "/graph/" + props.project.projectId + "/",
+        getServerUrl() + "/graph/" + props.project.projectId + "/",
         props.project.projectId
       )
       .then((r) => {
+        console.log(r)
         if (r.comment) {
           setDescription(r.comment);
         }
@@ -60,7 +65,7 @@ export default function ProjectElement(props: ProjectElementProps) {
   return (
     <Center>
       <Card
-        style={{ alignContent: "center", width: "340px", minHeight: "200px" }}
+        style={{ alignContent: "center", width: "340px", minHeight: "200px" , display: "flex", flexDirection: "column", justifyContent: "space-between"}}
         withBorder={true}
         // color={"blue"}
         p="md"

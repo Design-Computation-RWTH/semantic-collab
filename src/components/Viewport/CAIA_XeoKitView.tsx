@@ -11,12 +11,9 @@ import {
   DistanceMeasurementsPlugin,
   buildGridGeometry,
   VBOGeometry,
-  DirLight,
-  AmbientLight,
   NavCubePlugin,
   Texture,
   buildPlaneGeometry,
-  buildSphereGeometry,
   ReadableGeometry,
   Mesh,
   PhongMaterial,
@@ -62,10 +59,8 @@ export default function CAIA_XeoKitView() {
     setViewer,
     setGalleryScreen,
     setActiveGalleryTopic,
-    imageList,
     setLargeGalleryImg,
     setActiveTab,
-    activeTab,
   } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   let imageservice = new ImageService();
@@ -170,10 +165,10 @@ export default function CAIA_XeoKitView() {
         viewer.scene,
         buildGridGeometry({
           size: 1000,
-          divisions: 1000,
+          divisions: 100,
         })
       ),
-      position: [0, -1.6, 0],
+      position: [0, 0, 0],
       collidable: false,
     });
 
@@ -642,16 +637,15 @@ export default function CAIA_XeoKitView() {
         }}
       >
         <canvas id="viewport_canvas" className="viewport" />
-        <Paper shadow="xl" radius="xl" p="xs" className="plan-toggle">
-          <Switch
-            label="3D"
-            size="lg"
-            color="gray"
+        <Switch
+            onLabel="3D"
+            className="plan-toggle"
+            offLabel="2D"
+            size="xl"
             onClick={(e: any) => {
               PubSub.publish("ChangeViewMode", { test: "test" });
             }}
           />
-        </Paper>
         <canvas id="myNavCubeCanvas" className="viewport-nav-cube" />
       </div>
     </Container>
