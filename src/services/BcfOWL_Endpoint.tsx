@@ -6,9 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 import { NotificationManager } from "react-notifications";
 import * as BcfOWL_Endpoint_types from "./types/BcfOWL_Endpoint_types";
 
-const base_uri = "https://caia.herokuapp.com";
+// let base_uri = "https://caia.herokuapp.com";
 
 export const getAccessToken = () => Cookies.get("access_token");
+export const getServerUrl = () => Cookies.get("url");
+
+let base_uri:any;
+
 export const bcfOWLPrefixes =
   "PREFIX bcfOWL:<http://lbd.arch.rwth-aachen.de/bcfOWL#>\n\n";
 export const geoPrefix =
@@ -21,7 +25,10 @@ class BcfOWL_Endpoint {
   private readonly project_id: any;
   private readonly follow: RequestRedirect = "follow";
 
+  
+
   constructor() {
+    base_uri = getServerUrl();
     this.myHeaders = new Headers();
     this.myHeaders.append("Authorization", "Bearer " + getAccessToken());
     //this.myHeaders.append("accept", "text/plain");

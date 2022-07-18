@@ -4,7 +4,8 @@ import Cookies from "js-cookie";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
 import * as bcfOWL_API_types from "./types/bcfOWL_API_types";
-const base_uri = "https://caia.herokuapp.com";
+let base_uri: any;
+export const getServerUrl = () => Cookies.get("url");
 export const getAccessToken = () => Cookies.get("access_token");
 
 class BCFAPI {
@@ -27,6 +28,7 @@ class BCFAPI {
   };
 
   constructor() {
+    base_uri = getServerUrl();
     this.headers = new Headers();
     this.headers.append("Authorization", "Bearer " + getAccessToken());
     this.requestGetOptions = {
@@ -58,6 +60,7 @@ class BCFAPI {
   }
 
   async getProjects(): Promise<bcfOWL_API_types.ProjectType[]> {
+    console.log(base_uri);
     const response = await fetch(
       base_uri + "/bcf/3.0/projects",
       this.requestGetOptions

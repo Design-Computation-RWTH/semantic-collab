@@ -29,6 +29,8 @@ import {
   TextInput,
 } from "@mantine/core";
 import { CAIAAuthProvider } from "./services/CAIA_auth";
+import { ViewerContext } from "./context/dcwebviewerContext";
+import { DcWebViewerContextType } from "./@types/dcwebviewer";
 import { useForm } from "@mantine/form";
 import Cookies from "js-cookie";
 export const getAccessToken = () => Cookies.get("access_token");
@@ -312,8 +314,14 @@ class CAIA extends React.Component<CAIAProps, CAIAState> {
 }
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  let signin = (username: string, password: string, callback: VoidFunction) => {
-    return CAIAAuthProvider.signin(username, password, () => {
+
+  const { serverUrl, setServerUrl } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
+
+  let signin = (url: string, username: string, password: string, callback: VoidFunction) => {
+    return CAIAAuthProvider.signin(url, username, password, () => {
+      setServerUrl(url);
       callback();
     });
   };
@@ -330,7 +338,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 interface AuthContextType {
-  signin: (username: string, password: string, callback: VoidFunction) => void;
+  signin: (url:string, username: string, password: string, callback: VoidFunction) => void;
   signout: (callback: VoidFunction) => void;
 }
 
@@ -363,6 +371,7 @@ function Login() {
 
   const form = useForm({
     initialValues: {
+      url: "",
       username: "",
       password: "",
     },
@@ -374,10 +383,11 @@ function Login() {
   });
 
   function handleSubmit(values: any) {
+    let url = values.url;
     let username = values.username;
     let password = values.password;
 
-    auth.signin(username, password, () => {
+    auth.signin(url, username, password, () => {
       // Send them back to the page they tried to visit when they were
       // redirected to the login page. Use { replace: true } so we don't create
       // another entry in the history stack for the login page.  This means that
@@ -391,6 +401,12 @@ function Login() {
   return (
     <Box style={{ paddingTop: "10%" }} sx={{ maxWidth: 300 }} mx="auto">
       <form onSubmit={form.onSubmit(handleSubmit)}>
+      <TextInput
+          required
+          label="Server URL"
+          placeholder="https://yourserver.url"
+          {...form.getInputProps("url")}
+        />
         <TextInput
           required
           label="Username"

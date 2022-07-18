@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 import { Table, Select } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-// @ts-ignore
-import { ReactSession } from "react-client-session";
-import PubSub from "pubsub-js";
 import dayjs from "dayjs";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";

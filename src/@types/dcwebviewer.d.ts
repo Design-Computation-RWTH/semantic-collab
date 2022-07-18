@@ -17,6 +17,9 @@ export type SelectedDocument = {
 };
 
 export type DcWebViewerContextType = {
+  serverUrl: string;
+  setServerUrl: Dispatch<SetStateAction<string>>;
+
   viewer: Viewer;
   setViewer: Dispatch<SetStateAction<Viewer>>;
 

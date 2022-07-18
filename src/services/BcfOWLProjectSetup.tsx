@@ -4,9 +4,10 @@ import Cookies from "js-cookie";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
 
-const base_uri = "https://caia.herokuapp.com";
+let base_uri: any;
 
 export const getAccessToken = () => Cookies.get("access_token");
+export const getServerUrl = () => Cookies.get("url");
 export const bcfOWLPrefixes =
   "PREFIX bcfOWL:<http://lbd.arch.rwth-aachen.de/bcfOWL#>\n";
 class BcfOWLProjectSetup {
@@ -15,6 +16,7 @@ class BcfOWLProjectSetup {
   private readonly follow: RequestRedirect = "follow";
 
   constructor() {
+    base_uri = getServerUrl();
     this.myHeaders = new Headers();
     this.myHeaders.append("Authorization", "Bearer " + getAccessToken());
     this.myHeaders.append("Accept", "application/ld+json");
@@ -393,7 +395,7 @@ class BcfOWLProjectSetup {
       description: project_description,
     });
 
-    fetch("https://caia.herokuapp.com/bcf/sparql/projects", {
+    fetch(base_uri+"/bcf/sparql/projects", {
       method: "POST",
       headers: myHeaders,
       body: raw,

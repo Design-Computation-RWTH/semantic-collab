@@ -1,10 +1,9 @@
 import Cookies from "js-cookie";
 
-const base_uri = "https://caia.herokuapp.com";
-
 async function doLogin(
-  loginname: String,
-  password: String,
+  url: string,
+  loginname: string,
+  password: string,
   callback: VoidFunction
 ) {
   let myHeaders = new Headers();
@@ -21,12 +20,13 @@ async function doLogin(
     body: raw,
     redirect: "follow",
   };
-  await fetch(base_uri + "/bcf/3.0/auth/login", requestOptions)
+  await fetch(url + "/bcf/3.0/auth/login", requestOptions)
     .then((response) => response.json())
     .then((result) => {
       if (result.token) {
         Cookies.set("access_token", result.token);
         Cookies.set("refresh_token", result.token);
+        Cookies.set("url", url);
         callback();
       }
     })
@@ -37,9 +37,14 @@ async function doLogin(
 
 const CAIAAuthProvider = {
   isAuthenticated: false,
-  signin(username: String, password: String, callback: VoidFunction) {
+  signin(
+    url: string,
+    username: string,
+    password: string,
+    callback: VoidFunction
+  ) {
     CAIAAuthProvider.isAuthenticated = true;
-    doLogin(username, password, callback);
+    doLogin(url, username, password, callback);
   },
   signout(callback: VoidFunction) {
     CAIAAuthProvider.isAuthenticated = false;

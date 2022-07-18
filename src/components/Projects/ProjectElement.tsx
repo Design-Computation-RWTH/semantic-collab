@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import DeleteProjectsModal from "../Modals/DeleteProjectModal";
 import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import * as bcfOWL_API from "../../services/types/bcfOWL_API_types";
+import { ViewerContext } from "../../context/dcwebviewerContext";
+import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 
 type ProjectElementProps = {
   project: { projectName: string; projectId: string };
@@ -26,6 +28,9 @@ type ProjectElementProps = {
 export default function ProjectElement(props: ProjectElementProps) {
   const navigate = useNavigate();
   const [description, setDescription] = useState<string>("");
+  const { serverUrl } = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
 
   useEffect(() => {
     init();
@@ -35,7 +40,7 @@ export default function ProjectElement(props: ProjectElementProps) {
     let bcfowl = new BcfOWL_Endpoint();
     bcfowl
       .describeNoProject(
-        "https://caia.herokuapp.com/graph/" + props.project.projectId + "/",
+        serverUrl + "/graph/" + props.project.projectId + "/",
         props.project.projectId
       )
       .then((r) => {

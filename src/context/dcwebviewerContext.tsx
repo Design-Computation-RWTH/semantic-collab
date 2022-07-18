@@ -13,6 +13,9 @@ export const ViewerContext = React.createContext<DcWebViewerContextType | null>(
 );
 
 const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
+
+  const [serverUrl, setServerUrl] = React.useState<string>("");
+
   const [visibleDocuments, setVisibleDocuments] = React.useState<
     VisibleDocument[]
   >([]);
@@ -67,6 +70,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
   return (
     <ViewerContext.Provider
       value={{
+        serverUrl,
+        setServerUrl,
         viewer,
         setViewer,
         file,

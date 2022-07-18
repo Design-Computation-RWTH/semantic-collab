@@ -3,8 +3,9 @@ import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 
 //TODO: base_uri should be an env variable
-const base_uri = "https://caia.herokuapp.com";
+let base_uri:any;
 export const getAccessToken = () => Cookies.get("access_token");
+export const getServerUrl = () => Cookies.get("url");
 
 class ImageService {
   private readonly myHeaders: Headers;
@@ -17,6 +18,7 @@ class ImageService {
   };
 
   constructor() {
+    base_uri = getServerUrl();
     this.myHeaders = new Headers();
     this.myHeaders.append("Authorization", "Bearer " + getAccessToken());
     this.requestOptions = {
@@ -31,7 +33,7 @@ class ImageService {
     console.log("read snapshot");
 
     const response = await fetch(
-      "https://caia.herokuapp.com/bcf/3.0/projects/" +
+      base_uri + "/bcf/3.0/projects/" +
         this.project_id +
         "/topics/" +
         topic_id +
