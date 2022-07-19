@@ -27,6 +27,7 @@ async function doLogin(
         Cookies.set("access_token", result.token);
         Cookies.set("refresh_token", result.token);
         Cookies.set("url", url);
+        Cookies.set("username", loginname);
         callback();
       }
     })
@@ -48,6 +49,11 @@ const CAIAAuthProvider = {
   },
   signout(callback: VoidFunction) {
     CAIAAuthProvider.isAuthenticated = false;
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+    Cookies.remove("url");
+    Cookies.remove("username");
+    console.log("Logged Out");
     setTimeout(callback, 100);
   },
 };

@@ -30,7 +30,6 @@ class ImageService {
   }
 
   async getSnapShot(topic_id: string, viewpoint_id: string) {
-    console.log("read snapshot");
 
     const response = await fetch(
       base_uri + "/bcf/3.0/projects/" +
@@ -67,7 +66,6 @@ class ImageService {
   }
 
   async getImageData4GUID(viewpoint_guid: string) {
-    console.log("read snapshot");
     const response = await fetch(
       base_uri + "/files/" + this.project_id + "/" + viewpoint_guid + ".png",
       this.requestOptions
@@ -80,7 +78,6 @@ class ImageService {
   }
 
   async getImageData4URL(image_url: RequestInfo) {
-    console.log("read snapshot");
     const response = await fetch(image_url, this.requestOptions);
     if (!response.ok) {
       const message = `An error has occurred: ${response.status}`;
@@ -90,7 +87,6 @@ class ImageService {
   }
 
   async postFile(file: string, filename: string) {
-    console.log("Upload File");
     let file_url = base_uri + "/files/" + this.project_id + "/" + filename;
 
     let myHeaders = new Headers();
@@ -113,7 +109,6 @@ class ImageService {
       const message = `An error has occurred: ${response.status}`;
       throw new Error(message);
     }
-    console.log("File Uploaded");
     return response;
   }
 }

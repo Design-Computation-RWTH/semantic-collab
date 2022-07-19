@@ -18,7 +18,7 @@
 
 .darkmode-switch {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   align-content: stretch;
   flex-direction: column;
   justify-content: flex-end;

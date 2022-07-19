@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Route,
   Routes,
@@ -19,12 +19,13 @@ import { NotificationManager } from "react-notifications";
 import {
   ActionIcon,
   AppShell,
+  Avatar,
   Box,
   Button,
   Checkbox,
-  CheckboxProps,
   Group,
   Header,
+  Menu,
   Navbar,
   PasswordInput,
   Space,
@@ -36,8 +37,10 @@ import { CAIAAuthProvider } from "./services/CAIA_auth";
 import { ViewerContext } from "./context/dcwebviewerContext";
 import { DcWebViewerContextType } from "./@types/dcwebviewer";
 import { useForm } from "@mantine/form";
+import { useLocalStorage } from '@mantine/hooks';
 import Cookies from "js-cookie";
 export const getAccessToken = () => Cookies.get("access_token");
+export const getUserName = () => Cookies.get("username");
 export const isAuthenticated = () => !!getAccessToken();
 
 let caia_notifications: any[] = [];
@@ -71,15 +74,6 @@ function parseJWT(token: string | undefined) {
   return JSON.parse(jsonPayload);
 }
 
-type CAIAProps = {};
-
-type CAIAState = {
-  projectName: string;
-  notifications: any[];
-  sidebarName: string;
-  projectSelected: any;
-};
-
 export default function CAIA () {
   let un_subProjects_token: PubSubJS.Token;
   let un_subNotifications_token: PubSubJS.Token;
@@ -87,6 +81,7 @@ export default function CAIA () {
   let un_subAlert: PubSubJS.Token;
   let name: any;
   let useruri: any;
+  let auth = useAuth();
 
   let initial_pname:any = "";
   let initial_menustate = false;
@@ -130,12 +125,6 @@ export default function CAIA () {
 
     un_subAlert = PubSub.subscribe("Alert", subAlert);
 
-  }
-
-  function closeToast(message: any) {
-    caia_notifications = caia_notifications.filter((e) => e !== message);
-    // @ts-ignore  Not null.. init at the constructor
-    setNotifications(caia_notifications);
   }
 
   function subAlert(msg: any, data: { type: any; message: any; title: any }) {
@@ -184,119 +173,133 @@ export default function CAIA () {
     setSidebarName(data.name);
   }
 
-    let projectsIconColor: string;
-    let overview = `/projects/${projectName}/`;
-    let setup = `/projects/${projectName}/setup`;
-    let disabledIcons = "";
-
-    if (projectName) {
-    } else {
-      disabledIcons = "disabled";
-      setup = `/projects/${projectName}/setup`;
-    }
-    if (getAccessToken()) {
-      let token = parseJWT(getAccessToken());
-      name = token.name;
-      useruri = token.URI;
-    } else name = "";
-    return (
-      <AuthProvider>
-        <AppShell
-          padding={0}
-          navbar={
-            <Navbar width={{ base: 100 }} p="xl">
-              <Navbar.Section mt="xl">
-                <a className={"navbar-icons"} href={`/projects/`}>
-                  <BsHouse size="30"/>
-                </a>
-              </Navbar.Section>
-              <Navbar.Section mt="xl">
-                <a className={`navbar-icons ${disabledIcons}`} href={overview}>
-                  <BsFillPuzzleFill size="30" />
-                </a>
-              </Navbar.Section>
-              <Navbar.Section mt="xl">
-                <a className={`navbar-icons ${disabledIcons}`} href={setup}>
-                  <BsGearWideConnected size="30"  />
-                </a>
-              </Navbar.Section>
-              <div className={"darkmode-switch"}>
-                <ActionIcon
-                  variant="transparent"
-                  color={dark ? "blue" : "blue"}
-                  onClick={() => toggleColorScheme()}
-                  title="Toggle color scheme"
-                >
-                  {dark ? (
-                    <BsSunFill style={{ width: 18, height: 18 }} />
-                  ) : (
-                    <BsFillMoonStarsFill style={{ width: 18, height: 18 }} />
-                  )}
-                </ActionIcon>
-              </div>
-              
-            </Navbar>
-          }
-          header={
-            <Header height={"7vh"} p="xs">
-              <div className={"caia-header-row"}>
-                <img
-                  src={logo}
-                  width="60"
-                  height="60"
-                  className="d-inline-block align-content-center"
-                  alt="CAIA Logo"
-                />
-                <Space w="xl" />
-                <Text size="xl" weight={700}>
-                  {projectName}
-                </Text>
-              </div>
-            </Header>
-          }
-          styles={(theme) => ({
-            main: {
-              display: "flex",
-              alignContent: "stretch",
-              justifyContent: "space-evenly",
-              alignItems: "stretch",
-              flexDirection: "column",
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[8]
-                  : theme.colors.gray[0],
-            },
-            body: { height: "93vh" },
-          })}
-        >
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/projects/:id/setup" element={<SetupView />} />
-            <Route
-              path="/projects/:id/"
-              element={
-                <RequireAuth>
-                  <div style={{ height: "100%" }} className="caia-fill">
-                    <XeoKitView />
-                  </div>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/projects"
-              element={
-                <RequireAuth>
-                  <ProjectListView />
-                </RequireAuth>
-              }
-            />
-            <Route path="" element={<Navigate to="/projects" replace />} />
-            <Route path="/web-ifc.wasm" element={<Reload />} />
-          </Routes>
-        </AppShell>
-      </AuthProvider>
-    );
+  
+  let nav = useNavigate();
+  function Logout() {
+    CAIAAuthProvider.signout(() => {
+      nav("/login", {replace: false});
+    })
   }
+
+
+  let overview = `/projects/${projectName}/`;
+  let setup = `/projects/${projectName}/setup`;
+  let disabledIcons = "";
+
+  if (projectName) {
+  } else {
+    disabledIcons = "disabled";
+    setup = `/projects/${projectName}/setup`;
+  }
+  if (getAccessToken()) {
+    let token = parseJWT(getAccessToken());
+    name = token.name;
+  } else name = "";
+  return (
+    <AuthProvider>
+      <AppShell
+        padding={0}
+        navbar={
+          <Navbar width={{ base: 100 }} p="xl">
+            <Navbar.Section mt="xl">
+              <a className={"navbar-icons"} href={`/projects/`}>
+                <BsHouse size="30"/>
+              </a>
+            </Navbar.Section>
+            <Navbar.Section mt="xl">
+              <a className={`navbar-icons ${disabledIcons}`} href={overview}>
+                <BsFillPuzzleFill size="30" />
+              </a>
+            </Navbar.Section>
+            <Navbar.Section mt="xl">
+              <a className={`navbar-icons ${disabledIcons}`} href={setup}>
+                <BsGearWideConnected size="30"  />
+              </a>
+            </Navbar.Section>
+            <div className={"darkmode-switch"}>
+              <Avatar radius="xl" size="md">
+                <Menu>
+                  <Menu.Label>{getUserName()}</Menu.Label>
+                  <Menu.Item onClick={() => {Logout()}}>Logout</Menu.Item>
+                </Menu>
+              </Avatar>
+              <Space h="xl" />
+              <ActionIcon
+                variant="transparent"
+                color={dark ? "blue" : "blue"}
+                onClick={() => toggleColorScheme()}
+                title="Toggle color scheme"
+              >
+                {dark ? (
+                  <BsSunFill style={{ width: 18, height: 18 }} />
+                ) : (
+                  <BsFillMoonStarsFill style={{ width: 18, height: 18 }} />
+                )}
+              </ActionIcon>
+            </div>
+            
+          </Navbar>
+        }
+        header={
+          <Header height={"7vh"} p="xs">
+            <div className={"caia-header-row"}>
+              <img
+                src={logo}
+                width="60"
+                height="60"
+                className="d-inline-block align-content-center"
+                alt="CAIA Logo"
+              />
+              <Space w="xl" />
+              <Text size="xl" weight={700}>
+                {projectName}
+              </Text>
+            </div>
+          </Header>
+        }
+        styles={(theme) => ({
+          main: {
+            display: "flex",
+            alignContent: "stretch",
+            justifyContent: "space-evenly",
+            alignItems: "stretch",
+            flexDirection: "column",
+            backgroundColor:
+              theme.colorScheme === "dark"
+                ? theme.colors.dark[8]
+                : theme.colors.gray[0],
+          },
+          body: { height: "93vh" },
+        })}
+      >
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/projects/:id/setup" element={<SetupView />} />
+          <Route
+            path="/projects/:id/"
+            element={
+              <RequireAuth>
+                <div style={{ height: "100%" }} className="caia-fill">
+                  <XeoKitView />
+                </div>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <RequireAuth>
+                <ProjectListView />
+              </RequireAuth>
+            }
+          />
+          <Route path="" element={<Navigate to="/projects" replace />} />
+          <Route path="/web-ifc.wasm" element={<Reload />} />
+        </Routes>
+      </AppShell>
+    </AuthProvider>
+  );
+}
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
 
@@ -351,14 +354,39 @@ function Login() {
   let navigate = useNavigate();
   let location = useLocation();
   let auth = useAuth();
+
+
+  const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
+  
   // @ts-ignore
   let from = location.state?.from?.pathname || "/";
 
+  const [URL, setURL] = useLocalStorage<string>({
+    key: 'URL',
+    defaultValue: '',
+  });
+  const [user, setUser] = useLocalStorage<string>({
+    key: 'user',
+    defaultValue: '',
+  });
+  const [password, setPassword] = useLocalStorage<string>({
+    key: 'password',
+    defaultValue: '',
+  });
+  const [remember, setRemember] = useLocalStorage<boolean>({
+    key: 'remember',
+    defaultValue: false,
+  });
+
+  let initURL:string = remember ? URL : "";
+  let initUser:string = remember ? user : "";
+  let initPassword: string = remember ? password : "";
+
   const form = useForm({
     initialValues: {
-      url: "",
-      username: "",
-      password: "",
+      url: initURL,
+      username: initUser,
+      password: initPassword,
     },
 
     validate: {
@@ -368,6 +396,18 @@ function Login() {
   });
 
   function handleSubmit(values: any) {
+
+    setRemember(ref.current.checked);
+    if(ref.current.checked) {
+      setURL(values.url);
+      setUser(values.username);
+      setPassword(values.password);
+    } else {
+      setURL("");
+      setUser("");
+      setPassword("");
+    }
+
     let url = values.url;
     let username = values.username;
     let password = values.password;
@@ -388,27 +428,38 @@ function Login() {
       <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
           required
+          type="url"
           label="Server URL"
           placeholder="https://yourserver.url"
           {...form.getInputProps("url")}
         />
         <TextInput
           required
+          type="email"
           label="Username"
           placeholder="your@email.com"
           {...form.getInputProps("username")}
         />
-        <PasswordInput
+        <TextInput
           required
+          type="password"
           label="Password"
           placeholder="Enter your Password"
           {...form.getInputProps("password")}
         />
         <Group position="right" mt="md">
+          <Checkbox
+            ref={ref}
+            label="Remember"
+            defaultChecked={remember}
+          />
           <Button type="submit">Submit</Button>
         </Group>
       </form>
     </Box>
   );
 }
+
+
+
 //export default withRouter(CAIA);
