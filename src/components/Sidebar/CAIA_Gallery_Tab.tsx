@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import CloseButton from "react-bootstrap/CloseButton";
 import {
   Container,
   Image,
@@ -13,11 +12,10 @@ import {
   Group,
   MultiSelect,
   ActionIcon,
+  CloseButton
 } from "@mantine/core";
 
-import dayjs from "dayjs";
-
-import { DatePicker, DateRangePicker } from "@mantine/dates";
+import { DateRangePicker } from "@mantine/dates";
 
 import ImageService from "../../services/ImageService";
 import BCFAPI from "../../services/BCFAPI";

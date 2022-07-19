@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import { ReactSession } from "react-client-session";
-import CloseButton from "react-bootstrap/CloseButton";
 import RepresentationDetails from "./Representations/RepresentationDetails";
 import PubSub from "pubsub-js";
 import { showNotification, updateNotification } from "@mantine/notifications";
@@ -12,7 +11,7 @@ import {
 } from "react-icons/bs";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
-import { ActionIcon, Container, SimpleGrid } from "@mantine/core";
+import { ActionIcon, Container, SimpleGrid, CloseButton } from "@mantine/core";
 // @ts-ignore
 import { Viewer, LASLoaderPlugin } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
