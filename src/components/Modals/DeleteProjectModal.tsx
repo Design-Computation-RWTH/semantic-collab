@@ -30,8 +30,6 @@ export default function DeleteProjectsModal(props: DeleteProps) {
   const [opened, setOpened] = useState(false);
 
   function deleteProject() {
-    console.log(props.projectID);
-    console.log(parseJWT(getAccessToken()).URI);
 
     let bcfowl_setup = new BcfOWLProjectSetup();
     bcfowl_setup

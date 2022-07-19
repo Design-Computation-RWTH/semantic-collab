@@ -1,14 +1,17 @@
 import { useForm } from "@mantine/form";
-import { Box, Button, Group, Modal, Textarea, TextInput } from "@mantine/core";
+import { Box, Button, Group, Modal, Textarea, TextInput, Text } from "@mantine/core";
 import React, { useState } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { useModals } from "@mantine/modals";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
 import PubSub from "pubsub-js";
+import { useNavigate } from "react-router-dom";
 
+//@ts-ignore
 export default function AddProjectsModal() {
   const [opened, setOpened] = useState(false);
   const modals = useModals();
+  let navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -37,6 +40,7 @@ export default function AddProjectsModal() {
                   PubSub.publish("Update", {
                     txt: "Project created. Name: " + values.Name,
                   });
+                  
                   modals.closeModal("ProjectAddModal");
                   setOpened(false);
                 });
@@ -64,7 +68,7 @@ export default function AddProjectsModal() {
       <Group position="center">
         <p>
           <Button onClick={() => setOpened(true)}>
-            <BsPlusLg width={20} height={20} />
+            <Text>Add new Project</Text>
           </Button>
         </p>
       </Group>

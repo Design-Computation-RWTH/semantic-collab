@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Divider, ScrollArea, Grid } from "@mantine/core";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Divider, ScrollArea, Grid, Center, Card } from "@mantine/core";
 import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
 import PubSub from "pubsub-js";
@@ -34,7 +34,7 @@ function ProjectListView(props: ProjectListViewProps) {
 
   function update() {
     let bcfapi = new BCFAPI();
-
+    console.log("update");
     bcfapi
       .getProjects()
       .then((value) => {
@@ -55,17 +55,26 @@ function ProjectListView(props: ProjectListViewProps) {
             <Grid.Col xs={10} sm={6} md={6} lg={4} xl={3} key={String(binx++)}>
               <ProjectElement
                 project={{ projectName: d.name, projectId: d.project_id }}
-                //key={String(binx++)}
                 keyvalue={String(binx)}
-                //TODO: What is this history for?
                 history={props.history}
               />
             </Grid.Col>
           ))}
+          <Grid.Col xs={10} sm={6} md={6} lg={4} xl={3} key={"Add"}>
+            <Center>
+              <Card         
+                style={{ alignContent: "center", width: "340px", minHeight: "200px" , display: "flex", flexDirection: "column", justifyContent: "space-evenly"}}
+                withBorder={true}
+                p="md"
+              >
+                <AddProjectsModal/>
+              </Card>
+            </Center>
+          </Grid.Col>
         </Grid>
       </ScrollArea>
       <Divider p={"xs"} />
-      <AddProjectsModal />
+      
       <p />
       <div className="main-refresh">
         <Button

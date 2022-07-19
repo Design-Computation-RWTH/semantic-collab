@@ -53,7 +53,6 @@ const CAIAAuthProvider = {
     Cookies.remove("refresh_token");
     Cookies.remove("url");
     Cookies.remove("username");
-    console.log("Logged Out");
     setTimeout(callback, 100);
   },
 };

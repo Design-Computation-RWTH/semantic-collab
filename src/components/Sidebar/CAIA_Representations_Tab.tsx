@@ -222,7 +222,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
             autoClose: false,
             disallowClose: true,
           });
-          console.log(data.byteLength);
           if (data.byteLength < 50000000) {
             setNew_file_name(file.name);
             setFile(file);
@@ -251,7 +250,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
             imageService
               .postFile(file, file.name)
               .then((message) => {
-                console.log(message);
                 bcfowl
                   .createDocumentWithSpatialRepresentation(
                     file.name,
@@ -267,7 +265,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
                       icon: <BsFillCheckSquareFill />,
                       autoClose: 2000,
                     });
-                    console.log(message);
                   })
                   .catch((err) => {
                     updateNotification({

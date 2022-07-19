@@ -250,7 +250,6 @@ export default function CAIA_Gallery_Tab() {
         src={s.uri}
         onClick={() => {
           setGalleryScreen(1);
-          console.log(s);
           setCurrentViewpoint(s.vp_uri);
 
           for (const model in viewer.scene.models) {
@@ -279,7 +278,6 @@ export default function CAIA_Gallery_Tab() {
   async function downloadBCF() {
     let bcfOWL = new bcfOWL_Endpoint();
     bcfOWL.getFilteredViewpointsGraph(viewpoints).then((r) => {
-      console.log(r);
     });
   }
 

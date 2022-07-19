@@ -130,9 +130,7 @@ class BcfOWLProjectSetup {
       .then((response) => response)
       .then((result) => {
         if (result.ok) {
-          console.log("Update Fine.");
         } else {
-          console.log("Error happened");
         }
       })
       .catch((error) => {
@@ -196,7 +194,6 @@ class BcfOWLProjectSetup {
 
         }`;
     urlencoded.append("update", data);
-    console.log(data);
 
     fetch(base_uri + "/graph/" + this.project_id + "/update", {
       method: "POST",
@@ -208,9 +205,7 @@ class BcfOWLProjectSetup {
       .then((result) => {
         console.log(result);
         if (result.ok) {
-          console.log("Update Fine.");
         } else {
-          console.log("Error happened");
         }
       })
       .catch((error) => {
@@ -252,9 +247,7 @@ class BcfOWLProjectSetup {
       .then((result) => {
         console.log(result);
         if (result.ok) {
-          console.log("Update Fine.");
         } else {
-          console.log("Error happened");
         }
       })
       .catch((error) => {
@@ -292,9 +285,7 @@ class BcfOWLProjectSetup {
       .then((response) => response)
       .then((result) => {
         if (result.ok) {
-          console.log("Update Fine.");
         } else {
-          console.log("Error happened");
         }
       })
       .catch((error) => {
@@ -332,9 +323,7 @@ class BcfOWLProjectSetup {
       .then((response) => response)
       .then((result) => {
         if (result.ok) {
-          console.log("Update Fine.");
         } else {
-          console.log("Error happened");
         }
       })
       .catch((error) => {
@@ -371,9 +360,8 @@ class BcfOWLProjectSetup {
       .then((response) => response)
       .then((result) => {
         if (result.ok) {
-          console.log("Update Fine.");
         } else {
-          console.log("Error happened");
+
         }
       })
       .catch((error) => {

@@ -760,7 +760,6 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             });
           });
         } catch (e) {
-          console.log("No users");
         }
       });
     });

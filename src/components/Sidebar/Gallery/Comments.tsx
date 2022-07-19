@@ -49,8 +49,6 @@ export default function TopicComments(props: CommentProps) {
           vp["@graph"].forEach((node: any) => {
             tempComments.push(node);
             setTopicURI(node.hasTopic);
-            console.log(topicURI);
-            console.log("Topic:");
           });
         } else if ("@id" in vp) {
           //tempComments.push(vp);
@@ -130,8 +128,6 @@ export default function TopicComments(props: CommentProps) {
     React.useRef() as React.MutableRefObject<HTMLTextAreaElement>;
 
   function sendComment() {
-    console.log(commentRef.current.value);
-    console.log(topicURI);
     bcfowl
       .postComment(commentRef.current.value, currentViewpoint, topicURI)
       .then((r) => {

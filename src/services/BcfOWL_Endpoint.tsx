@@ -863,7 +863,6 @@ class BcfOWL_Endpoint {
       `
             INSERT DATA {${data}}
             `;
-    console.log(query);
 
     if (!this.project_id) alert("Project not selected. ");
     let urlencoded = new URLSearchParams();

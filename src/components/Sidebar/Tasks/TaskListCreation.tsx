@@ -53,7 +53,6 @@ export default function TaskListCreation(props: TaskListProps) {
         if (!Array.isArray(value)) value = [value];
         if (!documents) {
           setDocuments(value);
-          console.log(value);
         }
       })
       .catch((err: any) => {
@@ -94,8 +93,6 @@ export default function TaskListCreation(props: TaskListProps) {
   function DocumentSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     for (const [key, value] of Object.entries(UpdatedTasks)) {
       let Task: any = value;
-      console.log("Task1: ");
-      console.log(Task);
       if (key.includes(event.target.id)) {
         Task["document_uri"] = event.target.selectedOptions[0].id;
       } else if (Task.parent_intervention) {
@@ -120,8 +117,6 @@ export default function TaskListCreation(props: TaskListProps) {
 
             for (const [key, value] of Object.entries(UpdatedTasks)) {
               let Task: any = value;
-              console.log("Task2: ");
-              console.log(value);
               if (Task["document_uri"] === event.target.selectedOptions[0].id) {
                 if (Task.location) {
                   Task.location = [
@@ -192,11 +187,6 @@ export default function TaskListCreation(props: TaskListProps) {
         viewerScene[Element].highlighted = false;
       }
     }
-    /*    for (const ObjectID in ObjectIDs) {
-      console.log(ObjectIDs[ObjectID]);
-      viewer_instance.scene.objects[ObjectIDs[ObjectID].id].highlighted =
-        highlight;
-    }*/
   }
 
   function SelectMainTask(
@@ -222,9 +212,6 @@ export default function TaskListCreation(props: TaskListProps) {
         const ParentInterventions = d[1].map((p: any) => {
           // If there is no parent intervention it means it is a Parent itself!
           if (!p.parent_intervention) {
-            console.log("Incoming P");
-            console.log(p);
-
             /* The Old Parent
             let ParentIntervention = { ...p };
             ParentIntervention.id = Storeys.id + "_" + p.id;
@@ -240,8 +227,6 @@ export default function TaskListCreation(props: TaskListProps) {
                   ParentIntervention.id = Storeys.id + "_" + p.id + e[0];
                   ParentIntervention.name = p.name + "_" + e[1].name;
                   UpdatedTasks[ParentIntervention.id] = ParentIntervention;
-                  console.log(e);
-                  console.log("^this is e");
                   // Generate SubTasks for every Element
                   const SubTasks = d[1].map((s: any) => {
                     // No Parent Tasks
@@ -279,7 +264,6 @@ export default function TaskListCreation(props: TaskListProps) {
                       tempIntervention.buildingElement = e[0];
 
                       UpdatedTasks[tempIntervention.id] = tempIntervention;
-                      console.log(UpdatedTasks);
                       // Check if the parent is the correct one
                       //TODO: Add Task Data here!
                       return (
@@ -325,7 +309,6 @@ export default function TaskListCreation(props: TaskListProps) {
             );
             // Check if the first Element is valid. Strange work around, but currently the script puts empty values in the Array if the Storey is wrong
             if (IfcElements[0]) {
-              //console.log(p);
               return (
                 <Accordion
                   onChange={(e: AccordionState) => {
@@ -437,7 +420,6 @@ export default function TaskListCreation(props: TaskListProps) {
 
                 let task: any = value;
                 if (task.id === "1ZwJH$85D3YQG5AK5ER1gZ_45623") {
-                  console.log(task);
                 }
               }
 
@@ -459,10 +441,8 @@ export default function TaskListCreation(props: TaskListProps) {
                 bcfowl
                   .postRDF(rdfTasks)
                   .then((r) => {
-                    console.log(r);
                   })
                   .catch((e) => {
-                    console.log(e);
                   });
               });
             }}

@@ -41,14 +41,12 @@ export default function ProjectElement(props: ProjectElementProps) {
 
   function init() {
     let bcfowl = new BcfOWL_Endpoint();
-    console.log(serverUrl)
     bcfowl
       .describeNoProject(
         getServerUrl() + "/graph/" + props.project.projectId + "/",
         props.project.projectId
       )
       .then((r) => {
-        console.log(r)
         if (r.comment) {
           setDescription(r.comment);
         }
@@ -67,23 +65,9 @@ export default function ProjectElement(props: ProjectElementProps) {
       <Card
         style={{ alignContent: "center", width: "340px", minHeight: "200px" , display: "flex", flexDirection: "column", justifyContent: "space-between"}}
         withBorder={true}
-        // color={"blue"}
         p="md"
       >
         <Title order={2}>{props.project.projectName}</Title>
-
-        {/*        <RingProgress
-          label={
-            <Text size="xs" align="center">
-              Application data usage
-            </Text>
-          }
-          sections={[
-            { value: Math.floor(Math.random() * 100), color: "cyan" },
-            { value: Math.floor(Math.random() * 100), color: "orange" },
-            { value: Math.floor(Math.random() * 100), color: "grape" },
-          ]}
-        />*/}
         <Spoiler maxHeight={50} showLabel="Show more" hideLabel="Hide">
           {description}
         </Spoiler>

@@ -51,8 +51,6 @@ function TopicTable(props: TopicTableProps) {
         }
         setData(tempData);
 
-        console.log(tempData);
-
         tempData.forEach((d) => {
           if (d.i === "hasTopicType") {
             setTopicType(d.value);

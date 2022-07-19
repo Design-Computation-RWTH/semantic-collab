@@ -122,7 +122,6 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
                     viewer.scene.objects[child.id].visible =
                       e.currentTarget.checked;
                   } else {
-                    console.log(child);
                   }
                 });
               }}

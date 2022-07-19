@@ -60,7 +60,6 @@ class BCFAPI {
   }
 
   async getProjects(): Promise<bcfOWL_API_types.ProjectType[]> {
-    console.log(base_uri);
     const response = await fetch(
       base_uri + "/bcf/3.0/projects",
       this.requestGetOptions

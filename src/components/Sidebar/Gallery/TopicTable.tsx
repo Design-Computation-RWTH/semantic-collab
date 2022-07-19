@@ -399,7 +399,6 @@ function TopicTable(props: TopicTableProps) {
                   setTopicDueDate(e);
 
                   if (e !== null) {
-                    console.log('"' + e.toISOString() + '"^^xsd:datetime');
                     bcfOWL.updateTopic(
                       topic_guid,
                       "bcfOWL:hasDueDate",
