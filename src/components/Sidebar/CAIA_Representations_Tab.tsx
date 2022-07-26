@@ -44,26 +44,16 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   //const [checked, setChecked] = useState(false);
   const [documents, setDocuments] = useState<bcfOWL_DocumentType[]>([]);
   const [selected_ids, setSelected_ids] = useState<string[]>([]);
-  const [screen, setScreen] = useState(0);
   const [selected_document, setSelected_document] = useState<string>("");
+  const [selected_documentName, setSelected_documentName] = useState<string>("");
   const [new_file_name, setNew_file_name] = useState("");
 
-  const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
-
-  const { file, setFile } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
-
-  const { fileName, setFileName } = React.useContext(
-    ViewerContext
-  ) as DcWebViewerContextType;
-
-  const {
-    selectedDocument,
+  const { viewer, file, setFile, representationScreen, setRepresentationScreen, setFileName,
     setSelectedDocument,
     viewerDocuments,
-    setViewerDocuments,
-  } = React.useContext(ViewerContext) as DcWebViewerContextType;
+    setViewerDocuments,} = React.useContext(
+    ViewerContext
+  ) as DcWebViewerContextType;
 
   //
   let project_id: any = ReactSession.get("projectid");
@@ -79,7 +69,7 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
     return () => {
       setDocuments([]);
       setSelected_ids([]);
-      setScreen(0);
+      setRepresentationScreen(0);
       setSelected_document("");
       setNew_file_name("");
     };
@@ -152,7 +142,9 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
 
   function onDocumentSelected(msg: any, data: SelectedDocument) {
     setSelected_document(data.id);
-    setScreen(1);
+    
+    setSelected_documentName(data.name);
+    setRepresentationScreen(1);
     PubSub.publish("ShowDocument", {
       id: data.id,
       url: data.url,
@@ -203,7 +195,7 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   }
 
   function onDocumentsViewStateChange() {
-    setScreen(0);
+    setRepresentationScreen(0);
     init();
   }
 
@@ -316,7 +308,7 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
             name: "new_temp_plan",
           };
           setSelectedDocument(tempSelectedDocument);
-          setScreen(1);
+          setRepresentationScreen(1);
           break;
         case "pdf":
           console.log("picked pdf");
@@ -354,7 +346,8 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
 
   function leftPanel() {
     let leftPanel;
-    if (screen === 0) {
+    if (representationScreen === 0) {
+      console.log(selected_document)
       leftPanel = (
         <div>
           <SimpleGrid cols={1} spacing="xs">
@@ -363,20 +356,32 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
         </div>
       );
     } else {
+      let details: any;
+      //TODO: Add IFC Details
+      if (selected_documentName.endsWith(".ifc")){
+        details = (          <RepresentationDetails
+          selectedDocument={selected_document}
+          newFileName={new_file_name}
+          file={file}
+          viewer={viewer}
+        />)
+      } else if (selected_documentName.endsWith(".png")){
+        details = (          <RepresentationDetails
+          selectedDocument={selected_document}
+          newFileName={new_file_name}
+          file={file}
+          viewer={viewer}
+        />)
+      }
       leftPanel = (
         <div>
           <CloseButton
             onClick={() => {
               PubSub.publish("CancelNewDocument", {});
-              setScreen(0);
+              setRepresentationScreen(0);
             }}
           />
-          <RepresentationDetails
-            selectedDocument={selected_document}
-            newFileName={new_file_name}
-            file={file}
-            viewer={viewer}
-          />
+          {details}
         </div>
       );
     }
@@ -403,11 +408,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
           }}
         >
           <i className=" bi-arrow-clockwise" />
-        </ActionIcon>
-        <ActionIcon
-          title="Add spatial node"
-        >
-          <i className=" bi-folder-plus " />
         </ActionIcon>
         <ActionIcon
           title="Upload Spatial Representation"

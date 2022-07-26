@@ -96,7 +96,7 @@ export default function TopicComments(props: CommentProps) {
         }
         let date = new Date(comment.hasCommentDate);
         return (
-          <Group spacing="xs" direction="row" noWrap style={style}>
+          <Stack spacing="xs" style={style}>
             <Tooltip label={comment.hasAuthor}>
               <Avatar radius="xl" />
             </Tooltip>
@@ -115,7 +115,7 @@ export default function TopicComments(props: CommentProps) {
                 {date.toUTCString()}
               </Text>
             </Paper>
-          </Group>
+          </Stack>
         );
       });
       return commentElements;
@@ -150,7 +150,7 @@ export default function TopicComments(props: CommentProps) {
             radius="lg"
             size="lg"
           />
-          <ActionIcon variant="hover" color="red" onClick={sendComment}>
+          <ActionIcon variant="filled" color="red" onClick={sendComment}>
             <BsReplyFill size={"100px"} />
           </ActionIcon>
         </Group>

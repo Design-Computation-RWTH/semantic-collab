@@ -146,7 +146,7 @@ export default function RepresentationDetailsPlan(props: PlanProps) {
       });
       setScale(distance * scale);
     } else {
-      notifications.showNotification({
+      showNotification({
         title: "Set Target Distance",
         message: "Please set your Target Distance first",
       });

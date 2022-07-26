@@ -23,6 +23,9 @@ export type DcWebViewerContextType = {
   viewer: Viewer;
   setViewer: Dispatch<SetStateAction<Viewer>>;
 
+  representationScreen: number;
+  setRepresentationScreen: Dispact<SetStateAction<number>>;
+
   file: string;
   setFile: Dispatch<SetStateAction<string>>;
 
@@ -53,7 +56,7 @@ export type DcWebViewerContextType = {
   imageList: any[];
   setImageList: Dispatch<SetStateAction<any[]>>;
 
-  activeTab: number;
+  activeTab: any;
   setActiveTab: Dispatch<SetStateAction<number>>;
 
   viewpoints: string[];

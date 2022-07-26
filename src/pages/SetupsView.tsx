@@ -192,7 +192,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                 <Row>
                   <Col xs={11}>
                     <Tooltip
-                      wrapLines
+                      multiline
                       width={220}
                       withArrow
                       transition="fade"
@@ -246,7 +246,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                 <Row>
                   <Col xs={11}>
                     <Tooltip
-                      wrapLines
+                      multiline
                       width={220}
                       withArrow
                       transition="fade"
@@ -305,7 +305,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                   <Row>
                     <Col xs={11}>
                       <Tooltip
-                        wrapLines
+                        multiline
                         width={220}
                         withArrow
                         transition="fade"
@@ -362,7 +362,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             <Row>
               <Col xs={11}>
                 <Tooltip
-                  wrapLines
+                  multiline
                   width={220}
                   withArrow
                   transition="fade"
@@ -407,7 +407,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             <Row>
               <Col xs={11}>
                 <Tooltip
-                  wrapLines
+                  multiline
                   width={220}
                   withArrow
                   transition="fade"

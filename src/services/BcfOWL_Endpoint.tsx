@@ -444,6 +444,42 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
+  async deleteDocument(documentURI: string) {
+
+    let timestamp = new Date(Date.now()).toISOString();
+    let author = this.parseJWT(getAccessToken()).URI;
+    let urlencoded = new URLSearchParams();
+
+    let query = `
+      PREFIX bcfOWL: <http://lbd.arch.rwth-aachen.de/bcfOWL#>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+      DELETE 
+      WHERE {
+          <${documentURI}> ?p ?o.
+      }
+    
+    `;
+    urlencoded.append("update", query);
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/update",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+    );
+
+    if (!response.ok) {
+      const message = `Get Filtered Viewpoints: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
   async getViepointCameras4Document(doc_uri: string) {
     var guid = doc_uri.substring(doc_uri.lastIndexOf("/") + 1);
     if (!this.project_id) alert("Project not selected. ");

@@ -28,6 +28,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
   const [file, setFile] = React.useState<string>("");
   const [fileName, setFileName] = React.useState<string>("");
 
+  const [representationScreen, setRepresentationScreen] = React.useState<number>(0)
+
   const [projectID, setProjectID] = React.useState("");
 
   const [imageList, setImageList] = React.useState<any[]>([]);
@@ -42,7 +44,7 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
 
   const [galleryScreen, setGalleryScreen] = React.useState<number>(0);
 
-  const [activeTab, setActiveTab] = React.useState<number>(0);
+  const [activeTab, setActiveTab] = React.useState<any>(0);
 
   const [largeGalleryImg, setLargeGalleryImg] =
     React.useState<string>("/Icon_v2.svg");
@@ -106,6 +108,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setViewpoints,
         currentViewpoint,
         setCurrentViewpoint,
+        representationScreen,
+        setRepresentationScreen
       }}
     >
       {children}

@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { ReactSession } from "react-client-session";
 import PubSub from "pubsub-js";
-import { BsFillPuzzleFill, BsGearWideConnected, BsHouse, BsFillMoonStarsFill ,BsBrightnessHigh, BsSunFill} from "react-icons/bs";
+import { BsFillPuzzleFill, BsGearWideConnected, BsHouse, BsFillMoonStarsFill, BsSunFill} from "react-icons/bs";
 import logo from "./components/Branding/Icon_v2.svg";
 import ProjectListView from "./pages/ProjectsView";
 import SetupView from "./pages/SetupsView";
@@ -27,18 +27,24 @@ import {
   Header,
   Menu,
   Navbar,
-  PasswordInput,
+  Aside,
+  AsideProps,
+  MediaQuery,
   Space,
   Text,
   TextInput,
   useMantineColorScheme,
 } from "@mantine/core";
 import { CAIAAuthProvider } from "./services/CAIA_auth";
+import CAIA_Sidebar from "./components/Sidebar/CAIA_Sidebar";
 import { ViewerContext } from "./context/dcwebviewerContext";
 import { DcWebViewerContextType } from "./@types/dcwebviewer";
 import { useForm } from "@mantine/form";
 import { useLocalStorage } from '@mantine/hooks';
 import Cookies from "js-cookie";
+import { HorizontalSectionProps } from "@mantine/core/lib/AppShell/HorizontalSection/HorizontalSection";
+import { propTypes } from "react-bootstrap/esm/Image";
+import { HorizontalSectionPosition } from "@mantine/core/lib/AppShell/HorizontalSection/HorizontalSection.styles";
 export const getAccessToken = () => Cookies.get("access_token");
 export const getUserName = () => Cookies.get("username");
 export const isAuthenticated = () => !!getAccessToken();
@@ -181,6 +187,7 @@ export default function CAIA () {
     })
   }
 
+  let pos: HorizontalSectionPosition = {left: 1};
 
   let overview = `/projects/${projectName}/`;
   let setup = `/projects/${projectName}/setup`;
@@ -198,55 +205,15 @@ export default function CAIA () {
   return (
     <AuthProvider>
       <AppShell
-        padding={0}
-        navbar={
-          <Navbar width={{ base: 100 }} p="xl">
-            <Navbar.Section mt="xl">
-              <a className={"navbar-icons"} href={`/projects/`}>
-                <BsHouse size="30"/>
-              </a>
-            </Navbar.Section>
-            <Navbar.Section mt="xl">
-              <a className={`navbar-icons ${disabledIcons}`} href={overview}>
-                <BsFillPuzzleFill size="30" />
-              </a>
-            </Navbar.Section>
-            <Navbar.Section mt="xl">
-              <a className={`navbar-icons ${disabledIcons}`} href={setup}>
-                <BsGearWideConnected size="30"  />
-              </a>
-            </Navbar.Section>
-            <div className={"darkmode-switch"}>
-              <Avatar radius="xl" size="md">
-                <Menu>
-                  <Menu.Label>{getUserName()}</Menu.Label>
-                  <Menu.Item onClick={() => {Logout()}}>Logout</Menu.Item>
-                </Menu>
-              </Avatar>
-              <Space h="xl" />
-              <ActionIcon
-                variant="transparent"
-                color={dark ? "blue" : "blue"}
-                onClick={() => toggleColorScheme()}
-                title="Toggle color scheme"
-              >
-                {dark ? (
-                  <BsSunFill style={{ width: 18, height: 18 }} />
-                ) : (
-                  <BsFillMoonStarsFill style={{ width: 18, height: 18 }} />
-                )}
-              </ActionIcon>
-            </div>
-            
-          </Navbar>
-        }
+        navbarOffsetBreakpoint="sm"
+        padding="md"
         header={
-          <Header height={"7vh"} p="xs">
+          <Header height={"60"} p="xs">
             <div className={"caia-header-row"}>
               <img
                 src={logo}
-                width="60"
-                height="60"
+                width="50"
+                height="50"
                 className="d-inline-block align-content-center"
                 alt="CAIA Logo"
               />
@@ -257,6 +224,53 @@ export default function CAIA () {
             </div>
           </Header>
         }
+        navbar={
+          <Navbar p="md" hiddenBreakpoint="sm" width={{ base:60, sm: 60, lg: 60 }} styles={{Navbar}}>
+              <Navbar.Section mt="xl">
+                <a className={"navbar-icons"} href={`/projects/`}>
+                  <BsHouse size="30"/>
+                </a>
+              </Navbar.Section>
+              <Navbar.Section mt="xl">
+                <a className={`navbar-icons ${disabledIcons}`} href={overview}>
+                  <BsFillPuzzleFill size="30" />
+                </a>
+              </Navbar.Section>
+              <Navbar.Section mt="xl">
+                <a className={`navbar-icons ${disabledIcons}`} href={setup}>
+                  <BsGearWideConnected size="30"  />
+                </a>
+              </Navbar.Section>
+              <div className={"darkmode-switch"}>
+                
+                  <Menu>
+                    <Menu.Target>
+                    <Avatar radius="xl" size="sm"/>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Label>{getUserName()}</Menu.Label>
+                      <Menu.Item onClick={() => {Logout()}}>Logout</Menu.Item>
+                    </Menu.Dropdown>
+
+                    {/* <Menu.Item onClick={() => {Logout()}}>Logout</Menu.Item> */}
+                  </Menu>
+                <Space h="xl" />
+                <ActionIcon
+                  variant="transparent"
+                  color={dark ? "blue" : "blue"}
+                  onClick={() => toggleColorScheme()}
+                  title="Toggle color scheme"
+                >
+                  {dark ? (
+                    <BsSunFill style={{ width: 18, height: 18 }} />
+                  ) : (
+                    <BsFillMoonStarsFill style={{ width: 18, height: 18 }} />
+                  )}
+                </ActionIcon>
+              </div>
+          </Navbar>
+        }
+
         styles={(theme) => ({
           main: {
             display: "flex",
@@ -399,10 +413,12 @@ function Login() {
 
     setRemember(ref.current.checked);
     if(ref.current.checked) {
+      console.log("User")
       setURL(values.url);
       setUser(values.username);
       setPassword(values.password);
     } else {
+      console.log("No User")
       setURL("");
       setUser("");
       setPassword("");

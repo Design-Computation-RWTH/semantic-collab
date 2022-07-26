@@ -627,7 +627,7 @@ export default function CAIA_XeoKitView() {
         margin: "0px",
       }}
     >
-      <CAIA_Sidebar viewer={viewer} />
+      <CAIA_Sidebar/>
       <div
         style={{
           width: "100%",

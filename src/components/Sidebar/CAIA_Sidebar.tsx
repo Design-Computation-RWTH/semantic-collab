@@ -12,11 +12,8 @@ import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
 import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 
-type SidebarProps = {
-  viewer: Viewer;
-};
 
-export default function CAIA_Sidebar(props: SidebarProps) {
+export default function CAIA_Sidebar() {
   const {
     setExtensions,
     setUsers,
@@ -36,6 +33,7 @@ export default function CAIA_Sidebar(props: SidebarProps) {
     let bcfowl_project = new BcfOWLProjectSetup();
     let bcfowl = new BcfOWL_Endpoint();
 
+    setActiveTab("Representations");
     bcfowl_project.getCurrentProject().then((value) => {
       try {
         if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
@@ -90,7 +88,8 @@ export default function CAIA_Sidebar(props: SidebarProps) {
 
   return (
     <Tabs
-      active={activeTab}
+      value={activeTab}
+      variant="pills"
       onTabChange={setActiveTab}
       style={{
         display: "flex",
@@ -105,22 +104,30 @@ export default function CAIA_Sidebar(props: SidebarProps) {
         flexDirection: "column",
       }}
       styles={{
-        body: { height: "95%", width: "100%", maxWidth: "100%", backgroundColor: "#00000", },
+        // body: { height: "95%", width: "100%", maxWidth: "100%", backgroundColor: "#00000", },
         root: { height: "100%", width: "100%" },
-        tabsListWrapper: { height: "5%" },
+        panel: { height: "100%"}
+        // tabsListWrapper: { height: "5%" },
       }}
-      grow
-      tabPadding={0}
+      //tabPadding={0}
     >
-      <Tabs.Tab title="Representations" icon={<BsLayers />}>
-        <CAIA_Representations_Tab />
-      </Tabs.Tab>
-      <Tabs.Tab title="Gallery" icon={<BsCardImage />}>
+      <Tabs.List>
+        <Tabs.Tab value="Representations" title="Representations" icon={<BsLayers />}/>
+        <Tabs.Tab value="Gallery" title="Gallery" icon={<BsCardImage />}/>
+        <Tabs.Tab onClick={()=>{console.log("Selected Tasks")}} value="Tasks" title="Tasks" icon={<BsCalendarCheck />}/>
+      </Tabs.List>
+
+      <Tabs.Panel style={{height:"100%"}} value="Representations" pt="xs">
+          <CAIA_Representations_Tab />
+      </Tabs.Panel>
+
+      <Tabs.Panel style={{height:"100%"}} value="Gallery" pt="xs">
         <CAIA_Gallery_Tab />
-      </Tabs.Tab>
-      <Tabs.Tab title="Tasks" icon={<BsCalendarCheck />}>
+      </Tabs.Panel>
+
+      <Tabs.Panel  style={{height:"100%"}} value="Tasks" pt="xs">
         <CAIA_Tasks_Tab />
-      </Tabs.Tab>
+      </Tabs.Panel>
     </Tabs>
   );
 }

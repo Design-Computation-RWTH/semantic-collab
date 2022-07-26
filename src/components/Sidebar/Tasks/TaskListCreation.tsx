@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
-import { Button, Accordion, AccordionState, Text, Container, CloseButton } from "@mantine/core";
+import { Button, Accordion, Text, Container, CloseButton } from "@mantine/core";
 import { Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
@@ -177,12 +177,12 @@ export default function TaskListCreation(props: TaskListProps) {
     return People;
   }
 
-  function HighlightObjects(ObjectIDs: any[], highlight: boolean) {
+  function HighlightObjects(ObjectIDs: any[]) {
     let viewerScene = viewer_instance.scene.objects;
     for (const Element in viewerScene) {
       let elementID = viewerScene[Element].id;
       if (ObjectIDs.includes(elementID)) {
-        viewerScene[Element].highlighted = highlight;
+        viewerScene[Element].highlighted = true;
       } else {
         viewerScene[Element].highlighted = false;
       }
@@ -190,7 +190,6 @@ export default function TaskListCreation(props: TaskListProps) {
   }
 
   function SelectMainTask(
-    event: AccordionState,
     ParentIntervention: any,
     Storeys: any
   ) {
@@ -201,7 +200,7 @@ export default function TaskListCreation(props: TaskListProps) {
         selectedObjects.push(e[1].id);
       }
     });
-    HighlightObjects(selectedObjects, event[0]);
+    HighlightObjects(selectedObjects);
   }
 
   function CreateSubTasks(Storeys: any) {
@@ -273,7 +272,7 @@ export default function TaskListCreation(props: TaskListProps) {
                         >
                           <Accordion.Item
                             style={{ paddingLeft: "1px" }}
-                            label={tempIntervention.name}
+                            value={tempIntervention.name}
                             id={tempIntervention.id}
                           >
                             <Text>{tempIntervention.id}</Text>
@@ -286,14 +285,14 @@ export default function TaskListCreation(props: TaskListProps) {
                   return (
                     // This is the building element
                     <Accordion
-                      onChange={(event: AccordionState) => {
-                        HighlightObjects([e[1].id], event[0]);
+                      onChange={() => {
+                        HighlightObjects([e[1].id]);
                       }}
                       style={{ paddingLeft: "5px" }}
                     >
                       <Accordion.Item
                         style={{ paddingLeft: "5px" }}
-                        label={p.name + "_" + e[1].name}
+                        value={p.name + "_" + e[1].name}
                         id={e[1].id}
                       >
                         {SubTasks}
@@ -311,14 +310,14 @@ export default function TaskListCreation(props: TaskListProps) {
             if (IfcElements[0]) {
               return (
                 <Accordion
-                  onChange={(e: AccordionState) => {
-                    SelectMainTask(e, p, Storeys);
+                  onChange={() => {
+                    SelectMainTask( p, Storeys);
                   }}
                   style={{ paddingLeft: "5px" }}
                 >
                   <Accordion.Item
                     style={{ paddingLeft: "5px" }}
-                    label={p.name}
+                    value={p.name}
                     id={p.id}
                   >
                     <Text>Assigned To:</Text>
@@ -376,7 +375,7 @@ export default function TaskListCreation(props: TaskListProps) {
     return (
       <Accordion.Item
         style={{ paddingLeft: "5px" }}
-        label={d.name}
+        value={d.name}
         id={d.id + "_Item"}
       >
         <Text>Assign to Document:</Text>

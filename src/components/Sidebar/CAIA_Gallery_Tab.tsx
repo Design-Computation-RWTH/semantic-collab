@@ -25,15 +25,11 @@ import PubSub from "pubsub-js";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 import bcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
-var xml_convert = require("xml-js");
 (window as any).global = window;
 
 // for the JSON-XML conversion:
 // @ts-ignore
 window.Buffer = window.Buffer || require("buffer").Buffer;
-
-// To create BCF XML ZIP
-var JSZip = require("jszip");
 
 class SnapShotThumbnail {
   private uri: string;
@@ -127,14 +123,10 @@ export default function CAIA_Gallery_Tab() {
           style={{
             width: "100%",
             maxWidth: "100%",
-            //justifyContent: "center",
-            //display: "flex",
           }}
         >
           <Container style={{ width: "100%", maxWidth: "100%" }}>
             <div>
-              {/*  //TODO variant="black" does not exist
-                                                 // @ts-ignore */}
               <CloseButton onClick={() => setGalleryScreen(0)} />
             </div>
 
@@ -399,8 +391,11 @@ export default function CAIA_Gallery_Tab() {
   }
   topicStageData.push({ value: "None", label: "None" });
 
-  let authorData = [];
-  authorData = users.map((e: any) => {
+  let authorData: any[] = [];
+  console.log("Gallery Users" , users);
+  if (users.size !== 0) {
+    console.log("GalleryUsersWork")
+      authorData = users.map((e: any) => {
     let tempValue: string = "";
     let tempLabel: string = "";
     Object.keys(e).forEach((key: any) => {
@@ -409,6 +404,8 @@ export default function CAIA_Gallery_Tab() {
     });
     return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
   });
+  }
+
 
   let assignedData = authorData;
   assignedData.push({ value: "None", label: "None" });

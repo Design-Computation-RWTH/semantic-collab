@@ -142,6 +142,7 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
               <i className={determineEnding()} />
             </ActionIcon>
             <Button
+              variant="subtle"
               size="md"
               style={{ width: "70%"}}
               onClick={showDocumentDetails}

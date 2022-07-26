@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import { ActionIcon, Container } from "@mantine/core";
+import { ActionIcon, Container, } from "@mantine/core";
 import TaskListPreview from "./Tasks/TaskListPreview";
 import TaskListCreation from "./Tasks/TaskListCreation";
 // @ts-ignore
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 
-const testJSON = require("./Tasks/TasksExample.json");
+//const testJSON = require("./Tasks/TasksExample.json");
 
 type TaskView = "Preview" | "Creation";
 
 export default function CAIA_Tasks_Tab() {
   const [viewState, setViewState] = useState<TaskView>("Preview");
+  const [taskJSON, setTaskJson] = useState<Object| undefined>();
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
@@ -34,7 +35,7 @@ export default function CAIA_Tasks_Tab() {
   } else if (viewState === "Creation") {
     ViewState = (
       <TaskListCreation
-        TaskJson={testJSON}
+        TaskJson={taskJSON}
         IfcStoreys={storeyTemp}
         viewer={viewer}
       />
@@ -61,7 +62,7 @@ export default function CAIA_Tasks_Tab() {
                 }}
       >
         <ActionIcon
-          title="Refresh Tasks"
+          title="Create new Tasks"
           onClick={() => {
             if (viewer) {
               setViewState("Creation");

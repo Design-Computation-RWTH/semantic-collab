@@ -96,7 +96,9 @@ export default function TaskListPreview(props: TaskListProps) {
   topicStageData.push({ value: "None", label: "None" });
 
   let authorData = [];
-  authorData = users.map((e: any) => {
+  console.log("Task Users" , users);
+  if (users.size !== 0) {
+      authorData = users.map((e: any) => {
     let tempValue: string = "";
     let tempLabel: string = "";
     Object.keys(e).forEach((key: any) => {
@@ -105,10 +107,9 @@ export default function TaskListPreview(props: TaskListProps) {
     });
     return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
   });
-
-  function findMapping(data: any, uri: string) {
-    return;
   }
+
+
 
   useEffect(() => {
     init();
@@ -176,10 +177,10 @@ export default function TaskListPreview(props: TaskListProps) {
       if (st["hasTaskContext"] === taskID && elementID === st.buildingElement) {
         return (
           <Accordion.Item
-            icon={<></>}
-            label={st.hasTitle}
+            //icon={<></>}
+            value={st.hasTitle}
             id={st["@id"] + "_MainTask"}
-            iconSize={0}
+            //iconSize={0}
             onMouseEnter={() => {
               viewer.scene.objects[elementID].selected = true;
             }}
@@ -187,10 +188,10 @@ export default function TaskListPreview(props: TaskListProps) {
               viewer.scene.objects[elementID].selected = false;
             }}
             styles={{
-              itemTitle: { color: "white" },
-              contentInner: { padding: 0, margin: 0 },
-              content: { padding: 0, margin: 0 },
-              item: { padding: 0, margin: 0 },
+              // itemTitle: { color: "white" },
+              // contentInner: { padding: 0, margin: 0 },
+              // content: { padding: 0, margin: 0 },
+              // item: { padding: 0, margin: 0 },
             }}
             onClick={(e) => {
               setTaskPage(1);
@@ -224,7 +225,7 @@ export default function TaskListPreview(props: TaskListProps) {
 
       return (
         <Accordion.Item
-          label={name}
+          value={name}
           id={name + "_BuildingElement"}
           onMouseEnter={() => {
             viewer.scene.objects[st].selected = true;
@@ -233,17 +234,17 @@ export default function TaskListPreview(props: TaskListProps) {
             viewer.scene.objects[st].selected = false;
           }}
           styles={{
-            itemTitle: { color: "white" },
-            content: { padding: 0, margin: 0 },
-            item: { padding: 0, margin: 0 },
-            contentInner: { padding: 0, margin: 0 },
+            // itemTitle: { color: "white" },
+            // content: { padding: 0, margin: 0 },
+            // item: { padding: 0, margin: 0 },
+            // contentInner: { padding: 0, margin: 0 },
           }}
         >
           <Accordion
             styles={{
-              contentInner: { padding: 0, margin: 0 },
-              content: { padding: 0, margin: 0 },
-              item: { padding: 0, margin: 0 },
+              // contentInner: { padding: 0, margin: 0 },
+              // content: { padding: 0, margin: 0 },
+              // item: { padding: 0, margin: 0 },
             }}
             key={taskID + "Task"}
             style={{ padding: 0, margin: 0 }}
@@ -259,18 +260,11 @@ export default function TaskListPreview(props: TaskListProps) {
   const MainTasks = mainTasks.map((t: any) => {
     return (
       <Accordion.Item
-        label={t.hasTitle}
+        value={t.hasTitle}
         id={t["@id"] + "_MainTask"}
-        styles={{
-          itemTitle: { color: "white" },
-          contentInner: { padding: 0, margin: 0 },
-          content: { padding: 2, margin: 0 },
-        }}
       >
         <Accordion
           styles={{
-            contentInner: { padding: 0, margin: 0 },
-            content: { padding: 0, margin: 0 },
           }}
         >
           {buildingElementList(t["@id"])}
@@ -282,10 +276,10 @@ export default function TaskListPreview(props: TaskListProps) {
   const TaskList = (
     <Container>
       <Accordion
-        styles={{
-          contentInner: { padding: 0, margin: 0 },
-          content: { padding: 0, margin: 0 },
-        }}
+        // styles={{
+        //   contentInner: { padding: 0, margin: 0 },
+        //   content: { padding: 0, margin: 0 },
+        // }}
       >
         {MainTasks}
       </Accordion>
