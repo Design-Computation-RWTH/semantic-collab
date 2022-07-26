@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { ActionIcon, Container, } from "@mantine/core";
+import React, { useEffect, useState } from "react";
+import { ActionIcon, Container, FileButton} from "@mantine/core";
 import TaskListPreview from "./Tasks/TaskListPreview";
 import TaskListCreation from "./Tasks/TaskListCreation";
 // @ts-ignore
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
+import { TaskContext } from "../../context/taskContext";
+import { TaskTypes } from "../../@types/taskTypes";
 
 //const testJSON = require("./Tasks/TasksExample.json");
 
@@ -16,7 +18,20 @@ export default function CAIA_Tasks_Tab() {
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
+  const { taskFile, setTaskFile } = React.useContext(TaskContext) as TaskTypes;
+
   let storeyTemp: any = [];
+
+  useEffect(() => {
+    console.log("file", taskFile)
+    if (taskFile !== undefined) {
+           if (viewer) {
+                 setViewState("Creation");
+               } else {
+                 alert("Please load an IFC Building Representation First");
+            }
+    }
+  }, [taskFile]);
 
   if (viewer) {
     let storeys = viewer.metaScene.getObjectIDsByType("IfcBuildingStorey");
@@ -35,7 +50,6 @@ export default function CAIA_Tasks_Tab() {
   } else if (viewState === "Creation") {
     ViewState = (
       <TaskListCreation
-        TaskJson={taskJSON}
         IfcStoreys={storeyTemp}
         viewer={viewer}
       />
@@ -61,18 +75,21 @@ export default function CAIA_Tasks_Tab() {
                   justifyContent: "center",
                 }}
       >
-        <ActionIcon
-          title="Create new Tasks"
-          onClick={() => {
-            if (viewer) {
-              setViewState("Creation");
-            } else {
-              alert("Please load an IFC Building Representation First");
-            }
-          }}
-        >
-          <i className=" bi-plus-square " />
-        </ActionIcon>
+        <FileButton onChange={setTaskFile} accept={"image/png, image/jpeg, application/json"}>
+        {(props) => 
+          (<ActionIcon {...props}
+            // title="Create new Tasks"
+            // onClick={() => {
+            //   if (viewer) {
+            //     setViewState("Creation");
+            //   } else {
+            //     alert("Please load an IFC Building Representation First");
+            //   }
+            // }}
+          >
+            <i className=" bi-plus-square " />
+          </ActionIcon>)}
+        </FileButton>
       </Container>
     </div>
   );

@@ -8,10 +8,11 @@ import { ConvertTasks } from "../../../services/ConvertTasks2RDF";
 // @ts-ignore
 import { Viewer } from "@xeokit/xeokit-sdk";
 import BcfOWLProjectSetup from "../../../services/BcfOWLProjectSetup";
+import { TaskContext } from "../../../context/taskContext";
+import { TaskTypes } from "../../../@types/taskTypes";
 const wkt = require("terraformer-wkt-parser");
 
 type TaskListProps = {
-  TaskJson: any;
   IfcStoreys: any[];
   viewer: Viewer;
 };
@@ -30,8 +31,11 @@ let ProjectURI: string = "";
 
 export default function TaskListCreation(props: TaskListProps) {
   const [tasks, setTasks] = useState<any>(null);
+  const [taskJson, setTaskJson] = useState<any>(null);
   const [documents, setDocuments] = useState<any>(null);
   const [users, setUsers] = useState<any>(null);
+
+  const { taskFile } = React.useContext(TaskContext) as TaskTypes;
 
   useEffect(() => {
     init();
@@ -43,37 +47,47 @@ export default function TaskListCreation(props: TaskListProps) {
     let bcfowl = new BcfOWL_Endpoint();
     let bcfowl_setup = new BcfOWLProjectSetup();
 
-    if (viewer_instance) {
-      viewer_instance.cameraControl.on("picked", (e: any) => {});
-    }
-    bcfowl
-      .getDocuments()
-      .then((value: any) => {
-        if (value["@graph"]) value = value["@graph"];
-        if (!Array.isArray(value)) value = [value];
-        if (!documents) {
-          setDocuments(value);
-        }
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
+    taskFile?.arrayBuffer().then((res) => {
+      let taskString = new TextDecoder().decode(res)
 
-    bcfowl_setup.getCurrentProject().then((value) => {
-      ProjectURI = value["@id"];
-      try {
-        if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
-        let list: string[] = [];
-        value.hasUser.forEach((user: string) => {
-          bcfowl.describeUser(user).then((u) => {
-            list = list.concat(u);
-            if (!users) {
-              setUsers(list);
-            }
-          });
+      setTaskJson(JSON.parse(taskString))
+      console.log("res", res)
+
+      if (viewer_instance) {
+        viewer_instance.cameraControl.on("picked", (e: any) => {});
+      }
+      bcfowl
+        .getDocuments()
+        .then((value: any) => {
+          if (value["@graph"]) value = value["@graph"];
+          if (!Array.isArray(value)) value = [value];
+          if (!documents) {
+            setDocuments(value);
+          }
+        })
+        .catch((err: any) => {
+          console.log(err);
         });
-      } catch (e) {}
+  
+      bcfowl_setup.getCurrentProject().then((value) => {
+        ProjectURI = value["@id"];
+        try {
+          if (!Array.isArray(value.hasUser)) value.hasUser = [value.hasUser];
+          let list: string[] = [];
+          value.hasUser.forEach((user: string) => {
+            bcfowl.describeUser(user).then((u) => {
+              list = list.concat(u);
+              if (!users) {
+                setUsers(list);
+              }
+            });
+          });
+        } catch (e) {}
+      });
     });
+
+
+    
   }
 
   function AssigneeSelected(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -204,144 +218,156 @@ export default function TaskListCreation(props: TaskListProps) {
   }
 
   function CreateSubTasks(Storeys: any) {
-    const TasksNew = Object.entries(props.TaskJson).map((d: any) => {
-      // Check if they are interventions
-      if (d[0] === "interventions") {
-        // Find the Parent Interventions
-        const ParentInterventions = d[1].map((p: any) => {
-          // If there is no parent intervention it means it is a Parent itself!
-          if (!p.parent_intervention) {
-            /* The Old Parent
-            let ParentIntervention = { ...p };
-            ParentIntervention.id = Storeys.id + "_" + p.id;
-            UpdatedTasks[ParentIntervention.id] = ParentIntervention;
-            */
-
-            // Create a Card for every IFC Element
-            const IfcElements = Object.entries(FilteredIfcElements).map(
-              (e: any) => {
-                //Check if the Element is on the right storey
-                if (e[1].parent.id === Storeys.id) {
-                  let ParentIntervention = { ...p };
-                  ParentIntervention.id = Storeys.id + "_" + p.id + e[0];
-                  ParentIntervention.name = p.name + "_" + e[1].name;
-                  UpdatedTasks[ParentIntervention.id] = ParentIntervention;
-                  // Generate SubTasks for every Element
-                  const SubTasks = d[1].map((s: any) => {
-                    // No Parent Tasks
-                    if (s.parent_intervention === p.id) {
-                      // copy the current intervention
-                      let tempIntervention;
-                      tempIntervention = { ...s };
-
-                      // edit the ID by combining it with the element ID and change the "requiered previous" IDs
-                      tempIntervention.id = e[0] + "_" + s.id;
-                      tempIntervention.parent_intervention =
-                        ParentIntervention.id;
-
-                      if (tempIntervention.required_previous) {
-                        let RequieredPrev =
-                          tempIntervention.required_previous.map(function (
-                            x: any
-                          ) {
-                            return e[0] + "_" + x;
-                          });
-                        tempIntervention.required_previous = RequieredPrev;
-                      }
-                      let aabb = viewer_instance.scene.objects[e[0]]._aabb;
-
-                      // Calculate location. Keep in mind to later make this location relative to its document!
-                      tempIntervention.location = [
-                        (aabb[0] + aabb[3]) / 2,
-                        (aabb[2] + aabb[5]) / 2,
-                        (aabb[1] + aabb[4]) / 2,
-                      ];
-
-                      tempIntervention.up_vector = [0, 0, 1];
-                      tempIntervention.forward_vector = [1, 0, 0];
-
-                      tempIntervention.buildingElement = e[0];
-
-                      UpdatedTasks[tempIntervention.id] = tempIntervention;
-                      // Check if the parent is the correct one
-                      //TODO: Add Task Data here!
-                      return (
-                        <Accordion
-                          multiple={false}
-                          style={{ paddingLeft: "1px" }}
-                        >
-                          <Accordion.Item
+    let TasksNew;
+    console.log("taskJson", taskJson)
+    if (taskJson !== null) {
+      TasksNew = Object.entries(taskJson).map((d: any) => {
+        // Check if they are interventions
+        if (d[0] === "interventions") {
+          // Find the Parent Interventions
+          const ParentInterventions = d[1].map((p: any) => {
+            // If there is no parent intervention it means it is a Parent itself!
+            if (!p.parent_intervention) {
+              /* The Old Parent
+              let ParentIntervention = { ...p };
+              ParentIntervention.id = Storeys.id + "_" + p.id;
+              UpdatedTasks[ParentIntervention.id] = ParentIntervention;
+              */
+  
+              // Create a Card for every IFC Element
+              const IfcElements = Object.entries(FilteredIfcElements).map(
+                (e: any) => {
+                  //Check if the Element is on the right storey
+                  if (e[1].parent.id === Storeys.id) {
+                    let ParentIntervention = { ...p };
+                    ParentIntervention.id = Storeys.id + "_" + p.id + e[0];
+                    ParentIntervention.name = p.name + "_" + e[1].name;
+                    UpdatedTasks[ParentIntervention.id] = ParentIntervention;
+                    // Generate SubTasks for every Element
+                    const SubTasks = d[1].map((s: any) => {
+                      // No Parent Tasks
+                      if (s.parent_intervention === p.id) {
+                        // copy the current intervention
+                        let tempIntervention;
+                        tempIntervention = { ...s };
+  
+                        // edit the ID by combining it with the element ID and change the "requiered previous" IDs
+                        tempIntervention.id = e[0] + "_" + s.id;
+                        tempIntervention.parent_intervention =
+                          ParentIntervention.id;
+  
+                        if (tempIntervention.required_previous) {
+                          let RequieredPrev =
+                            tempIntervention.required_previous.map(function (
+                              x: any
+                            ) {
+                              return e[0] + "_" + x;
+                            });
+                          tempIntervention.required_previous = RequieredPrev;
+                        }
+                        let aabb = viewer_instance.scene.objects[e[0]]._aabb;
+  
+                        // Calculate location. Keep in mind to later make this location relative to its document!
+                        tempIntervention.location = [
+                          (aabb[0] + aabb[3]) / 2,
+                          (aabb[2] + aabb[5]) / 2,
+                          (aabb[1] + aabb[4]) / 2,
+                        ];
+  
+                        tempIntervention.up_vector = [0, 0, 1];
+                        tempIntervention.forward_vector = [1, 0, 0];
+  
+                        tempIntervention.buildingElement = e[0];
+  
+                        UpdatedTasks[tempIntervention.id] = tempIntervention;
+                        // Check if the parent is the correct one
+                        //TODO: Add Task Data here!
+                        return (
+                          <Accordion
+                            multiple={false}
                             style={{ paddingLeft: "1px" }}
-                            value={tempIntervention.name}
-                            id={tempIntervention.id}
                           >
-                            <Text>{tempIntervention.id}</Text>
-                          </Accordion.Item>
-                        </Accordion>
-                      );
-                    }
-                  });
-                  // Create main tasks with Subtasks as children
-                  return (
-                    // This is the building element
-                    <Accordion
-                      onChange={() => {
-                        HighlightObjects([e[1].id]);
-                      }}
-                      style={{ paddingLeft: "5px" }}
-                    >
-                      <Accordion.Item
+                            <Accordion.Item
+                              style={{ paddingLeft: "1px" }}
+                              value={tempIntervention.name}
+                              id={tempIntervention.id}
+                            >
+                              <Accordion.Control>{tempIntervention.name}</Accordion.Control>
+                              <Accordion.Panel><Text>{tempIntervention.id}</Text></Accordion.Panel>
+                            </Accordion.Item>
+                          </Accordion>
+                        );
+                      }
+                    });
+                    // Create main tasks with Subtasks as children
+                    return (
+                      // This is the building element
+                      <Accordion
+                        onChange={() => {
+                          HighlightObjects([e[1].id]);
+                        }}
                         style={{ paddingLeft: "5px" }}
-                        value={p.name + "_" + e[1].name}
-                        id={e[1].id}
                       >
-                        {SubTasks}
-                      </Accordion.Item>
-                    </Accordion>
-                  );
+                        <Accordion.Item
+                          style={{ paddingLeft: "5px" }}
+                          value={p.name + "_" + e[1].name}
+                          id={e[1].id}
+                        >
+                          <Accordion.Control>{p.name + "_" + e[1].name}</Accordion.Control>
+                          <Accordion.Panel>{SubTasks}</Accordion.Panel>
+                        </Accordion.Item>
+                      </Accordion>
+                    );
+                  }
+                  // Return empty if it does not belong to the right storey
+                  else {
+                    return null;
+                  }
                 }
-                // Return empty if it does not belong to the right storey
-                else {
-                  return null;
-                }
-              }
-            );
-            // Check if the first Element is valid. Strange work around, but currently the script puts empty values in the Array if the Storey is wrong
-            if (IfcElements[0]) {
-              return (
-                <Accordion
-                  onChange={() => {
-                    SelectMainTask( p, Storeys);
-                  }}
-                  style={{ paddingLeft: "5px" }}
-                >
-                  <Accordion.Item
-                    style={{ paddingLeft: "5px" }}
-                    value={p.name}
-                    id={p.id}
-                  >
-                    <Text>Assigned To:</Text>
-                    <Form.Select
-                      aria-label="Default select example"
-                      id={p.id}
-                      onChange={(event) => AssigneeSelected(event)}
-                    >
-                      <option>Select a person/organization</option>
-                      {CreatePeopleDropdown()}
-                    </Form.Select>
-                    <p />
-                    {IfcElements}
-                  </Accordion.Item>
-                </Accordion>
               );
-            } else {
-              return <div></div>;
+              // Check if the first Element is valid. Strange work around, but currently the script puts empty values in the Array if the Storey is wrong
+              if (IfcElements[0]) {
+                return (
+                  <Accordion
+                    onChange={() => {
+                      SelectMainTask( p, Storeys);
+                    }}
+                    style={{ paddingLeft: "5px" }}
+                  >
+                    <Accordion.Item
+                      style={{ paddingLeft: "5px" }}
+                      value={p.name}
+                      id={p.id}
+                    >
+
+                      <Accordion.Control>{p.name}</Accordion.Control>
+                      <Accordion.Panel>
+                        <Text>Assigned To:</Text>
+                        <Form.Select
+                          aria-label="Default select example"
+                          id={p.id}
+                          onChange={(event) => AssigneeSelected(event)}
+                        >
+                          <option>Select a person/organization</option>
+                          {CreatePeopleDropdown()}
+                        </Form.Select>
+                        <p />
+                        {IfcElements}
+                      </Accordion.Panel>
+
+                    </Accordion.Item>
+                  </Accordion>
+                );
+              } else {
+                return <div></div>;
+              }
             }
-          }
-        });
-        return ParentInterventions;
-      }
-    });
+          });
+          return ParentInterventions;
+        }
+      });
+    }
+  
 
     return TasksNew;
   }
@@ -378,18 +404,21 @@ export default function TaskListCreation(props: TaskListProps) {
         value={d.name}
         id={d.id + "_Item"}
       >
-        <Text>Assign to Document:</Text>
-        <Form.Select
-          aria-label="Default select example"
-          id={d.id}
-          onChange={(event) => DocumentSelected(event)}
-        >
-          <option>Select corresponding (2D) Document</option>
-          {CreateDocumentsDropdown()}
-        </Form.Select>
-        <p />
-        Tasks:
-        {CreateSubTasks(d)}
+        <Accordion.Control>{d.name}</Accordion.Control>
+        <Accordion.Panel>
+          <Text>Assign to Document:</Text>
+          <Form.Select
+            aria-label="Default select example"
+            id={d.id}
+            onChange={(event) => DocumentSelected(event)}
+          >
+            <option>Select corresponding (2D) Document</option>
+            {CreateDocumentsDropdown()}
+          </Form.Select>
+          <p />
+          Tasks:
+          {CreateSubTasks(d)}
+        </Accordion.Panel>
       </Accordion.Item>
     );
   });
@@ -412,7 +441,7 @@ export default function TaskListCreation(props: TaskListProps) {
         <div className={"caia-center"}>
           <Button
             onClick={() => {
-              let tasks2Convert: any = props.TaskJson;
+              let tasks2Convert: any = taskJson;
               let UpdatedTasksArr: any = [];
               for (const [key, value] of Object.entries(UpdatedTasks)) {
                 UpdatedTasksArr.push(value);
@@ -424,9 +453,9 @@ export default function TaskListCreation(props: TaskListProps) {
 
               tasks2Convert.interventions = UpdatedTasksArr;
               tasks2Convert.intervention_posts =
-                props.TaskJson.intervention_posts;
+              taskJson.intervention_posts;
               tasks2Convert.intervention_priorities =
-                props.TaskJson.intervention_priorities;
+              taskJson.intervention_priorities;
 
               let bcfowl = new BcfOWL_Endpoint();
 

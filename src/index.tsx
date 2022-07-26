@@ -15,6 +15,7 @@ import ViewerProvider from "./context/dcwebviewerContext";
 import BcfOWLProvider from "./context/bcfOWLservercontext";
 import { ModalsProvider } from "@mantine/modals";
 import CAIA from "./App";
+import TaskProvider from "./context/taskContext";
 
 const Root = () => {
   const toggleColorScheme = (value?: ColorScheme) =>
@@ -33,19 +34,21 @@ const Root = () => {
     >
       <NotificationsProvider>
         <BcfOWLProvider>
-          <ViewerProvider>
-            <MantineProvider
-              theme={{colorScheme: colorScheme}} withGlobalStyles withNormalizeCSS
-            >
-              <ModalsProvider>
-                <React.StrictMode>
-                  <BrowserRouter>
-                    <CAIA />
-                  </BrowserRouter>
-                </React.StrictMode>
-              </ModalsProvider>
-            </MantineProvider>
-          </ViewerProvider>
+          <TaskProvider>
+            <ViewerProvider>
+              <MantineProvider
+                theme={{colorScheme: colorScheme}} withGlobalStyles withNormalizeCSS
+              >
+                <ModalsProvider>
+                  <React.StrictMode>
+                    <BrowserRouter>
+                      <CAIA />
+                    </BrowserRouter>
+                  </React.StrictMode>
+                </ModalsProvider>
+              </MantineProvider>
+            </ViewerProvider>
+          </TaskProvider>
         </BcfOWLProvider>
       </NotificationsProvider>
    </ColorSchemeProvider>
