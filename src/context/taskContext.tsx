@@ -3,8 +3,6 @@ import {
   TaskTypes,
 } from "../@types/taskTypes";
 // @ts-ignore
-import { Viewer } from "@xeokit/xeokit-sdk";
-import { useState } from "react";
 
 export const TaskContext = React.createContext<TaskTypes | null>(
   null
@@ -13,12 +11,13 @@ export const TaskContext = React.createContext<TaskTypes | null>(
 const TaskProvider: React.FC<React.ReactNode> = ({ children }) => {
 
   const [taskFile, setTaskFile] = React.useState<File | undefined>(undefined);
+  const [taskViewState, setTaskViewState] = React.useState<"Preview" | "Creation">("Preview");
 
 
   return (
     <TaskContext.Provider
       value={{
-        taskFile, setTaskFile
+        taskFile, setTaskFile, taskViewState, setTaskViewState,
       }}
     >
       {children}

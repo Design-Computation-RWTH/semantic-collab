@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActionIcon, Container, FileButton} from "@mantine/core";
+import { ActionIcon, Container, FileButton, ScrollArea} from "@mantine/core";
 import TaskListPreview from "./Tasks/TaskListPreview";
 import TaskListCreation from "./Tasks/TaskListCreation";
 // @ts-ignore
@@ -10,27 +10,25 @@ import { TaskTypes } from "../../@types/taskTypes";
 
 //const testJSON = require("./Tasks/TasksExample.json");
 
-type TaskView = "Preview" | "Creation";
-
 export default function CAIA_Tasks_Tab() {
-  const [viewState, setViewState] = useState<TaskView>("Preview");
 
   const { viewer } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
-  const { taskFile, setTaskFile } = React.useContext(TaskContext) as TaskTypes;
+  const { taskFile, setTaskFile, taskViewState, setTaskViewState } = React.useContext(TaskContext) as TaskTypes;
 
   let storeyTemp: any = [];
 
   useEffect(() => {
-    console.log("file", taskFile)
     if (taskFile !== undefined) {
            if (viewer) {
-                 setViewState("Creation");
+            console.log("Test")
+              setTaskViewState("Creation");
                } else {
                  alert("Please load an IFC Building Representation First");
             }
     }
-  }, [taskFile]);
+  }, [taskFile, viewer, setTaskViewState]);
+
 
   if (viewer) {
     let storeys = viewer.metaScene.getObjectIDsByType("IfcBuildingStorey");
@@ -44,9 +42,9 @@ export default function CAIA_Tasks_Tab() {
 
   let ViewState = null;
 
-  if (viewState === "Preview") {
+  if (taskViewState === "Preview") {
     ViewState = <TaskListPreview IfcStoreys={storeyTemp} viewer={viewer} />;
-  } else if (viewState === "Creation") {
+  } else if (taskViewState === "Creation") {
     ViewState = (
       <TaskListCreation
         IfcStoreys={storeyTemp}
@@ -59,13 +57,14 @@ export default function CAIA_Tasks_Tab() {
     <div
       style={{
         height: "100%",
+        width: "100%",
         flexDirection: "column",
         display: "flex",
       }}
     >
-      <div className={"yscroll"} style={{ height: "100%" }}>
+      <ScrollArea.Autosize maxHeight={"100%"} style={{ flex: 1, height:"95%", maxHeight:"95%", width: "100%", maxWidth: "100%" }} offsetScrollbars>
         {ViewState}
-      </div>
+      </ScrollArea.Autosize>
       <Container
                 style={{
                   height: "5%",
@@ -74,18 +73,9 @@ export default function CAIA_Tasks_Tab() {
                   justifyContent: "center",
                 }}
       >
-        <FileButton onChange={setTaskFile} accept={"image/png, image/jpeg, application/json"}>
+        <FileButton onChange={setTaskFile} accept={"application/json"}>
         {(props) => 
-          (<ActionIcon {...props}
-            // title="Create new Tasks"
-            // onClick={() => {
-            //   if (viewer) {
-            //     setViewState("Creation");
-            //   } else {
-            //     alert("Please load an IFC Building Representation First");
-            //   }
-            // }}
-          >
+          (<ActionIcon {...props}          >
             <i className=" bi-plus-square " />
           </ActionIcon>)}
         </FileButton>

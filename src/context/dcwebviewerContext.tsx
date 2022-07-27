@@ -25,6 +25,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
     [document_id: string]: boolean;
   }>({});
 
+  const [lastSelection, setLastSelection] = React.useState<any>();
+
   const [file, setFile] = React.useState<string>("");
   const [fileName, setFileName] = React.useState<string>("");
 
@@ -100,6 +102,8 @@ const ViewerProvider: React.FC<React.ReactNode> = ({ children }) => {
         setLargeGalleryImg,
         activeGalleryTopic,
         setActiveGalleryTopic,
+        lastSelection,
+        setLastSelection,
         imageList,
         setImageList,
         activeTab,

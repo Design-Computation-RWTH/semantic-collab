@@ -347,7 +347,6 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
   function leftPanel() {
     let leftPanel;
     if (representationScreen === 0) {
-      console.log(selected_document)
       leftPanel = (
         <div>
           <SimpleGrid cols={1} spacing="xs">
@@ -366,6 +365,13 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
           viewer={viewer}
         />)
       } else if (selected_documentName.endsWith(".png")){
+        details = (          <RepresentationDetails
+          selectedDocument={selected_document}
+          newFileName={new_file_name}
+          file={file}
+          viewer={viewer}
+        />)
+      } else {
         details = (          <RepresentationDetails
           selectedDocument={selected_document}
           newFileName={new_file_name}

@@ -20,6 +20,9 @@ export type DcWebViewerContextType = {
   serverUrl: string;
   setServerUrl: Dispatch<SetStateAction<string>>;
 
+  lastSelection: any;
+  setLastSelection: Dispatch<SetStateAction<string>>;
+
   viewer: Viewer;
   setViewer: Dispatch<SetStateAction<Viewer>>;
 

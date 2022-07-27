@@ -61,6 +61,8 @@ export default function CAIA_XeoKitView() {
     setActiveGalleryTopic,
     setLargeGalleryImg,
     setActiveTab,
+    lastSelection,
+    setLastSelection
   } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   let imageservice = new ImageService();
@@ -184,21 +186,23 @@ export default function CAIA_XeoKitView() {
     viewer.camera.right = [0, 1, 0];
     viewer.camera.orbitYaw(180);
 
-    let lastSelection: any;
     let lastViewpointId;
+    let lastSel: any;
+    
 
     let measureCount = 0;
 
     cameraControl.on("picked", (e: any) => {
       if (clickMode === "Select") {
         const entity = e.entity;
-        if (lastSelection) {
-          lastSelection.selected = false;
+        let viewerScene = viewer.scene.objects;
+        for (const Element in viewerScene) {
+          viewerScene[Element].selected = false;
         }
         entity.selected = true;
-        lastSelection = entity;
+
         //Don't delete this console.log
-        console.log(entity);
+        console.log("entity", entity);
         const metaObj = viewer.metaScene.metaObjects[entity.id];
         //Don't delete this console.log
         console.log(metaObj);

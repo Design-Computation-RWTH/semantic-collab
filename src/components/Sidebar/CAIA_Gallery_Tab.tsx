@@ -392,10 +392,8 @@ export default function CAIA_Gallery_Tab() {
   topicStageData.push({ value: "None", label: "None" });
 
   let authorData: any[] = [];
-  console.log("Gallery Users" , users);
   if (users.size !== 0) {
-    console.log("GalleryUsersWork")
-      authorData = users.map((e: any) => {
+    authorData = users.map((e: any) => {
     let tempValue: string = "";
     let tempLabel: string = "";
     Object.keys(e).forEach((key: any) => {

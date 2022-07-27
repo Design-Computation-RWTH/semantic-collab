@@ -34,7 +34,7 @@
       "description": "Installation of an external insulation system",
       "estimated_cost": 20000.0,
       "start_date": "2022-05-24",
-      "end_date": "2022-06-31",
+      "end_date": "2022-06-30",
       "intervention_priority_id": 3,
       "intervention_post_id": 6,
       "intervention_post_name": "Façade insulation"
@@ -133,7 +133,7 @@
       "name": "Finishing",
       "description": "Install the finishing. Could be wooden panels, coating...",
       "start_date": "2022-06-25",
-      "end_date": "2022-06-31",
+      "end_date": "2022-06-30",
       "intervention_priority_id": 3,
       "intervention_post_id": 4,
       "intervention_post_name": "Façade",

@@ -17,11 +17,11 @@ type TaskListProps = {
 export default function TaskListPreview(props: TaskListProps) {
   const [mainTasks, setMainTasks] = useState<any>([]);
   const [subTasks, setSubTasks] = useState<any>([]);
-  const [viewpoints, setViewpoints] = useState<any>([]);
-  const [perspectiveCameras, setPerspectiveCameras] = useState<any>([]);
+  const [setViewpoints] = useState<any>([]);
+  const [setPerspectiveCameras] = useState<any>([]);
   const [taskPage, setTaskPage] = useState<0 | 1>(0);
   const [activeTask, setActiveTask] = useState<string>("");
-  const { viewer, taskExtensions, users } = React.useContext(
+  const {viewer, taskExtensions, users } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
 
@@ -96,7 +96,6 @@ export default function TaskListPreview(props: TaskListProps) {
   topicStageData.push({ value: "None", label: "None" });
 
   let authorData = [];
-  console.log("Task Users" , users);
   if (users.size !== 0) {
       authorData = users.map((e: any) => {
     let tempValue: string = "";
@@ -177,16 +176,7 @@ export default function TaskListPreview(props: TaskListProps) {
       if (st["hasTaskContext"] === taskID && elementID === st.buildingElement) {
         return (
           <Accordion.Item
-            //icon={<></>}
-            value={st.hasTitle}
-            id={st["@id"] + "_MainTask"}
-            //iconSize={0}
-            onMouseEnter={() => {
-              viewer.scene.objects[elementID].selected = true;
-            }}
-            onMouseLeave={() => {
-              viewer.scene.objects[elementID].selected = false;
-            }}
+            value={st["@id"] + "_MainTask"}
             styles={{
               // itemTitle: { color: "white" },
               // contentInner: { padding: 0, margin: 0 },
@@ -197,7 +187,10 @@ export default function TaskListPreview(props: TaskListProps) {
               setTaskPage(1);
               setActiveTask(st["@id"]);
             }}
-          />
+          >
+            <Accordion.Control>{st.hasTitle}</Accordion.Control>
+            <Accordion.Panel>Test</Accordion.Panel>
+          </Accordion.Item>
         );
       } else {
         return <></>;
@@ -223,35 +216,7 @@ export default function TaskListPreview(props: TaskListProps) {
         name = st;
       }
 
-      return (
-        <Accordion.Item
-          value={name}
-          id={name + "_BuildingElement"}
-          onMouseEnter={() => {
-            viewer.scene.objects[st].selected = true;
-          }}
-          onMouseLeave={() => {
-            viewer.scene.objects[st].selected = false;
-          }}
-          styles={{
-            // itemTitle: { color: "white" },
-            // content: { padding: 0, margin: 0 },
-            // item: { padding: 0, margin: 0 },
-            // contentInner: { padding: 0, margin: 0 },
-          }}
-        >
-          <Accordion
-            styles={{
-              // contentInner: { padding: 0, margin: 0 },
-              // content: { padding: 0, margin: 0 },
-              // item: { padding: 0, margin: 0 },
-            }}
-            key={taskID + "Task"}
-            style={{ padding: 0, margin: 0 }}
-          >
-            {relatedSubtasks(taskID, st)}
-          </Accordion>
-        </Accordion.Item>
+      return (relatedSubtasks(taskID, st)
       );
     });
     return buildingElements;
@@ -260,15 +225,17 @@ export default function TaskListPreview(props: TaskListProps) {
   const MainTasks = mainTasks.map((t: any) => {
     return (
       <Accordion.Item
-        value={t.hasTitle}
-        id={t["@id"] + "_MainTask"}
+        value={t["@id"] + "_MainTask"}
       >
-        <Accordion
-          styles={{
-          }}
-        >
-          {buildingElementList(t["@id"])}
-        </Accordion>
+        <Accordion.Control>{t.hasTitle}</Accordion.Control>
+        <Accordion.Panel>
+          <Accordion
+            styles={{
+            }}
+          >
+            {buildingElementList(t["@id"])}
+          </Accordion>
+        </Accordion.Panel>
       </Accordion.Item>
     );
   });

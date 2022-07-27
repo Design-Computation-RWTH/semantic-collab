@@ -191,10 +191,8 @@ export async function ConvertTasks(data: any, projectURI: string) {
       );
     }
   );
-
   data.interventions.forEach((i: ConvertTasks2RDF_types.Intervention) => {
     let intervention_uri = interventions_map.get(i.id); // just not to recreate it
-
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -239,6 +237,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
       namedNode(bcdOWL_uri + "hasCreationDate"),
       lit_CreationDate
     );
+    console.log("EndDate", i.end_date);
     let lit_DueDate = literal(
       new Date(i.end_date).toISOString(),
       namedNode("http://www.w3.org/2001/XMLSchema#dateTime")
