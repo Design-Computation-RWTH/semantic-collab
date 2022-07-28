@@ -1,10 +1,12 @@
 // @ts-ignore
 import * as ConvertTasks2RDF_types from "./types/ConvertTasks2RDF_types";
 import { getAccessToken } from "./BcfOWL_Endpoint";
+import Cookies from "js-cookie";
 
 const N3 = require("n3");
 const { DataFactory } = N3;
 const { namedNode, literal } = DataFactory;
+const getServerUrl = () => Cookies.get("url");
 
 export async function ConvertTasks(data: any, projectURI: string) {
   let inst_uri = projectURI;
@@ -40,7 +42,8 @@ export async function ConvertTasks(data: any, projectURI: string) {
     return JSON.parse(jsonPayload);
   }
 
-  let author_uri = parseJWT(getAccessToken()).URI;
+  let author_uri = getServerUrl() + "/users/" + parseJWT(getAccessToken()).URI;
+  console.log(author_uri);
 
   writer.addQuad(
     namedNode(inst_uri + "TaskRMContext"),
@@ -68,7 +71,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
     let intervention_uri =
       inst_uri +
       "Intervention_" +
-      i.name.replace(/ /g, "_").replace(/ç/g, "c") +
+      i.name.replace(/ /g, "_").replace(/c/g, "c") +
       "_" +
       i.id;
     interventions_map.set(i.id, intervention_uri);
@@ -104,7 +107,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
       let interventionpost_uri =
         inst_uri +
         "InterventionPost_" +
-        i.name.replace(/ /g, "_").replace(/ç/g, "c") +
+        i.name.replace(/ /g, "_").replace(/c/g, "c") +
         "_" +
         i.id;
       types.set(i.id, interventionpost_uri);
@@ -153,7 +156,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
       let interventionpriority_uri =
         inst_uri +
         "InterventionPriority_" +
-        i.name.replace(/ /g, "_").replace(/ç/g, "c") +
+        i.name.replace(/ /g, "_").replace(/c/g, "c") +
         "_" +
         i.id;
       priorities.set(i.id, interventionpriority_uri);
@@ -237,7 +240,6 @@ export async function ConvertTasks(data: any, projectURI: string) {
       namedNode(bcdOWL_uri + "hasCreationDate"),
       lit_CreationDate
     );
-    console.log("EndDate", i.end_date);
     let lit_DueDate = literal(
       new Date(i.end_date).toISOString(),
       namedNode("http://www.w3.org/2001/XMLSchema#dateTime")
@@ -255,7 +257,7 @@ export async function ConvertTasks(data: any, projectURI: string) {
     );
 
     let intervention_TopicType =
-      i.intervention_post_name.replace(/ /g, "_").replace(/ç/g, "c") +
+      i.intervention_post_name.replace(/ /g, "_").replace(/c/g, "c") +
       i.intervention_post_id;
     writer.addQuad(
       namedNode(intervention_uri),
@@ -305,7 +307,6 @@ export async function ConvertTasks(data: any, projectURI: string) {
       // share the same Viewpoint and Perspective Camera.
       let elementId: any = i.id.toString();
       //elementId = elementId.split("_")[-1];
-      console.log(elementId.split("_")[0]);
       let viewpoint_guid = elementId.split("_")[0]; // uuid.v4();
       // Create viewpoint and perspective camera URI from the GUID
       let viewpoint_uri = inst_uri + "viewpoint_" + viewpoint_guid;

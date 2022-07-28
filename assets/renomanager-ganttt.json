@@ -72,11 +72,8 @@
     "intervention_category_name": "Replace"
   },
   {
-    "checks": [
-      "Façade quality",
-      "Accessibility of the façade"
-    ],
-    "description": "Technical pre-work inspection. The quality of the façade needs to be checked, some measure be performed, and the accessibility needs to be ensures",
+    "checks": ["Facade quality", "Accessibility of the facade"],
+    "description": "Technical pre-work inspection. The quality of the facade needs to be checked, some measure be performed, and the accessibility needs to be ensures",
     "parent_intervention_id": 25,
     "id": 0,
     "required_previous": [],
@@ -91,16 +88,16 @@
       "Identify thermal bridges",
       "Cladding security",
       "Uv protection installed",
-      "No roughness on the façade",
+      "No roughness on the facade",
       "Floor is protected",
       "Remove weak structural zones",
       "Remove external elements: cables..."
     ],
-    "description": "Install cladding and prepare the façade for the installation of the insulation system",
+    "description": "Install cladding and prepare the facade for the installation of the insulation system",
     "parent_intervention_id": 25,
     "id": 1,
     "required_previous": [],
-    "name": "Façade preparation",
+    "name": "Facade preparation",
     "estimated_cost": 1000,
     "intervention_priority_name": "Mandatory",
     "intervention_category_name": "Measure",
@@ -115,9 +112,7 @@
     "description": "Installation of the rails supporting the system. Drill holes, install rails, cut angles",
     "parent_intervention_id": 25,
     "id": 2,
-    "required_previous": [
-      1
-    ],
+    "required_previous": [1],
     "name": "Rails installation",
     "estimated_cost": 0,
     "intervention_priority_name": "Mandatory",
@@ -129,9 +124,7 @@
     "description": "Installation of the insulation panels. Cut the panels. Paste/fix them. Insulation of framing. Fix the panels with screws",
     "parent_intervention_id": 25,
     "id": 3,
-    "required_previous": [
-      2
-    ],
+    "required_previous": [2],
     "name": "Installation of insulation panels",
     "estimated_cost": 0,
     "intervention_priority_name": "Mandatory",
@@ -143,9 +136,7 @@
     "description": "Apply sub-coating to protect the panels",
     "parent_intervention_id": 25,
     "id": 4,
-    "required_previous": [
-      3
-    ],
+    "required_previous": [3],
     "name": "Sub-coating",
     "estimated_cost": 0,
     "intervention_priority_name": "Mandatory",
@@ -157,9 +148,7 @@
     "description": "Install the finishing. Could be wooden panels, coating...",
     "parent_intervention_id": 25,
     "id": 5,
-    "required_previous": [
-      2
-    ],
+    "required_previous": [2],
     "name": "Finishing",
     "estimated_cost": 0,
     "intervention_priority_name": "Opportunity",

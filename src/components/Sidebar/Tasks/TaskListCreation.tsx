@@ -35,9 +35,10 @@ export default function TaskListCreation(props: TaskListProps) {
   const [documents, setDocuments] = useState<any>(null);
   const [users, setUsers] = useState<any>(null);
 
-  const { taskFile } = React.useContext(TaskContext) as TaskTypes;
+  const { taskFile, setTaskViewState, setTaskFile  } = React.useContext(TaskContext) as TaskTypes;
 
   useEffect(() => {
+    console.log("Init")
     init();
   }, []);
 
@@ -435,7 +436,10 @@ export default function TaskListCreation(props: TaskListProps) {
   >
     <Container style={{ width: "100%", maxWidth: "100%" }}>
       <div>
-        <CloseButton onClick={() => {}} />
+        <CloseButton onClick={() => {
+          setTaskFile(null)
+          setTaskViewState("Preview");
+        }} />
         <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
           {AccordionList}
         </Accordion>
@@ -471,6 +475,8 @@ export default function TaskListCreation(props: TaskListProps) {
                 bcfowl
                   .postRDF(rdfTasks)
                   .then((r) => {
+                    setTaskFile(null)
+                    setTaskViewState("Preview");
                   })
                   .catch((e) => {
                   });

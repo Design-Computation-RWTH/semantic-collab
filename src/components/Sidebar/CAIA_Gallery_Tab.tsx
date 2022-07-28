@@ -81,6 +81,7 @@ export default function CAIA_Gallery_Tab() {
 
   const {
     viewer,
+    setViewer,
     extensions,
     users,
     imageList,
@@ -95,6 +96,13 @@ export default function CAIA_Gallery_Tab() {
     setViewpoints,
     setCurrentViewpoint,
   } = React.useContext(ViewerContext) as DcWebViewerContextType;
+
+  let tempViewer: any;
+
+  useEffect(() => {
+    console.log("viewer gallery", viewer)
+    init();
+  }, [viewer, setViewer]);
 
   function gallery() {
     let gallery_content;
@@ -241,22 +249,35 @@ export default function CAIA_Gallery_Tab() {
         onClick={() => {
           setGalleryScreen(1);
           setCurrentViewpoint(s.vp_uri);
-
-          for (const model in viewer.scene.models) {
-            if (model.includes(s.guid)) {
-              viewer.scene.models[model].selected = true;
-              viewer.cameraFlight.flyTo(model);
-            } else {
-              viewer.scene.models[model].selected = false;
-            }
-          }
           let image = imageservice.getImageData4GUID(s.guid);
-          setActiveGalleryTopic(s.topic_guid);
           PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
           image.then((img: any) => {
             if (img.size > 0) {
+              console.log(img.size)
               let url = URL.createObjectURL(img);
+              console.log(url)
               setLargeGalleryImg(url);
+              setActiveGalleryTopic(s.topic_guid);
+              console.log("viewer", viewer)
+              for (const model in viewer.scene.models) {
+                if (model.includes(s.guid)) {
+                  viewer.scene.models[model].selected = true;
+                  viewer.cameraFlight.flyTo(model);
+                } else {
+                  viewer.scene.models[model].selected = false;
+                }
+              }
+            } else {
+              console.log(img.size)
+              setActiveGalleryTopic(s.topic_guid);
+              for (const model in viewer.scene.models) {
+                if (model.includes(s.guid)) {
+                  viewer.scene.models[model].selected = true;
+                  viewer.cameraFlight.flyTo(model);
+                } else {
+                  viewer.scene.models[model].selected = false;
+                }
+              }
             }
           });
         }}

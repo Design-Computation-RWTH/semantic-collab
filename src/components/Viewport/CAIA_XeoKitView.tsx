@@ -138,6 +138,7 @@ export default function CAIA_XeoKitView() {
     });
 
     setViewer(viewer);
+    console.log("viewer", viewer)
 
     distanceMeasurements_instance = new DistanceMeasurementsPlugin(viewer);
 
