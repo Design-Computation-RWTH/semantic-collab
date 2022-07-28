@@ -11,7 +11,7 @@ import {
 } from "react-icons/bs";
 import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
-import { ActionIcon, Container, SimpleGrid, CloseButton } from "@mantine/core";
+import { ActionIcon, Container, SimpleGrid, CloseButton, ScrollArea } from "@mantine/core";
 // @ts-ignore
 import { Viewer, LASLoaderPlugin } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
@@ -396,7 +396,7 @@ export default function CAIA_Representations_Tab(props: RepresentationsProps) {
 
   return (
     <div className="caia-fill">
-      <div className="yscroll">{leftPanel()}</div>
+      <ScrollArea style={{height:"100%"}}>{leftPanel()}</ScrollArea>
       <Container
                 style={{
                   height: "5%",

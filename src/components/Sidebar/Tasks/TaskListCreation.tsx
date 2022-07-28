@@ -228,11 +228,6 @@ export default function TaskListCreation(props: TaskListProps) {
           const ParentInterventions = d[1].map((p: any) => {
             // If there is no parent intervention it means it is a Parent itself!
             if (!p.parent_intervention) {
-              /* The Old Parent
-              let ParentIntervention = { ...p };
-              ParentIntervention.id = Storeys.id + "_" + p.id;
-              UpdatedTasks[ParentIntervention.id] = ParentIntervention;
-              */
   
               // Create a Card for every IFC Element
               const IfcElements = Object.entries(FilteredIfcElements).map(
@@ -285,11 +280,13 @@ export default function TaskListCreation(props: TaskListProps) {
                         return (
                           <Accordion
                             multiple={false}
+                            key={tempIntervention.id}
                             style={{ paddingLeft: "1px" }}
                           >
                             <Accordion.Item
                               style={{ paddingLeft: "1px" }}
                               value={tempIntervention.name}
+                              key={tempIntervention.id + "_Item"}
                               id={tempIntervention.id}
                             >
                               <Accordion.Control>{tempIntervention.name}</Accordion.Control>
@@ -303,6 +300,7 @@ export default function TaskListCreation(props: TaskListProps) {
                     return (
                       // This is the building element
                       <Accordion
+                        key={e[1].id}
                         onChange={() => {
                           HighlightObjects([e[1].id]);
                         }}
@@ -311,6 +309,7 @@ export default function TaskListCreation(props: TaskListProps) {
                         <Accordion.Item
                           style={{ paddingLeft: "5px" }}
                           value={p.name + "_" + e[1].name}
+                          key={e[1].id+ "_Item"}
                           id={e[1].id}
                         >
                           <Accordion.Control>{p.name + "_" + e[1].name}</Accordion.Control>
@@ -329,6 +328,7 @@ export default function TaskListCreation(props: TaskListProps) {
               if (IfcElements[0]) {
                 return (
                   <Accordion
+                    key={p.id}
                     onChange={() => {
                       SelectMainTask( p, Storeys);
                     }}
@@ -336,6 +336,7 @@ export default function TaskListCreation(props: TaskListProps) {
                   >
                     <Accordion.Item
                       style={{ paddingLeft: "5px" }}
+                      key={p.id + "_Item"}
                       value={p.name}
                       id={p.id}
                     >
@@ -402,6 +403,7 @@ export default function TaskListCreation(props: TaskListProps) {
       <Accordion.Item
         style={{ paddingLeft: "5px" }}
         value={d.name}
+        key={d.id + "_Item"}
         id={d.id + "_Item"}
       >
         <Accordion.Control>{d.name}</Accordion.Control>

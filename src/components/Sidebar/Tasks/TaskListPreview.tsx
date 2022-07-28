@@ -17,8 +17,8 @@ type TaskListProps = {
 export default function TaskListPreview(props: TaskListProps) {
   const [mainTasks, setMainTasks] = useState<any>([]);
   const [subTasks, setSubTasks] = useState<any>([]);
-  const [setViewpoints] = useState<any>([]);
-  const [setPerspectiveCameras] = useState<any>([]);
+  const [viewpoints, setViewpoints] = useState<any>([]);
+  const [perspectiveCameras, setPerspectiveCameras] = useState<any>([]);
   const [taskPage, setTaskPage] = useState<0 | 1>(0);
   const [activeTask, setActiveTask] = useState<string>("");
   const {viewer, taskExtensions, users } = React.useContext(
@@ -177,6 +177,7 @@ export default function TaskListPreview(props: TaskListProps) {
         return (
           <Accordion.Item
             value={st["@id"] + "_MainTask"}
+            key={st["@id"] + "_MainTask"}
             styles={{
               // itemTitle: { color: "white" },
               // contentInner: { padding: 0, margin: 0 },
@@ -189,7 +190,7 @@ export default function TaskListPreview(props: TaskListProps) {
             }}
           >
             <Accordion.Control>{st.hasTitle}</Accordion.Control>
-            <Accordion.Panel>Test</Accordion.Panel>
+            <Accordion.Panel></Accordion.Panel>
           </Accordion.Item>
         );
       } else {
@@ -226,10 +227,12 @@ export default function TaskListPreview(props: TaskListProps) {
     return (
       <Accordion.Item
         value={t["@id"] + "_MainTask"}
+        key={t["@id"] + "_MainTask"}
       >
         <Accordion.Control>{t.hasTitle}</Accordion.Control>
         <Accordion.Panel>
           <Accordion
+            key={"MainTasks_Elements" + t["@id"]}
             styles={{
             }}
           >

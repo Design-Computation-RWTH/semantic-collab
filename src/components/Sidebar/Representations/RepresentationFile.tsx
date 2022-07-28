@@ -137,7 +137,7 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
     <Table>
       <tbody>
         <tr key={props.document.id}>
-          <td className="file-component">
+          <td key={props.document.id + "_TD"} className="file-component">
             <ActionIcon size="xl">
               <i className={determineEnding()} />
             </ActionIcon>
@@ -151,6 +151,7 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
             </Button>
             <Switch
               id={props.document.id}
+              defaultChecked={false}
               checked={viewerDocuments[props.document.id]}
               size="xl"
               onLabel={"On"}
@@ -172,7 +173,6 @@ export default function RepresentationFile(props: RepresentationFilePropsType) {
             />
           </td>
         </tr>
-        <tr>{/*<Stack>{showStoreys()}</Stack>*/}</tr>
       </tbody>
     </Table>
   );

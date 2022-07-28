@@ -116,13 +116,13 @@ export default function CAIA_Sidebar() {
         <Tabs.Tab value="Gallery" title="Gallery" icon={<BsCardImage />}/>
         <Tabs.Tab onClick={()=>{}} value="Tasks" title="Tasks" icon={<BsCalendarCheck />}/>
       </Tabs.List>
-      <Tabs.Panel style={{height:"100%"}} value="Representations" pt="xs">
+      <Tabs.Panel style={{height:"100%", paddingBottom: "25px"}} value="Representations" pt="xs">
           <CAIA_Representations_Tab />
       </Tabs.Panel>
-      <Tabs.Panel style={{height:"100%"}} value="Gallery" pt="xs">
+      <Tabs.Panel style={{height:"100%", paddingBottom: "25px"}} value="Gallery" pt="xs">
         <CAIA_Gallery_Tab />
       </Tabs.Panel>
-      <Tabs.Panel  style={{height:"100%"}} value="Tasks" pt="xs">
+      <Tabs.Panel  style={{height:"100%", paddingBottom: "25px"}} value="Tasks" pt="xs">
         <CAIA_Tasks_Tab />
       </Tabs.Panel>
     </Tabs>

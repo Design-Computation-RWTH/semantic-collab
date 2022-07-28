@@ -283,7 +283,7 @@ export default function CAIA () {
                 ? theme.colors.dark[8]
                 : theme.colors.gray[0],
           },
-          body: { height: "93vh" },
+          body: { height: "100vh" },
         })}
       >
         <Routes>
