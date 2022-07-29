@@ -258,7 +258,6 @@ export default function CAIA_Gallery_Tab() {
               console.log(url)
               setLargeGalleryImg(url);
               setActiveGalleryTopic(s.topic_guid);
-              console.log("viewer", viewer)
               for (const model in viewer.scene.models) {
                 if (model.includes(s.guid)) {
                   viewer.scene.models[model].selected = true;

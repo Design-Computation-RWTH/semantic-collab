@@ -484,23 +484,75 @@ class BcfOWL_Endpoint {
     var guid = doc_uri.substring(doc_uri.lastIndexOf("/") + 1);
     if (!this.project_id) alert("Project not selected. ");
     let urlencoded = new URLSearchParams();
+
+    let query = bcfOWLPrefixes + ctoPrefix + `
+      CONSTRUCT {?viewpoint ?p ?o}
+      WHERE {
+        { ?viewpoint bcfOWL:hasOriginatingDocument <${doc_uri}> . }
+        UNION {?viewpoint bcfOWL:hasOriginatingDocument '${guid}' . }
+        {
+        ?viewpoint a bcfOWL:Viewpoint.
+          ?viewpoint bcfOWL:hasPerspectiveCamera ?c.
+          ?viewpoint bcfOWL:hasTopic ?topic.
+          ?c ?p ?o.
+        
+        FILTER NOT EXISTS { ?topic a cto:Task .}
+      
+      }}
+    `
+
     urlencoded.append(
       "query",
-      bcfOWLPrefixes +
-        "CONSTRUCT {?viewpoint ?p ?o}\n" +
-        "WHERE {\n" +
-        "  { ?viewpoint bcfOWL:hasOriginatingDocument <" +
-        doc_uri +
-        "> . }\n" +
-        "  UNION {?viewpoint bcfOWL:hasOriginatingDocument '" +
-        guid +
-        "' . }\n" +
-        "   ?viewpoint a bcfOWL:Viewpoint. \n" +
-        "   ?viewpoint bcfOWL:hasPerspectiveCamera ?c .\n" +
-        "   ?c ?p ?o .\n" +
-        "  \n" +
-        "}\n"
+      query
+    )
+
+    console.log(query)
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/query",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
     );
+
+    if (!response.ok) {
+      const message = `getAll: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
+  async getTaskViepointCameras4Document(doc_uri: string) {
+    var guid = doc_uri.substring(doc_uri.lastIndexOf("/") + 1);
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+
+    let query = bcfOWLPrefixes + ctoPrefix + `
+      CONSTRUCT {?viewpoint ?p ?o}
+      WHERE {
+        { ?viewpoint bcfOWL:hasOriginatingDocument <${doc_uri}> . }
+        UNION {?viewpoint bcfOWL:hasOriginatingDocument '${guid}' . }
+        {
+        ?viewpoint a bcfOWL:Viewpoint.
+          ?viewpoint bcfOWL:hasPerspectiveCamera ?c.
+          ?viewpoint bcfOWL:hasTopic ?topic.
+          ?c ?p ?o.
+        
+        ?topic a cto:Task .
+      
+      }}
+    `
+
+    urlencoded.append(
+      "query",
+      query
+    )
+
+    console.log(query)
 
     const response = await fetch(
       base_uri + "/graph/" + this.project_id + "/query",
@@ -671,7 +723,7 @@ class BcfOWL_Endpoint {
   async postComment(comment: string, viewpoint: string, topic: string) {
     let projectUri = base_uri + "/graph/" + this.project_id;
     let guid = uuidv4();
-    let author = this.parseJWT(getAccessToken()).URI;
+    let author = base_uri + "/users/" + this.parseJWT(getAccessToken()).URI;
     let uri = projectUri + "/" + guid;
     let creationDate = new Date().toISOString();
 

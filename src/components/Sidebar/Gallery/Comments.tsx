@@ -40,18 +40,24 @@ export default function TopicComments(props: CommentProps) {
     init();
   }, []);
 
-  function init() {
+  useEffect(() => {
+
+  }, [])
+
+  function fetchComments() {
     bcfowl
       .getCommentsByViewpoint(currentViewpoint)
       .then((vp: any) => {
         let tempComments: any[] = [];
+        console.log("vp", vp)
         if ("@graph" in vp) {
           vp["@graph"].forEach((node: any) => {
             tempComments.push(node);
             setTopicURI(node.hasTopic);
           });
         } else if ("@id" in vp) {
-          //tempComments.push(vp);
+          tempComments.push(vp);
+          setTopicURI(vp.hasTopic)
         }
 
         tempComments.sort((a: any, b: any) => {
@@ -60,12 +66,16 @@ export default function TopicComments(props: CommentProps) {
             new Date(b.hasCommentDate).getTime()
           );
         });
-
+        console.log(tempComments)
         setComments(tempComments);
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  function init() {
+    fetchComments();
   }
 
   function parseJWT(token: string | undefined) {
@@ -84,6 +94,7 @@ export default function TopicComments(props: CommentProps) {
   }
 
   function commentList() {
+    console.log("comments", comments)
     if (comments !== null) {
       let author = parseJWT(getAccessToken()).URI;
 
@@ -154,7 +165,6 @@ export default function TopicComments(props: CommentProps) {
             <BsReplyFill size={"100px"} />
           </ActionIcon>
         </Group>
-
         <Space />
       </Stack>
     </Container>

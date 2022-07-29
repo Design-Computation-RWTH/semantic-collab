@@ -223,6 +223,13 @@ export default function TaskListPreview(props: TaskListProps) {
     return buildingElements;
   }
 
+  function showElement(t:any) {
+    console.log(t);
+    let target = viewer.scene.models[t["@id"]]
+    viewer.cameraFlight.flyTo(target)
+    console.log("Test", target)
+  }
+
   const MainTasks = mainTasks.map((t: any) => {
     return (
       <Accordion.Item
@@ -236,6 +243,7 @@ export default function TaskListPreview(props: TaskListProps) {
             styles={{
             }}
           >
+            <Button variant="outline" onClick={() => showElement(t)}>Show Element</Button>
             {buildingElementList(t["@id"])}
           </Accordion>
         </Accordion.Panel>

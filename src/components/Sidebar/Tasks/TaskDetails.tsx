@@ -436,6 +436,7 @@ function TopicTable(props: TopicTableProps) {
           </tr>
         </tbody>
       </Table>
+      
     </div>
   );
 }
