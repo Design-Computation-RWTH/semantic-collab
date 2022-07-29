@@ -24,13 +24,13 @@ function parseJWT(token: string | undefined) {
 
 type DeleteProps = {
   projectID: string;
+  update: any;
 };
 
 export default function DeleteProjectsModal(props: DeleteProps) {
   const [opened, setOpened] = useState(false);
 
   function deleteProject() {
-
     let bcfowl_setup = new BcfOWLProjectSetup();
     bcfowl_setup
       .deletetUserOutside(
@@ -39,6 +39,7 @@ export default function DeleteProjectsModal(props: DeleteProps) {
       )
       .then(() => {
         setOpened(false);
+        props.update();
       });
   }
 
