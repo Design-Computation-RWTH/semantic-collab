@@ -24,6 +24,7 @@ type ProjectElementProps = {
   project: { projectName: string; projectId: string };
   keyvalue: string;
   history: any;
+  update: any;
 };
 
 export const getServerUrl = () => Cookies.get("url");
@@ -63,7 +64,14 @@ export default function ProjectElement(props: ProjectElementProps) {
   return (
     <Center>
       <Card
-        style={{ alignContent: "center", width: "340px", minHeight: "200px" , display: "flex", flexDirection: "column", justifyContent: "space-between"}}
+        style={{
+          alignContent: "center",
+          width: "340px",
+          minHeight: "200px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
         withBorder={true}
         p="md"
       >
@@ -79,7 +87,10 @@ export default function ProjectElement(props: ProjectElementProps) {
           >
             Open
           </Button>
-          <DeleteProjectsModal projectID={props.project.projectId} />
+          <DeleteProjectsModal
+            projectID={props.project.projectId}
+            update={props.update}
+          />
         </Group>
       </Card>
     </Center>

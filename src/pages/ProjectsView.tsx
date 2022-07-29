@@ -38,11 +38,19 @@ function ProjectListView(props: ProjectListViewProps) {
     bcfapi
       .getProjects()
       .then((value) => {
+        console.log("set Project value= " + JSON.stringify(value));
         setProjects(value);
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  function updateProjects() {
+    console.log("Update Projects value= " + JSON.stringify(projects));
+    setTimeout(function () {
+      update();
+    }, 1000);
   }
 
   let binx = 1000;
@@ -55,6 +63,7 @@ function ProjectListView(props: ProjectListViewProps) {
             <Grid.Col xs={10} sm={6} md={6} lg={4} xl={3} key={String(binx++)}>
               <ProjectElement
                 project={{ projectName: d.name, projectId: d.project_id }}
+                update={updateProjects}
                 keyvalue={String(binx)}
                 history={props.history}
               />
@@ -62,19 +71,26 @@ function ProjectListView(props: ProjectListViewProps) {
           ))}
           <Grid.Col xs={10} sm={6} md={6} lg={4} xl={3} key={"Add"}>
             <Center>
-              <Card         
-                style={{ alignContent: "center", width: "340px", minHeight: "200px" , display: "flex", flexDirection: "column", justifyContent: "space-evenly"}}
+              <Card
+                style={{
+                  alignContent: "center",
+                  width: "340px",
+                  minHeight: "200px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-evenly",
+                }}
                 withBorder={true}
                 p="md"
               >
-                <AddProjectsModal/>
+                <AddProjectsModal update={updateProjects} />
               </Card>
             </Center>
           </Grid.Col>
         </Grid>
       </ScrollArea>
       <Divider p={"xs"} />
-      
+
       <p />
       <div className="main-refresh">
         <Button
