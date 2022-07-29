@@ -251,12 +251,15 @@ export default function TaskListPreview(props: TaskListProps) {
   }
 
   function showElement(t:any) {
-    let target = viewer.scene.models[t["@id"]]
-    viewer.cameraFlight.flyTo(target)
     let bcfowl = new BcfOWL_Endpoint();
-
     bcfowl.getViewpoint4TaskMainTopic(t["@id"]).then((res) => {
-      let vp_uri = res["@graph"][0]["@id"]
+      let vp_uri;
+      if (res["@graph"]) {
+        vp_uri = res["@graph"][0]["@id"]
+      } else {
+        vp_uri = res["@id"]
+      }
+      
       viewer.cameraFlight.flyTo(vp_uri)
     })
       

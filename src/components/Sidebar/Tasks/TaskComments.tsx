@@ -77,6 +77,23 @@ export default function TopicComments(props: CommentProps) {
             tempComments.push(node);
           });
         } else if ("@id" in comments) {
+          if (comments.hasViewpoint) {
+            if (comments.hasViewpoint !== "http://server/unset-base/") {
+                bcfowl.describe(comments.hasViewpoint).then((res) => {
+                    if (res.hasSnapshot) {
+                        let imgload = new ImageService;
+                        imgload.getThumbnailData(res.hasGuid).then((imgres) => {
+                            let url = URL.createObjectURL(imgres);
+                            let tempImageList = {...imageList}
+                            tempImageList[comments["@id"]] = url;
+                            setImageList(tempImageList)
+                        })
+                    }
+                }).catch((err) => console.log(err));
+
+            }
+           
+        }
           tempComments.push(comments);
         }
 
