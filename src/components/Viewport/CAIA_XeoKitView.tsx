@@ -627,6 +627,7 @@ export default function CAIA_XeoKitView() {
       if (!Array.isArray(perspactivecameras))
         perspactivecameras = [perspactivecameras];
       perspactivecameras.forEach((camera: any) => {
+        console.log("cameraInfo", camera)
         let node = documentNodes[document_uri];
         const gltfLoader = new GLTFLoaderPlugin(viewer);
         if (!camera.hasCameraViewPoint)
@@ -647,6 +648,7 @@ export default function CAIA_XeoKitView() {
         tz = tz * (180 / Math.PI);
         if (x < 0 && y > 0) tz += 180;
         if (x < 0 && y < 0) tz -= 180;
+
 
         let guid = camera["@id"];
 
