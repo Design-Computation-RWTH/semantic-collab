@@ -39,6 +39,7 @@ function ProjectListView(props: ProjectListViewProps) {
       .getProjects()
       .then((value) => {
         console.log("set Project value= " + JSON.stringify(value));
+        value.sort((a, b) => a.name.localeCompare(b.name));
         setProjects(value);
       })
       .catch((err) => {

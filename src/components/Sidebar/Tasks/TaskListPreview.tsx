@@ -21,7 +21,7 @@ export default function TaskListPreview(props: TaskListProps) {
   const [perspectiveCameras, setPerspectiveCameras] = useState<any>([]);
   const [taskPage, setTaskPage] = useState<0 | 1>(0);
   const [activeTask, setActiveTask] = useState<string>("");
-  const {viewer, taskExtensions, users } = React.useContext(
+  const { viewer, taskExtensions, users } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
 
@@ -97,18 +97,16 @@ export default function TaskListPreview(props: TaskListProps) {
 
   let authorData = [];
   if (users.size !== 0) {
-      authorData = users.map((e: any) => {
-    let tempValue: string = "";
-    let tempLabel: string = "";
-    Object.keys(e).forEach((key: any) => {
-      tempValue = key;
-      tempLabel = e[key];
+    authorData = users.map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
     });
-    return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
-  });
   }
-
-
 
   useEffect(() => {
     init();
@@ -116,7 +114,7 @@ export default function TaskListPreview(props: TaskListProps) {
   }, []);
 
   function init() {
-    getTasks();
+    if (mainTasks.length === 0) getTasks();
   }
 
   function getTasks() {
@@ -291,10 +289,10 @@ export default function TaskListPreview(props: TaskListProps) {
   const TaskList = (
     <Container>
       <Accordion
-        // styles={{
-        //   contentInner: { padding: 0, margin: 0 },
-        //   content: { padding: 0, margin: 0 },
-        // }}
+      // styles={{
+      //   contentInner: { padding: 0, margin: 0 },
+      //   content: { padding: 0, margin: 0 },
+      // }}
       >
         {MainTasks}
       </Accordion>

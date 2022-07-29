@@ -99,11 +99,6 @@ export default function CAIA_Gallery_Tab() {
 
   let tempViewer: any;
 
-  useEffect(() => {
-    console.log("viewer gallery", viewer);
-    init();
-  }, [viewer, setViewer]);
-
   function gallery() {
     let gallery_content;
     if (galleryScreen === 0) {
@@ -178,12 +173,19 @@ export default function CAIA_Gallery_Tab() {
       );
     }
     return gallery_content;
-  }
+  } // Gallery
 
   useEffect(() => {
+    console.log("viewer gallery", viewer);
     init();
+  }, [viewer, setViewer]);
+
+  /*
+  useEffect(() => {
+    init();
+    console.log("viewer gallery 2", viewer);
     return () => {};
-  }, []);
+  }, []);*/
 
   // let viewpoints: any[] = [];
   function init() {
@@ -191,10 +193,12 @@ export default function CAIA_Gallery_Tab() {
     //TODO: Make filter "state" for this file
     let filter: string[] = [];
 
-    if (imageList.length === 0) {
+    //if (imageList.length === 0)
+    {
       bcfOWL
         .getFilteredViewpoints(filter)
         .then((graph) => {
+          console.log("galleryTab init api get: " + JSON.stringify(graph));
           ViewpointsResponse(graph);
         })
         .catch((err) => {
