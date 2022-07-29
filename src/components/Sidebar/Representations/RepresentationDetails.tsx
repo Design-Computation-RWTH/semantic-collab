@@ -26,11 +26,8 @@ export default function Representationdetails(
   ) as DcWebViewerContextType;
 
   function deleteFile() {
-    console.log(ref.current?.checked)
     if (ref.current?.checked){
-      console.log("DELETE FILE", props.selectedDocument);
       let destroyModel = props.viewer.scene.models[props.selectedDocument]
-      console.log(destroyModel)
       destroyModel.destroy();
       setError("");
       setRepresentationScreen(0)

@@ -56,6 +56,7 @@ export default function ProjectElement(props: ProjectElementProps) {
 
   function handleClick() {
     ReactSession.set("projectid", props.project.projectId);
+    Cookies.set("projectid", props.project.projectId);
     PubSub.publish("ProjectName", { name: props.project.projectName });
     PubSub.publish("SidebarName", { name: props.project.projectName });
     navigate(props.project.projectName + "/");

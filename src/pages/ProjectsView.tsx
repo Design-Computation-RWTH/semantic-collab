@@ -34,11 +34,9 @@ function ProjectListView(props: ProjectListViewProps) {
 
   function update() {
     let bcfapi = new BCFAPI();
-    console.log("update");
     bcfapi
       .getProjects()
       .then((value) => {
-        console.log("set Project value= " + JSON.stringify(value));
         value.sort((a, b) => a.name.localeCompare(b.name));
         setProjects(value);
       })
@@ -48,7 +46,6 @@ function ProjectListView(props: ProjectListViewProps) {
   }
 
   function updateProjects() {
-    console.log("Update Projects value= " + JSON.stringify(projects));
     setTimeout(function () {
       update();
     }, 1000);

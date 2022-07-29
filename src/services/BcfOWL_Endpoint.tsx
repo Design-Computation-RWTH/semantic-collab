@@ -1,5 +1,4 @@
 // @ts-ignore
-import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 // @ts-ignore
@@ -32,7 +31,8 @@ class BcfOWL_Endpoint {
     //this.myHeaders.append("accept", "text/plain");
     this.myHeaders.append("Accept", "application/ld+json");
     this.myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-    this.project_id = ReactSession.get("projectid");
+    //this.project_id = ReactSession.get("projectid");
+    this.project_id = Cookies.get("projectid");
   }
 
   parseJWT(token: string | undefined) {
@@ -526,6 +526,50 @@ class BcfOWL_Endpoint {
     return await response.json();
   }
 
+  async getViewpoint4TaskMainTopic(topicID: string) {
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+
+    let query = bcfOWLPrefixes + ctoPrefix + `
+      CONSTRUCT {?viewpoint ?p ?o}
+      WHERE {
+
+        ?subtopic a bcfOWL:Topic;
+        cto:hasTaskContext <${topicID}>.
+
+        ?viewpoint a bcfOWL:Viewpoint.
+        ?viewpoint ?p ?o.
+        ?viewpoint bcfOWL:hasTopic ?subtopic.
+      }
+    `
+
+    urlencoded.append(
+      "query",
+      query
+    )
+
+    console.log(query)
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/query",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+
+      
+    );
+
+    if (!response.ok) {
+      const message = `getAll: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
   async getTaskViepointCameras4Document(doc_uri: string) {
     var guid = doc_uri.substring(doc_uri.lastIndexOf("/") + 1);
     if (!this.project_id) alert("Project not selected. ");
@@ -778,6 +822,39 @@ class BcfOWL_Endpoint {
         WHERE {
             ?s  a                       bcfOWL:Comment ;
                 bcfOWL:hasViewpoint     <${vp_uri}> ;
+                ?p                      ?o .
+        }
+        `
+    );
+
+    const response = await fetch(
+      base_uri + "/graph/" + this.project_id + "/query",
+      {
+        method: "POST",
+        headers: this.myHeaders,
+        body: urlencoded,
+        redirect: this.follow,
+      }
+    );
+    if (!response.ok) {
+      const message = `getAll: An error has occured: ${response.status}`;
+      NotificationManager.warning(message, "Error", 3000);
+      throw new Error(message);
+    }
+    return await response.json();
+  }
+
+  async getCommentsByTopic(topic_uri: string) {
+    if (!this.project_id) alert("Project not selected. ");
+    let urlencoded = new URLSearchParams();
+    urlencoded.append(
+      "query",
+      bcfOWLPrefixes +
+        `
+        CONSTRUCT { ?s ?p ?o }
+        WHERE {
+            ?s  a                       bcfOWL:Comment ;
+                bcfOWL:hasTopic     <${topic_uri}> ;
                 ?p                      ?o .
         }
         `

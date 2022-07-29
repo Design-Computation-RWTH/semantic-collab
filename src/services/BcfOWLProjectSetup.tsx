@@ -21,7 +21,8 @@ class BcfOWLProjectSetup {
     this.myHeaders.append("Authorization", "Bearer " + getAccessToken());
     this.myHeaders.append("Accept", "application/ld+json");
     this.myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-    this.project_id = ReactSession.get("projectid");
+    //this.project_id = ReactSession.get("projectid");
+    this.project_id = Cookies.get("projectid");
   }
 
   async getCurrentProject() {
@@ -203,7 +204,6 @@ class BcfOWLProjectSetup {
     })
       .then((response) => response)
       .then((result) => {
-        console.log(result);
         if (result.ok) {
         } else {
         }

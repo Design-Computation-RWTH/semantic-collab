@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
-import { Table, Select } from "@mantine/core";
+import { Table, Select, Stack } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
+import TaskComments from "./TaskComments";
 
 type TopicTableProps = {
   topic_guid: string;
@@ -436,7 +437,9 @@ function TopicTable(props: TopicTableProps) {
           </tr>
         </tbody>
       </Table>
-      
+      <Stack>
+          <TaskComments topicGuid={topic_guid}/>
+      </Stack>
     </div>
   );
 }

@@ -176,14 +176,12 @@ export default function CAIA_Gallery_Tab() {
   } // Gallery
 
   useEffect(() => {
-    console.log("viewer gallery", viewer);
     init();
   }, [viewer, setViewer]);
 
   /*
   useEffect(() => {
     init();
-    console.log("viewer gallery 2", viewer);
     return () => {};
   }, []);*/
 
@@ -194,17 +192,16 @@ export default function CAIA_Gallery_Tab() {
     let filter: string[] = [];
 
     //if (imageList.length === 0)
-    {
+    
       bcfOWL
         .getFilteredViewpoints(filter)
         .then((graph) => {
-          console.log("galleryTab init api get: " + JSON.stringify(graph));
           ViewpointsResponse(graph);
         })
         .catch((err) => {
           console.log(err);
         });
-    }
+    
   }
 
   function ViewpointsResponse(Response: any) {
@@ -257,12 +254,9 @@ export default function CAIA_Gallery_Tab() {
           PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
           image.then((img: any) => {
             if (img.size > 0) {
-              console.log(img.size);
               let url = URL.createObjectURL(img);
-              console.log(url);
               setLargeGalleryImg(url);
               setActiveGalleryTopic(s.topic_guid);
-              console.log("viewer", viewer);
               for (const model in viewer.scene.models) {
                 if (model.includes(s.guid)) {
                   viewer.scene.models[model].selected = true;
@@ -272,7 +266,6 @@ export default function CAIA_Gallery_Tab() {
                 }
               }
             } else {
-              console.log(img.size);
               setActiveGalleryTopic(s.topic_guid);
               for (const model in viewer.scene.models) {
                 if (model.includes(s.guid)) {

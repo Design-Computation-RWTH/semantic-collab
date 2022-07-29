@@ -138,7 +138,6 @@ export default function CAIA_XeoKitView() {
     });
 
     setViewer(viewer);
-    console.log("viewer", viewer)
 
     distanceMeasurements_instance = new DistanceMeasurementsPlugin(viewer);
 
@@ -594,7 +593,6 @@ export default function CAIA_XeoKitView() {
           if (x < 0 && y < 0) tz -= 180;
 
           let guid = camera["@id"];
-          console.log("CameraID", camera["@id"])
 
           //TODO: The ID is not set. Look for the Parent in Xeokit to find the right ID
           //TODO: Import once and then reuse?
@@ -621,7 +619,6 @@ export default function CAIA_XeoKitView() {
     bcfowl
     .getTaskViepointCameras4Document(document_uri)
     .then((perspactivecameras) => {
-      console.log("perspactivecameras", perspactivecameras)
       if (perspactivecameras["@graph"])
         perspactivecameras = perspactivecameras["@graph"];
       if (!Array.isArray(perspactivecameras))
@@ -647,6 +644,7 @@ export default function CAIA_XeoKitView() {
         tz = tz * (180 / Math.PI);
         if (x < 0 && y > 0) tz += 180;
         if (x < 0 && y < 0) tz -= 180;
+
 
         let guid = camera["@id"];
 

@@ -11,7 +11,10 @@ import {
   Tooltip,
   Space,
   ActionIcon,
+  Image,
 } from "@mantine/core";
+
+import ImageService from "../../../services/ImageService";
 
 import { BsReplyFill } from "react-icons/bs";
 import { IconContext } from "react-icons";
@@ -25,14 +28,17 @@ import bcfOWL_Endpoint, {
 } from "../../../services/BcfOWL_Endpoint";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 
-type CommentProps = {};
+type CommentProps = {
+    topicGuid: string
+};
 
 export default function TopicComments(props: CommentProps) {
   const { currentViewpoint } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
   const [comments, setComments] = useState<any[] | null>(null);
-  const [topicURI, setTopicURI] = useState<string>("");
+  const [imageList, setImageList] = useState<any>({});
+  const [topicURI, setTopicURI] = useState<string>(props.topicGuid);
 
   let bcfowl = new BcfOWL_Endpoint();
 
@@ -46,17 +52,32 @@ export default function TopicComments(props: CommentProps) {
 
   function fetchComments() {
     bcfowl
-      .getCommentsByViewpoint(currentViewpoint)
-      .then((vp: any) => {
+      .getCommentsByTopic(topicURI)
+      .then((comments: any) => {
         let tempComments: any[] = [];
-        if ("@graph" in vp) {
-          vp["@graph"].forEach((node: any) => {
+        if ("@graph" in comments) {
+            comments["@graph"].forEach((node: any) => {
+                if (node.hasViewpoint) {
+                    if (node.hasViewpoint !== "http://server/unset-base/") {
+                        bcfowl.describe(node.hasViewpoint).then((res) => {
+                            if (res.hasSnapshot) {
+                                let imgload = new ImageService;
+                                imgload.getThumbnailData(res.hasGuid).then((imgres) => {
+                                    let url = URL.createObjectURL(imgres);
+                                    let tempImageList = {...imageList}
+                                    tempImageList[node["@id"]] = url;
+                                    setImageList(tempImageList)
+                                })
+                            }
+                        }).catch((err) => console.log(err));
+
+                    }
+                   
+                }
             tempComments.push(node);
-            setTopicURI(node.hasTopic);
           });
-        } else if ("@id" in vp) {
-          tempComments.push(vp);
-          setTopicURI(vp.hasTopic)
+        } else if ("@id" in comments) {
+          tempComments.push(comments);
         }
 
         tempComments.sort((a: any, b: any) => {
@@ -103,6 +124,14 @@ export default function TopicComments(props: CommentProps) {
           color = "#fab005";
         }
         let date = new Date(comment.hasCommentDate);
+
+        let image = (<></>)
+
+        if (comment["@id"] in imageList) {
+            image = (<Image fit="contain" src={imageList[comment["@id"]]}></Image>)
+        }
+
+
         return (
           <Stack spacing="xs" style={style}>
             <Tooltip label={comment.hasAuthor}>
@@ -118,6 +147,7 @@ export default function TopicComments(props: CommentProps) {
               p="xs"
               withBorder
             >
+                {image}
               <Text color={"white"}>{comment.hasComment}</Text>
               <Text size="xs" color="grey">
                 {date.toUTCString()}

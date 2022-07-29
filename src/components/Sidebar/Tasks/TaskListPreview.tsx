@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  CloseButton,
-  Accordion,
-  Container,
-  Table,
-  Select,
-  Button,
-} from "@mantine/core";
+import { CloseButton, Accordion, Container, Table, Select, Button, Group, Badge } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 // @ts-ignore
@@ -188,24 +181,28 @@ export default function TaskListPreview(props: TaskListProps) {
   function relatedSubtasks(taskID: string, elementID: string) {
     const SubTasks = subTasks.map((st: any) => {
       if (st["hasTaskContext"] === taskID && elementID === st.buildingElement) {
+        let BadgeText: string = "Closed"
+        let BadgeColor: string = "green"
+        if(st["hasTopicStatus"].includes("Open")) {
+          BadgeText = "Open";
+          BadgeColor = "red";
+        }
         return (
           <Accordion.Item
             value={st["@id"] + "_MainTask"}
             key={st["@id"] + "_MainTask"}
-            styles={
-              {
-                // itemTitle: { color: "white" },
-                // contentInner: { padding: 0, margin: 0 },
-                // content: { padding: 0, margin: 0 },
-                // item: { padding: 0, margin: 0 },
-              }
-            }
             onClick={(e) => {
               setTaskPage(1);
               setActiveTask(st["@id"]);
             }}
           >
-            <Accordion.Control>{st.hasTitle}</Accordion.Control>
+            <Accordion.Control>
+              <Group>
+                <Badge color={BadgeColor}>
+                {BadgeText}
+                </Badge>
+                {st.hasTitle}
+              </Group></Accordion.Control>
             <Accordion.Panel></Accordion.Panel>
           </Accordion.Item>
         );
@@ -232,17 +229,37 @@ export default function TaskListPreview(props: TaskListProps) {
       } else {
         name = st;
       }
-
-      return relatedSubtasks(taskID, st);
+      return (relatedSubtasks(taskID, st)
+      );
     });
     return buildingElements;
   }
 
-  function showElement(t: any) {
-    console.log(t);
-    let target = viewer.scene.models[t["@id"]];
-    viewer.cameraFlight.flyTo(target);
-    console.log("Test", target);
+  function checkMainTaskStatus(taskID:string) {
+    let color: string = "green";
+    let text: string = "Closed";
+    subTasks.forEach((task: any) => {
+      if (task.hasTaskContext === taskID) {
+        if (task["hasTopicStatus"].includes("Open")) {
+          color = "red";
+          text = "Open"
+        }
+      }
+    });
+
+    return [color, text]
+  }
+
+  function showElement(t:any) {
+    let target = viewer.scene.models[t["@id"]]
+    viewer.cameraFlight.flyTo(target)
+    let bcfowl = new BcfOWL_Endpoint();
+
+    bcfowl.getViewpoint4TaskMainTopic(t["@id"]).then((res) => {
+      let vp_uri = res["@graph"][0]["@id"]
+      viewer.cameraFlight.flyTo(vp_uri)
+    })
+      
   }
 
   const MainTasks = mainTasks.map((t: any) => {
@@ -251,12 +268,22 @@ export default function TaskListPreview(props: TaskListProps) {
         value={t["@id"] + "_MainTask"}
         key={t["@id"] + "_MainTask"}
       >
-        <Accordion.Control>{t.hasTitle}</Accordion.Control>
+        <Accordion.Control>
+          <Group>
+            <Badge color={checkMainTaskStatus(t["@id"])[0]}>
+            {checkMainTaskStatus(t["@id"])[1]}
+            </Badge>
+            {t.hasTitle}
+          </Group>
+          </Accordion.Control>
         <Accordion.Panel>
-          <Accordion key={"MainTasks_Elements" + t["@id"]} styles={{}}>
-            <Button variant="outline" onClick={() => showElement(t)}>
-              Show Element
-            </Button>
+          <Accordion
+            key={"MainTasks_Elements" + t["@id"]}
+            chevronSize={0}
+            styles={{
+            }}
+          >
+            <Button variant="outline" onClick={() => showElement(t)}>Show Element</Button>
             {buildingElementList(t["@id"])}
           </Accordion>
         </Accordion.Panel>

@@ -40,7 +40,6 @@ export default function TaskListCreation(props: TaskListProps) {
   ) as TaskTypes;
 
   useEffect(() => {
-    console.log("Init");
     init();
   }, []);
 
@@ -54,7 +53,6 @@ export default function TaskListCreation(props: TaskListProps) {
       let taskString = new TextDecoder().decode(res);
 
       setTaskJson(JSON.parse(taskString));
-      console.log("res", res);
 
       if (viewer_instance) {
         viewer_instance.cameraControl.on("picked", (e: any) => {});
@@ -216,7 +214,6 @@ export default function TaskListCreation(props: TaskListProps) {
 
   function CreateSubTasks(Storeys: any) {
     let TasksNew;
-    console.log("taskJson", taskJson);
     if (taskJson !== null) {
       TasksNew = Object.entries(taskJson).map((d: any) => {
         // Check if they are interventions
