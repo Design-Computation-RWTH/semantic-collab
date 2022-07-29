@@ -12,7 +12,7 @@ import {
   Group,
   MultiSelect,
   ActionIcon,
-  CloseButton
+  CloseButton,
 } from "@mantine/core";
 
 import { DateRangePicker } from "@mantine/dates";
@@ -100,7 +100,7 @@ export default function CAIA_Gallery_Tab() {
   let tempViewer: any;
 
   useEffect(() => {
-    console.log("viewer gallery", viewer)
+    console.log("viewer gallery", viewer);
     init();
   }, [viewer, setViewer]);
 
@@ -253,12 +253,12 @@ export default function CAIA_Gallery_Tab() {
           PubSub.publish("SelectedTopicID", { topic_guid: s.topic_guid });
           image.then((img: any) => {
             if (img.size > 0) {
-              console.log(img.size)
+              console.log(img.size);
               let url = URL.createObjectURL(img);
-              console.log(url)
+              console.log(url);
               setLargeGalleryImg(url);
               setActiveGalleryTopic(s.topic_guid);
-              console.log("viewer", viewer)
+              console.log("viewer", viewer);
               for (const model in viewer.scene.models) {
                 if (model.includes(s.guid)) {
                   viewer.scene.models[model].selected = true;
@@ -268,7 +268,7 @@ export default function CAIA_Gallery_Tab() {
                 }
               }
             } else {
-              console.log(img.size)
+              console.log(img.size);
               setActiveGalleryTopic(s.topic_guid);
               for (const model in viewer.scene.models) {
                 if (model.includes(s.guid)) {
@@ -288,8 +288,7 @@ export default function CAIA_Gallery_Tab() {
 
   async function downloadBCF() {
     let bcfOWL = new bcfOWL_Endpoint();
-    bcfOWL.getFilteredViewpointsGraph(viewpoints).then((r) => {
-    });
+    bcfOWL.getFilteredViewpointsGraph(viewpoints).then((r) => {});
   }
 
   // Setting all filters to "None" | null
@@ -415,16 +414,15 @@ export default function CAIA_Gallery_Tab() {
   let authorData: any[] = [];
   if (users.size !== 0) {
     authorData = users.map((e: any) => {
-    let tempValue: string = "";
-    let tempLabel: string = "";
-    Object.keys(e).forEach((key: any) => {
-      tempValue = key;
-      tempLabel = e[key];
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
     });
-    return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
-  });
   }
-
 
   let assignedData = authorData;
   assignedData.push({ value: "None", label: "None" });
@@ -616,6 +614,17 @@ export default function CAIA_Gallery_Tab() {
         }}
       >
         <ActionIcon
+          className="btn-caia-icon"
+          title="Refresh List"
+          onClick={() => {
+            init();
+            //alert("Gallery Init Test alert. ");
+          }}
+        >
+          <i className=" bi-arrow-clockwise" />
+        </ActionIcon>
+
+        <ActionIcon
           onClick={() => {
             setOpenDrawer(true);
           }}
@@ -626,7 +635,6 @@ export default function CAIA_Gallery_Tab() {
           <i className=" bi-plus-square" />
         </ActionIcon>
         <ActionIcon
-          
           onClick={() => {
             downloadBCF();
           }}
