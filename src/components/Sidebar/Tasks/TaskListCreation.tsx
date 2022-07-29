@@ -35,10 +35,12 @@ export default function TaskListCreation(props: TaskListProps) {
   const [documents, setDocuments] = useState<any>(null);
   const [users, setUsers] = useState<any>(null);
 
-  const { taskFile, setTaskViewState, setTaskFile  } = React.useContext(TaskContext) as TaskTypes;
+  const { taskFile, setTaskViewState, setTaskFile } = React.useContext(
+    TaskContext
+  ) as TaskTypes;
 
   useEffect(() => {
-    console.log("Init")
+    console.log("Init");
     init();
   }, []);
 
@@ -49,10 +51,10 @@ export default function TaskListCreation(props: TaskListProps) {
     let bcfowl_setup = new BcfOWLProjectSetup();
 
     taskFile?.arrayBuffer().then((res) => {
-      let taskString = new TextDecoder().decode(res)
+      let taskString = new TextDecoder().decode(res);
 
-      setTaskJson(JSON.parse(taskString))
-      console.log("res", res)
+      setTaskJson(JSON.parse(taskString));
+      console.log("res", res);
 
       if (viewer_instance) {
         viewer_instance.cameraControl.on("picked", (e: any) => {});
@@ -69,7 +71,7 @@ export default function TaskListCreation(props: TaskListProps) {
         .catch((err: any) => {
           console.log(err);
         });
-  
+
       bcfowl_setup.getCurrentProject().then((value) => {
         ProjectURI = value["@id"];
         try {
@@ -86,9 +88,6 @@ export default function TaskListCreation(props: TaskListProps) {
         } catch (e) {}
       });
     });
-
-
-    
   }
 
   function AssigneeSelected(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -204,10 +203,7 @@ export default function TaskListCreation(props: TaskListProps) {
     }
   }
 
-  function SelectMainTask(
-    ParentIntervention: any,
-    Storeys: any
-  ) {
+  function SelectMainTask(ParentIntervention: any, Storeys: any) {
     let selectedObjects: string[] = [];
     Object.entries(FilteredIfcElements).map((e: any) => {
       //Check if the Element is on the right storey
@@ -220,7 +216,7 @@ export default function TaskListCreation(props: TaskListProps) {
 
   function CreateSubTasks(Storeys: any) {
     let TasksNew;
-    console.log("taskJson", taskJson)
+    console.log("taskJson", taskJson);
     if (taskJson !== null) {
       TasksNew = Object.entries(taskJson).map((d: any) => {
         // Check if they are interventions
@@ -229,7 +225,6 @@ export default function TaskListCreation(props: TaskListProps) {
           const ParentInterventions = d[1].map((p: any) => {
             // If there is no parent intervention it means it is a Parent itself!
             if (!p.parent_intervention) {
-  
               // Create a Card for every IFC Element
               const IfcElements = Object.entries(FilteredIfcElements).map(
                 (e: any) => {
@@ -246,12 +241,12 @@ export default function TaskListCreation(props: TaskListProps) {
                         // copy the current intervention
                         let tempIntervention;
                         tempIntervention = { ...s };
-  
+
                         // edit the ID by combining it with the element ID and change the "requiered previous" IDs
                         tempIntervention.id = e[0] + "_" + s.id;
                         tempIntervention.parent_intervention =
                           ParentIntervention.id;
-  
+
                         if (tempIntervention.required_previous) {
                           let RequieredPrev =
                             tempIntervention.required_previous.map(function (
@@ -262,19 +257,19 @@ export default function TaskListCreation(props: TaskListProps) {
                           tempIntervention.required_previous = RequieredPrev;
                         }
                         let aabb = viewer_instance.scene.objects[e[0]]._aabb;
-  
+
                         // Calculate location. Keep in mind to later make this location relative to its document!
                         tempIntervention.location = [
                           (aabb[0] + aabb[3]) / 2,
                           (aabb[2] + aabb[5]) / 2,
                           (aabb[1] + aabb[4]) / 2,
                         ];
-  
+
                         tempIntervention.up_vector = [0, 0, 1];
                         tempIntervention.forward_vector = [1, 0, 0];
-  
+
                         tempIntervention.buildingElement = e[0];
-  
+
                         UpdatedTasks[tempIntervention.id] = tempIntervention;
                         // Check if the parent is the correct one
                         //TODO: Add Task Data here!
@@ -290,8 +285,12 @@ export default function TaskListCreation(props: TaskListProps) {
                               key={tempIntervention.id + "_Item"}
                               id={tempIntervention.id}
                             >
-                              <Accordion.Control>{tempIntervention.name}</Accordion.Control>
-                              <Accordion.Panel><Text>{tempIntervention.id}</Text></Accordion.Panel>
+                              <Accordion.Control>
+                                {tempIntervention.name}
+                              </Accordion.Control>
+                              <Accordion.Panel>
+                                <Text>{tempIntervention.id}</Text>
+                              </Accordion.Panel>
                             </Accordion.Item>
                           </Accordion>
                         );
@@ -310,10 +309,12 @@ export default function TaskListCreation(props: TaskListProps) {
                         <Accordion.Item
                           style={{ paddingLeft: "5px" }}
                           value={p.name + "_" + e[1].name}
-                          key={e[1].id+ "_Item"}
+                          key={e[1].id + "_Item"}
                           id={e[1].id}
                         >
-                          <Accordion.Control>{p.name + "_" + e[1].name}</Accordion.Control>
+                          <Accordion.Control>
+                            {p.name + "_" + e[1].name}
+                          </Accordion.Control>
                           <Accordion.Panel>{SubTasks}</Accordion.Panel>
                         </Accordion.Item>
                       </Accordion>
@@ -331,7 +332,7 @@ export default function TaskListCreation(props: TaskListProps) {
                   <Accordion
                     key={p.id}
                     onChange={() => {
-                      SelectMainTask( p, Storeys);
+                      SelectMainTask(p, Storeys);
                     }}
                     style={{ paddingLeft: "5px" }}
                   >
@@ -341,7 +342,6 @@ export default function TaskListCreation(props: TaskListProps) {
                       value={p.name}
                       id={p.id}
                     >
-
                       <Accordion.Control>{p.name}</Accordion.Control>
                       <Accordion.Panel>
                         <Text>Assigned To:</Text>
@@ -356,7 +356,6 @@ export default function TaskListCreation(props: TaskListProps) {
                         <p />
                         {IfcElements}
                       </Accordion.Panel>
-
                     </Accordion.Item>
                   </Accordion>
                 );
@@ -369,7 +368,6 @@ export default function TaskListCreation(props: TaskListProps) {
         }
       });
     }
-  
 
     return TasksNew;
   }
@@ -428,67 +426,67 @@ export default function TaskListCreation(props: TaskListProps) {
 
   return (
     <div
-    className={"GalleryContent"}
-    style={{
-      width: "100%",
-      maxWidth: "100%",
-    }}
-  >
-    <Container style={{ width: "100%", maxWidth: "100%" }}>
-      <div>
-        <CloseButton onClick={() => {
-          setTaskFile(null)
-          setTaskViewState("Preview");
-        }} />
-        <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
-          {AccordionList}
-        </Accordion>
-        <p />
-        <div className={"caia-center"}>
-          <Button
+      className={"GalleryContent"}
+      style={{
+        width: "100%",
+        maxWidth: "100%",
+      }}
+    >
+      <Container style={{ width: "100%", maxWidth: "100%" }}>
+        <div>
+          <CloseButton
             onClick={() => {
-              let tasks2Convert: any = taskJson;
-              let UpdatedTasksArr: any = [];
-              for (const [key, value] of Object.entries(UpdatedTasks)) {
-                UpdatedTasksArr.push(value);
-
-                let task: any = value;
-                if (task.id === "1ZwJH$85D3YQG5AK5ER1gZ_45623") {
-                }
-              }
-
-              tasks2Convert.interventions = UpdatedTasksArr;
-              tasks2Convert.intervention_posts =
-              taskJson.intervention_posts;
-              tasks2Convert.intervention_priorities =
-              taskJson.intervention_priorities;
-
-              let bcfowl = new BcfOWL_Endpoint();
-
-              //let rdfTasks = ConvertTasks(tasks2Convert, ProjectURI);
-
-              let rdfTasks;
-
-              ConvertTasks(tasks2Convert, ProjectURI).then((e) => {
-                rdfTasks = e;
-
-                bcfowl
-                  .postRDF(rdfTasks)
-                  .then((r) => {
-                    setTaskFile(null)
-                    setTaskViewState("Preview");
-                  })
-                  .catch((e) => {
-                  });
-              });
+              setTaskFile(null);
+              setTaskViewState("Preview");
             }}
-          >
-            <Text>Create Tasks</Text>
-          </Button>
+          />
+          <Accordion style={{ paddingLeft: "5px" }} id={"AccordionListId"}>
+            {AccordionList}
+          </Accordion>
+          <p />
+          <div className={"caia-center"}>
+            <Button
+              onClick={() => {
+                let tasks2Convert: any = taskJson;
+                let UpdatedTasksArr: any = [];
+                for (const [key, value] of Object.entries(UpdatedTasks)) {
+                  UpdatedTasksArr.push(value);
+
+                  let task: any = value;
+                  if (task.id === "1ZwJH$85D3YQG5AK5ER1gZ_45623") {
+                  }
+                }
+
+                tasks2Convert.interventions = UpdatedTasksArr;
+                tasks2Convert.intervention_posts = taskJson.intervention_posts;
+                tasks2Convert.intervention_priorities =
+                  taskJson.intervention_priorities;
+
+                let bcfowl = new BcfOWL_Endpoint();
+
+                //let rdfTasks = ConvertTasks(tasks2Convert, ProjectURI);
+
+                let rdfTasks;
+
+                ConvertTasks(tasks2Convert, ProjectURI).then((e) => {
+                  rdfTasks = e;
+
+                  bcfowl
+                    .postRDF(rdfTasks)
+                    .then((r) => {
+                      setTaskFile(null);
+                      setTaskViewState("Preview");
+                    })
+                    .catch((e) => {});
+                });
+              }}
+            >
+              <Text>Create Tasks</Text>
+            </Button>
+          </div>
+          <p />
         </div>
-        <p />
-      </div>
-    </Container>
-  </div>
+      </Container>
+    </div>
   );
 }

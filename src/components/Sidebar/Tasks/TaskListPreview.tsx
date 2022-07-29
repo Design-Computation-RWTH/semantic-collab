@@ -15,6 +15,7 @@ import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
 //import CloseButton from "react-bootstrap/CloseButton";
 import TaskDetails from "./TaskDetails";
+import PubSub from "pubsub-js";
 
 type TaskListProps = {
   IfcStoreys: any[];
@@ -31,6 +32,7 @@ export default function TaskListPreview(props: TaskListProps) {
   const { viewer, taskExtensions, users } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
+  let un_subTasks_token: PubSubJS.Token;
 
   let topicTypeData = [];
   if (taskExtensions.has("bcfOWL:TopicType")) {
@@ -119,8 +121,15 @@ export default function TaskListPreview(props: TaskListProps) {
     init();
   }, []);
 
+  function update() {
+    getTasks();
+  }
+
   function init() {
-    if (mainTasks.length === 0) getTasks();
+    if (mainTasks.length === 0) {
+      getTasks();
+      un_subTasks_token = PubSub.subscribe("TasksUpdate", update);
+    }
   }
 
   function getTasks() {
