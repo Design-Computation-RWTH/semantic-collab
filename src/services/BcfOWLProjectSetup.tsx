@@ -295,7 +295,7 @@ class BcfOWLProjectSetup {
 
   async deletetUser(value: string) {
     if (!this.project_id) alert("Project not selected. ");
-    let value_uri = "<" + value + ">";
+    let value_uri = "<" + base_uri + "/users/" + value + ">";
 
     let headers = new Headers();
     headers.append("Authorization", "Bearer " + getAccessToken());
@@ -332,7 +332,7 @@ class BcfOWLProjectSetup {
   }
 
   async deletetUserOutside(value: string, projectID: string) {
-    let value_uri = "<" + value + ">";
+    let value_uri = "<" + base_uri + "/users/" + value + ">";
 
     let headers = new Headers();
     headers.append("Authorization", "Bearer " + getAccessToken());
