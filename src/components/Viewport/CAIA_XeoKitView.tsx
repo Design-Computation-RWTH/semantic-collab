@@ -594,6 +594,7 @@ export default function CAIA_XeoKitView() {
           if (x < 0 && y < 0) tz -= 180;
 
           let guid = camera["@id"];
+          console.log("CameraID", camera["@id"])
 
           //TODO: The ID is not set. Look for the Parent in Xeokit to find the right ID
           //TODO: Import once and then reuse?
@@ -617,6 +618,60 @@ export default function CAIA_XeoKitView() {
       .catch((err) => {
         console.log(err);
       });
+    bcfowl
+    .getTaskViepointCameras4Document(document_uri)
+    .then((perspactivecameras) => {
+      console.log("perspactivecameras", perspactivecameras)
+      if (perspactivecameras["@graph"])
+        perspactivecameras = perspactivecameras["@graph"];
+      if (!Array.isArray(perspactivecameras))
+        perspactivecameras = [perspactivecameras];
+      perspactivecameras.forEach((camera: any) => {
+        let node = documentNodes[document_uri];
+        const gltfLoader = new GLTFLoaderPlugin(viewer);
+        if (!camera.hasCameraViewPoint)
+          // Should always have a value
+          return;
+        let location = wkt.parse(camera.hasCameraViewPoint);
+        if (!location) return;
+
+        let direction = wkt.parse(camera.hasCameraDirection);
+        if (!direction) return;
+
+        let x = direction.coordinates[0];
+        let y = direction.coordinates[1];
+        // let z = direction.coordinates[2];
+
+        if (x === 0) x = 0.01;
+        let tz = Math.atan(y / x);
+        tz = tz * (180 / Math.PI);
+        if (x < 0 && y > 0) tz += 180;
+        if (x < 0 && y < 0) tz -= 180;
+
+        let guid = camera["@id"];
+
+        //TODO: The ID is not set. Look for the Parent in Xeokit to find the right ID
+        //TODO: Import once and then reuse?
+        let task3d = gltfLoader.load({
+          id: guid,
+          src: "../../Task.gltf",
+          edges: false,
+          rotation: [0, tz, 0], // ax, cz, by
+          position: [
+            location.coordinates[0],
+            location.coordinates[2],
+            location.coordinates[1] * -1,
+          ],
+          performance: false,
+        });
+        node.addChild(task3d);
+        // Hide images initially
+        task3d.visible = true;
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   return (
