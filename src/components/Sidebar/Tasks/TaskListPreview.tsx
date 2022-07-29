@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { CloseButton, Accordion, Container, Table, Select, Button } from "@mantine/core";
+import {
+  CloseButton,
+  Accordion,
+  Container,
+  Table,
+  Select,
+  Button,
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
 // @ts-ignore
@@ -21,7 +28,7 @@ export default function TaskListPreview(props: TaskListProps) {
   const [perspectiveCameras, setPerspectiveCameras] = useState<any>([]);
   const [taskPage, setTaskPage] = useState<0 | 1>(0);
   const [activeTask, setActiveTask] = useState<string>("");
-  const {viewer, taskExtensions, users } = React.useContext(
+  const { viewer, taskExtensions, users } = React.useContext(
     ViewerContext
   ) as DcWebViewerContextType;
 
@@ -97,25 +104,23 @@ export default function TaskListPreview(props: TaskListProps) {
 
   let authorData = [];
   if (users.size !== 0) {
-      authorData = users.map((e: any) => {
-    let tempValue: string = "";
-    let tempLabel: string = "";
-    Object.keys(e).forEach((key: any) => {
-      tempValue = key;
-      tempLabel = e[key];
+    authorData = users.map((e: any) => {
+      let tempValue: string = "";
+      let tempLabel: string = "";
+      Object.keys(e).forEach((key: any) => {
+        tempValue = key;
+        tempLabel = e[key];
+      });
+      return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
     });
-    return { value: e["@id"], label: e["name"] + " (" + e["mbox"] + ")" };
-  });
   }
-
-
 
   useEffect(() => {
     init();
   }, []);
 
   function init() {
-    getTasks();
+    if (mainTasks.length === 0) getTasks();
   }
 
   function getTasks() {
@@ -178,12 +183,14 @@ export default function TaskListPreview(props: TaskListProps) {
           <Accordion.Item
             value={st["@id"] + "_MainTask"}
             key={st["@id"] + "_MainTask"}
-            styles={{
-              // itemTitle: { color: "white" },
-              // contentInner: { padding: 0, margin: 0 },
-              // content: { padding: 0, margin: 0 },
-              // item: { padding: 0, margin: 0 },
-            }}
+            styles={
+              {
+                // itemTitle: { color: "white" },
+                // contentInner: { padding: 0, margin: 0 },
+                // content: { padding: 0, margin: 0 },
+                // item: { padding: 0, margin: 0 },
+              }
+            }
             onClick={(e) => {
               setTaskPage(1);
               setActiveTask(st["@id"]);
@@ -217,17 +224,16 @@ export default function TaskListPreview(props: TaskListProps) {
         name = st;
       }
 
-      return (relatedSubtasks(taskID, st)
-      );
+      return relatedSubtasks(taskID, st);
     });
     return buildingElements;
   }
 
-  function showElement(t:any) {
+  function showElement(t: any) {
     console.log(t);
-    let target = viewer.scene.models[t["@id"]]
-    viewer.cameraFlight.flyTo(target)
-    console.log("Test", target)
+    let target = viewer.scene.models[t["@id"]];
+    viewer.cameraFlight.flyTo(target);
+    console.log("Test", target);
   }
 
   const MainTasks = mainTasks.map((t: any) => {
@@ -238,12 +244,10 @@ export default function TaskListPreview(props: TaskListProps) {
       >
         <Accordion.Control>{t.hasTitle}</Accordion.Control>
         <Accordion.Panel>
-          <Accordion
-            key={"MainTasks_Elements" + t["@id"]}
-            styles={{
-            }}
-          >
-            <Button variant="outline" onClick={() => showElement(t)}>Show Element</Button>
+          <Accordion key={"MainTasks_Elements" + t["@id"]} styles={{}}>
+            <Button variant="outline" onClick={() => showElement(t)}>
+              Show Element
+            </Button>
             {buildingElementList(t["@id"])}
           </Accordion>
         </Accordion.Panel>
@@ -254,10 +258,10 @@ export default function TaskListPreview(props: TaskListProps) {
   const TaskList = (
     <Container>
       <Accordion
-        // styles={{
-        //   contentInner: { padding: 0, margin: 0 },
-        //   content: { padding: 0, margin: 0 },
-        // }}
+      // styles={{
+      //   contentInner: { padding: 0, margin: 0 },
+      //   content: { padding: 0, margin: 0 },
+      // }}
       >
         {MainTasks}
       </Accordion>
