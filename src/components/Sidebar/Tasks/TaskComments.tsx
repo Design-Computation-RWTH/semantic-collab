@@ -56,16 +56,12 @@ export default function TopicComments(props: CommentProps) {
       .then((comments: any) => {
         let tempComments: any[] = [];
         if ("@graph" in comments) {
-            console.log("comment", comments)
             comments["@graph"].forEach((node: any) => {
                 if (node.hasViewpoint) {
                     if (node.hasViewpoint !== "http://server/unset-base/") {
-                        console.log("Viewpoint", node.hasViewpoint);
                         bcfowl.describe(node.hasViewpoint).then((res) => {
-                            console.log("viewpointres", res)
                             if (res.hasSnapshot) {
                                 let imgload = new ImageService;
-                                console.log("Res Snap", res.hasSnapshot)
                                 imgload.getThumbnailData(res.hasGuid).then((imgres) => {
                                     let url = URL.createObjectURL(imgres);
                                     let tempImageList = {...imageList}
@@ -90,7 +86,6 @@ export default function TopicComments(props: CommentProps) {
             new Date(b.hasCommentDate).getTime()
           );
         });
-        console.log(tempComments)
         setComments(tempComments);
       })
       .catch((err) => {
@@ -118,7 +113,6 @@ export default function TopicComments(props: CommentProps) {
   }
 
   function commentList() {
-    console.log("comments", comments)
     if (comments !== null) {
       let author = parseJWT(getAccessToken()).URI;
 

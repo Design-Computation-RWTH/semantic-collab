@@ -110,7 +110,6 @@ export default function TaskListPreview(props: TaskListProps) {
 
   useEffect(() => {
     init();
-    console.log("Test")
   }, []);
 
   function init() {
@@ -245,12 +244,9 @@ export default function TaskListPreview(props: TaskListProps) {
   function showElement(t:any) {
     let target = viewer.scene.models[t["@id"]]
     viewer.cameraFlight.flyTo(target)
-    let bcfowl = new BcfOWL_Endpoint;
-
-    console.log(t["@id"])
+    let bcfowl = new BcfOWL_Endpoint();
 
     bcfowl.getViewpoint4TaskMainTopic(t["@id"]).then((res) => {
-      console.log("vp res", res["@graph"])
       let vp_uri = res["@graph"][0]["@id"]
       viewer.cameraFlight.flyTo(vp_uri)
     })

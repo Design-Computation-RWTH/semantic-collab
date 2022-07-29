@@ -1,5 +1,4 @@
 // @ts-ignore
-import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 // @ts-ignore
@@ -32,7 +31,8 @@ class BcfOWL_Endpoint {
     //this.myHeaders.append("accept", "text/plain");
     this.myHeaders.append("Accept", "application/ld+json");
     this.myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-    this.project_id = ReactSession.get("projectid");
+    //this.project_id = ReactSession.get("projectid");
+    this.project_id = Cookies.get("projectid");
   }
 
   parseJWT(token: string | undefined) {

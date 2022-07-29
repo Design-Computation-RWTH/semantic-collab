@@ -49,7 +49,6 @@ export default function TopicComments(props: CommentProps) {
       .getCommentsByViewpoint(currentViewpoint)
       .then((vp: any) => {
         let tempComments: any[] = [];
-        console.log("vp", vp)
         if ("@graph" in vp) {
           vp["@graph"].forEach((node: any) => {
             tempComments.push(node);
@@ -66,7 +65,6 @@ export default function TopicComments(props: CommentProps) {
             new Date(b.hasCommentDate).getTime()
           );
         });
-        console.log(tempComments)
         setComments(tempComments);
       })
       .catch((err) => {
@@ -94,7 +92,6 @@ export default function TopicComments(props: CommentProps) {
   }
 
   function commentList() {
-    console.log("comments", comments)
     if (comments !== null) {
       let author = parseJWT(getAccessToken()).URI;
 

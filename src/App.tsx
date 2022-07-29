@@ -114,7 +114,7 @@ export default function CAIA () {
 
   function init() {
     //caia_app = this;
-    ReactSession.setStoreType("sessionStorage");
+    ReactSession.setStoreType("localStorage");
 
     un_subProjects_token = PubSub.subscribe(
       "ProjectName",
@@ -413,12 +413,10 @@ function Login() {
 
     setRemember(ref.current.checked);
     if(ref.current.checked) {
-      console.log("User")
       setURL(values.url);
       setUser(values.username);
       setPassword(values.password);
     } else {
-      console.log("No User")
       setURL("");
       setUser("");
       setPassword("");

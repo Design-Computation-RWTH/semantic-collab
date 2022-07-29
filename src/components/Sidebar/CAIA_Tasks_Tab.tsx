@@ -21,7 +21,6 @@ export default function CAIA_Tasks_Tab() {
   useEffect(() => {
     if (taskFile !== undefined) {
            if (viewer) {
-            console.log("Test")
               setTaskViewState("Creation");
                } else {
                  alert("Please load an IFC Building Representation First");
