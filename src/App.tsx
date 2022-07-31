@@ -97,7 +97,7 @@ export default function CAIA () {
     initial_menustate = true;
   }
 
-  const [projectName, setProjectName] = useState<string>(initial_pname);
+  const [projectName, setProjectName] = useState<string | undefined>(initial_pname);
   const [notifications, setNotifications] = useState<string[]|undefined>();
   const [sidebarName, setSidebarName] = useState<string>("Overview");
   const [projectSelected, setProjectSelected] = useState<boolean>(initial_menustate);
@@ -115,6 +115,7 @@ export default function CAIA () {
   function init() {
     //caia_app = this;
     ReactSession.setStoreType("localStorage");
+    setProjectName(Cookies.get("projectname"))
 
     un_subProjects_token = PubSub.subscribe(
       "ProjectName",
@@ -157,6 +158,7 @@ export default function CAIA () {
   function subProjects(msg: any, data: { name: any }) {
     // @ts-ignore  Not null.. init at the constructor
     setProjectName(data.name);
+    Cookies.set("projectname", data.name)
     ReactSession.set("projectname", data.name);
     caia_notifications = caia_notifications.filter(
       (e) => e !== "Select a project"
@@ -193,7 +195,7 @@ export default function CAIA () {
   let setup = `/projects/${projectName}/setup`;
   let disabledIcons = "";
 
-  if (projectName) {
+  if (Cookies.get("projectid")) {
   } else {
     disabledIcons = "disabled";
     setup = `/projects/${projectName}/setup`;
@@ -288,7 +290,7 @@ export default function CAIA () {
       >
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/projects/:id/setup" element={<SetupView />} />
+          <Route path="/projects/:id/setup" element={<RequireAuth><SetupView /></RequireAuth>} />
           <Route
             path="/projects/:id/"
             element={

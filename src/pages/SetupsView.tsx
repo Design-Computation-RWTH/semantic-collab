@@ -1,6 +1,6 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
-import { Tooltip, ScrollArea } from "@mantine/core";
+import { Tooltip, ScrollArea, Text } from "@mantine/core";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import Card from "react-bootstrap/Card";
@@ -199,7 +199,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                       transitionDuration={200}
                       label={this.state.extensionsMap[topictype].comment}
                     >
-                      {this.state.extensionsMap[topictype].label}
+                      <Text>{this.state.extensionsMap[topictype].label}</Text>
                     </Tooltip>
                   </Col>
                   <Col xs={1}>
@@ -253,7 +253,8 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                       transitionDuration={200}
                       label={this.state.extensionsMap[topicstatus].comment}
                     >
-                      {this.state.extensionsMap[topicstatus].label}
+                      <Text>
+                      {this.state.extensionsMap[topicstatus].label}</Text>
                     </Tooltip>
                   </Col>
                   <Col xs={1}>
@@ -314,7 +315,8 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                           this.state.extensionsMap[documentationPhase].comment
                         }
                       >
-                        {this.state.extensionsMap[documentationPhase].label}
+                        <Text>
+                        {this.state.extensionsMap[documentationPhase].label}</Text>
                       </Tooltip>
                     </Col>
                     <Col xs={1}>
@@ -369,7 +371,8 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                   transitionDuration={200}
                   label={this.state.extensionsMap[priority].comment}
                 >
-                  {this.state.extensionsMap[priority].label}
+                  <Text>
+                  {this.state.extensionsMap[priority].label}</Text>
                 </Tooltip>
               </Col>
               <Col xs={1}>
@@ -414,7 +417,8 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
                   transitionDuration={200}
                   label={this.state.extensionsMap[label].comment}
                 >
-                  {this.state.extensionsMap[label].label}
+                  <Text>
+                  {this.state.extensionsMap[label].label}</Text>
                 </Tooltip>
               </Col>
               <Col xs={1}>
