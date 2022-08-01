@@ -143,11 +143,11 @@ export async function ConvertTasks(data: any, projectURI: string) {
         namedNode(bcdOWL_uri + "hasTopicType"),
         namedNode(interventionpost_uri)
       );
-      writer.addQuad(
-        namedNode(interventionpost_uri),
-        namedNode(bcdOWL_uri + "hasGuid"),
-        namedNode(interventionpost_uri)
-      );
+      // writer.addQuad(
+      //   namedNode(interventionpost_uri),
+      //   namedNode(bcdOWL_uri + "hasGuid"),
+      //   namedNode(interventionpost_uri)
+      // );
     }
   );
 
