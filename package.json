@@ -30,6 +30,7 @@
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.6",
     "@xeokit/xeokit-convert": "^1.0.4",
     "@xeokit/xeokit-sdk": "^2.2.5",
+    "@xmldom/xmldom": "^0.8.2",
     "asciify-image": "^0.1.8",
     "assert": "^2.0.0",
     "bootstrap": "^5.1.3",
