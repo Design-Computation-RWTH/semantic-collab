@@ -1,6 +1,5 @@
 import { Box, Button, Group, Modal } from "@mantine/core";
 import React, { useState } from "react";
-import { useModals } from "@mantine/modals";
 import Cookies from "js-cookie";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
 

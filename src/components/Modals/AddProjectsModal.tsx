@@ -9,16 +9,13 @@ import {
   Text,
 } from "@mantine/core";
 import React, { useState } from "react";
-import { BsPlusLg } from "react-icons/bs";
 import { useModals } from "@mantine/modals";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
 import PubSub from "pubsub-js";
-import { useNavigate } from "react-router-dom";
 
 export default function AddProjectsModal(props: any) {
   const [opened, setOpened] = useState(false);
   const modals = useModals();
-  let navigate = useNavigate();
 
   const form = useForm({
     initialValues: {

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Container, Paper, Switch } from "@mantine/core";
+import { Container, Switch } from "@mantine/core";
 // @ts-ignore
 
 import {
@@ -26,7 +26,7 @@ import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
 import ImageService from "../../services/ImageService";
 import PubSub from "pubsub-js";
 
-import CAIA_Sidebar from "../Sidebar/CAIA_Sidebar";
+import Sidebar from "../Sidebar/Sidebar";
 
 const wkt = require("terraformer-wkt-parser");
 
@@ -54,7 +54,7 @@ class MyDataSource {
   }
 }
 
-export default function CAIA_XeoKitView() {
+export default function XeoKitView() {
   const {
     setViewer,
     setGalleryScreen,
@@ -62,7 +62,6 @@ export default function CAIA_XeoKitView() {
     setLargeGalleryImg,
     setActiveTab,
     lastSelection,
-    setLastSelection
   } = React.useContext(ViewerContext) as DcWebViewerContextType;
 
   let imageservice = new ImageService();
@@ -106,8 +105,8 @@ export default function CAIA_XeoKitView() {
       PubSub.unsubscribe(un_cancelnewdocu);
       PubSub.unsubscribe(un_changeViewMode);
 
-      documents = new Set();
-      documentNodes = {};
+      //documents = new Set();
+      //documentNodes = {};
       viewer.destroy();
       //
     };
@@ -135,6 +134,7 @@ export default function CAIA_XeoKitView() {
     viewer = new Viewer({
       canvasId: "viewport_canvas",
       transparent: true,
+      saoEnabled: true,
     });
 
     setViewer(viewer);
@@ -186,8 +186,8 @@ export default function CAIA_XeoKitView() {
     viewer.camera.right = [0, 1, 0];
     viewer.camera.orbitYaw(180);
 
-    let lastViewpointId;
-    let lastSel: any;
+    // let lastViewpointId;
+    // let lastSel: any;
     
 
     let measureCount = 0;
@@ -685,7 +685,7 @@ export default function CAIA_XeoKitView() {
         margin: "0px",
       }}
     >
-      <CAIA_Sidebar/>
+      <Sidebar/>
       <div
         style={{
           width: "100%",

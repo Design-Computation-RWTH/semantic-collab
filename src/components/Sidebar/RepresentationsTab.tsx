@@ -13,7 +13,6 @@ import RepresentationFile from "./Representations/RepresentationFile";
 import ImageService from "../../services/ImageService";
 import { ActionIcon, Container, SimpleGrid, CloseButton, ScrollArea } from "@mantine/core";
 // @ts-ignore
-import { Viewer, LASLoaderPlugin } from "@xeokit/xeokit-sdk";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 

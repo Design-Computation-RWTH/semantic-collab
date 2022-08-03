@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Avatar,
@@ -6,7 +6,6 @@ import {
   Paper,
   Text,
   Group,
-  TextInput,
   Textarea,
   Tooltip,
   Space,
@@ -17,13 +16,10 @@ import {
 import ImageService from "../../../services/ImageService";
 
 import { BsReplyFill } from "react-icons/bs";
-import { IconContext } from "react-icons";
-
-import dayjs from "dayjs";
 
 import { ViewerContext } from "../../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../../@types/dcwebviewer";
-import bcfOWL_Endpoint, {
+import {
   getAccessToken,
 } from "../../../services/BcfOWL_Endpoint";
 import BcfOWL_Endpoint from "../../../services/BcfOWL_Endpoint";
@@ -38,6 +34,7 @@ export default function TopicComments(props: CommentProps) {
   ) as DcWebViewerContextType;
   const [comments, setComments] = useState<any[] | null>(null);
   const [imageList, setImageList] = useState<any>({});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [topicURI, setTopicURI] = useState<string>(props.topicGuid);
 
   let bcfowl = new BcfOWL_Endpoint();
@@ -61,7 +58,7 @@ export default function TopicComments(props: CommentProps) {
                     if (node.hasViewpoint !== "http://server/unset-base/") {
                         bcfowl.describe(node.hasViewpoint).then((res) => {
                             if (res.hasSnapshot) {
-                                let imgload = new ImageService;
+                                let imgload = new ImageService();
                                 imgload.getThumbnailData(res.hasGuid).then((imgres) => {
                                     let url = URL.createObjectURL(imgres);
                                     let tempImageList = {...imageList}
@@ -81,7 +78,7 @@ export default function TopicComments(props: CommentProps) {
             if (comments.hasViewpoint !== "http://server/unset-base/") {
                 bcfowl.describe(comments.hasViewpoint).then((res) => {
                     if (res.hasSnapshot) {
-                        let imgload = new ImageService;
+                        let imgload = new ImageService();
                         imgload.getThumbnailData(res.hasGuid).then((imgres) => {
                             let url = URL.createObjectURL(imgres);
                             let tempImageList = {...imageList}

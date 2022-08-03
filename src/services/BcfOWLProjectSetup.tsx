@@ -1,5 +1,3 @@
-// @ts-ignore
-import { ReactSession } from "react-client-session";
 import Cookies from "js-cookie";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";

@@ -13,7 +13,7 @@ import { BsFillPuzzleFill, BsGearWideConnected, BsHouse, BsFillMoonStarsFill, Bs
 import logo from "./components/Branding/Icon_v2.svg";
 import ProjectListView from "./pages/ProjectsView";
 import SetupView from "./pages/SetupsView";
-import XeoKitView from "./components/Viewport/CAIA_XeoKitView";
+import XeoKitView from "./components/Viewport/XeoKitView";
 // @ts-ignore
 import { NotificationManager } from "react-notifications";
 import {
@@ -27,24 +27,17 @@ import {
   Header,
   Menu,
   Navbar,
-  Aside,
-  AsideProps,
-  MediaQuery,
   Space,
   Text,
   TextInput,
   useMantineColorScheme,
 } from "@mantine/core";
 import { CAIAAuthProvider } from "./services/CAIA_auth";
-import CAIA_Sidebar from "./components/Sidebar/CAIA_Sidebar";
 import { ViewerContext } from "./context/dcwebviewerContext";
 import { DcWebViewerContextType } from "./@types/dcwebviewer";
 import { useForm } from "@mantine/form";
 import { useLocalStorage } from '@mantine/hooks';
 import Cookies from "js-cookie";
-import { HorizontalSectionProps } from "@mantine/core/lib/AppShell/HorizontalSection/HorizontalSection";
-import { propTypes } from "react-bootstrap/esm/Image";
-import { HorizontalSectionPosition } from "@mantine/core/lib/AppShell/HorizontalSection/HorizontalSection.styles";
 export const getAccessToken = () => Cookies.get("access_token");
 export const getUserName = () => Cookies.get("username");
 export const isAuthenticated = () => !!getAccessToken();
@@ -81,13 +74,7 @@ function parseJWT(token: string | undefined) {
 }
 
 export default function CAIA () {
-  let un_subProjects_token: PubSubJS.Token;
-  let un_subNotifications_token: PubSubJS.Token;
-  let un_subSidebarName_token: PubSubJS.Token;
-  let un_subAlert: PubSubJS.Token;
   let name: any;
-  let useruri: any;
-  let auth = useAuth();
 
   let initial_pname:any = "";
   let initial_menustate = false;
@@ -98,8 +85,11 @@ export default function CAIA () {
   }
 
   const [projectName, setProjectName] = useState<string | undefined>(initial_pname);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [notifications, setNotifications] = useState<string[]|undefined>();
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sidebarName, setSidebarName] = useState<string>("Overview");
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [projectSelected, setProjectSelected] = useState<boolean>(initial_menustate);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
@@ -117,20 +107,20 @@ export default function CAIA () {
     ReactSession.setStoreType("localStorage");
     setProjectName(Cookies.get("projectname"))
 
-    un_subProjects_token = PubSub.subscribe(
+    PubSub.subscribe(
       "ProjectName",
       subProjects
     );
-    un_subNotifications_token = PubSub.subscribe(
+    PubSub.subscribe(
       "Update",
       subUpdates
     );
-    un_subSidebarName_token = PubSub.subscribe(
+    PubSub.subscribe(
       "SidebarName",
       subSidebar
     );
 
-    un_subAlert = PubSub.subscribe("Alert", subAlert);
+    PubSub.subscribe("Alert", subAlert);
 
   }
 
@@ -188,8 +178,6 @@ export default function CAIA () {
       nav("/login", {replace: false});
     })
   }
-
-  let pos: HorizontalSectionPosition = {left: 1};
 
   let overview = `/projects/${projectName}/`;
   let setup = `/projects/${projectName}/setup`;

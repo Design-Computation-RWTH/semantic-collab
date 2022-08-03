@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { BsCalendarCheck, BsCardImage, BsLayers } from "react-icons/bs";
 import { Tabs } from "@mantine/core";
-import CAIA_Representations_Tab from "./CAIA_Representations_Tab";
-import CAIA_Gallery_Tab from "./CAIA_Gallery_Tab";
-import CAIA_Tasks_Tab from "./CAIA_Tasks_Tab";
-
-// @ts-ignore
-import { Viewer } from "@xeokit/xeokit-sdk";
+import RepresentationsTab from "./RepresentationsTab";
+import GalleryTab from "./GalleryTab";
+import TasksTab from "./TasksTab";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 import BcfOWLProjectSetup from "../../services/BcfOWLProjectSetup";
@@ -117,13 +114,13 @@ export default function CAIA_Sidebar() {
         <Tabs.Tab onClick={()=>{}} value="Tasks" title="Tasks" icon={<BsCalendarCheck />}/>
       </Tabs.List>
       <Tabs.Panel style={{height:"100%", paddingBottom: "25px"}} value="Representations" pt="xs">
-          <CAIA_Representations_Tab />
+          <RepresentationsTab />
       </Tabs.Panel>
       <Tabs.Panel style={{height:"100%", paddingBottom: "25px"}} value="Gallery" pt="xs">
-        <CAIA_Gallery_Tab />
+        <GalleryTab />
       </Tabs.Panel>
       <Tabs.Panel  style={{height:"100%", paddingBottom: "25px"}} value="Tasks" pt="xs">
-        <CAIA_Tasks_Tab />
+        <TasksTab />
       </Tabs.Panel>
     </Tabs>
   );

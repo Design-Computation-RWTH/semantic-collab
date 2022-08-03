@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Divider, ScrollArea, Grid, Center, Card } from "@mantine/core";
 import BCFAPI from "../services/BCFAPI";
 // @ts-ignore
