@@ -134,6 +134,7 @@ export default function XeoKitView() {
     viewer = new Viewer({
       canvasId: "viewport_canvas",
       transparent: true,
+      saoEnabled: true,
     });
 
     setViewer(viewer);
