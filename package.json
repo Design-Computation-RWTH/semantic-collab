@@ -43,6 +43,7 @@
     "file-to-array-buffer": "^1.0.0",
     "gantt-task-react": "^0.3.8",
     "https-browserify": "^1.0.0",
+    "jpeg-js": "^0.4.4",
     "js-cookie": "^3.0.1",
     "js-file-download": "^0.4.12",
     "jszip": "^3.9.1",
