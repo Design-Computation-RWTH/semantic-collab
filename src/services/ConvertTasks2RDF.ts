@@ -256,9 +256,9 @@ export async function ConvertTasks(data: any, projectURI: string) {
       namedNode(priorities.get(i.intervention_priority_id))
     );
 
-    let intervention_TopicType =
-      i.intervention_post_name.replace(/ /g, "_").replace(/c/g, "c") +
-      i.intervention_post_id;
+    // let intervention_TopicType =
+    //   i.intervention_post_name.replace(/ /g, "_").replace(/c/g, "c") +
+    //   i.intervention_post_id;
     writer.addQuad(
       namedNode(intervention_uri),
       namedNode(bcdOWL_uri + "hasTopicType"),

@@ -2,9 +2,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import {
   Card,
-  Text,
   Button,
-  RingProgress,
   Center,
   Title,
   Group,
@@ -15,7 +13,6 @@ import { ReactSession } from "react-client-session";
 import { useNavigate } from "react-router-dom";
 import DeleteProjectsModal from "../Modals/DeleteProjectModal";
 import BcfOWL_Endpoint from "../../services/BcfOWL_Endpoint";
-import * as bcfOWL_API from "../../services/types/bcfOWL_API_types";
 import { ViewerContext } from "../../context/dcwebviewerContext";
 import { DcWebViewerContextType } from "../../@types/dcwebviewer";
 import Cookies from "js-cookie";

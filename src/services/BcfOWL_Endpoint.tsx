@@ -446,8 +446,6 @@ class BcfOWL_Endpoint {
 
   async deleteDocument(documentURI: string) {
 
-    let timestamp = new Date(Date.now()).toISOString();
-    let author = this.parseJWT(getAccessToken()).URI;
     let urlencoded = new URLSearchParams();
 
     let query = `

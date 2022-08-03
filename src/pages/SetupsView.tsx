@@ -231,7 +231,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             </ListGroup.Item>
           );
         }
-      }
+      } else {return (<></>)}
     });
 
     const topicstatus_list = this.state.topicStatuses.map((topicstatus) => {
@@ -290,7 +290,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
             </ListGroup.Item>
           );
         }
-      }
+      } else {return (<></>)}
     });
 
     const documentationphase_list = this.state.documentationPhases.map(
@@ -353,7 +353,7 @@ class SetupView extends React.Component<SetupViewProps, SetupViewState> {
               </ListGroup.Item>
             );
           }
-        }
+        } else {return (<></>)}
       }
     );
 
